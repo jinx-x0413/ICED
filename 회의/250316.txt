@@ -1,0 +1,100 @@
+< UE >
+
+1. 렌더링 최적화
+UE cmd
+
+2. Graphics API (DX12 & Vulkan)
+- Explicit Multi-threading
+	RHI thread 실행 코드
+- Blindless Rendering
+	RHI thread 실행 코드
+- 명령 버퍼 최적화
+
+
+** Vulkan vs DX12
+Vulkan : 더 낮은 수준 -> 설정 필요
+	안드로이드, 윈도우에 필요
+DX12 : 
+
+3. 개발 일정 (10일)
+- 이론적인 R&D : 1주일 
+	> gpt 말고, 실제 UE 샘플에서 돌아가게 하는 것까지
+- 코드 적용 : 2~3일
+
+프로파일링 이후 최적화 과정 필요
+>> 기본 기능 구현 이후 최적화 작업 필요
+
+
+
+
+--------------------------------------------
+4-2. 서버 데이터 처리 로직 : 2일
+최우선 개발
+	JSON parsing
+	HTTP 통신 로직만 구현
+
+그다음 개발
+	fbx : open file dialog
+		
+
+4-3 ~ 4-5. 액터 로드/조작 : 5일
+
+/
+
+** UE.exe (로그인 정보 받기) : 2일
+shipping --> 로그 말고 위젯을 띄워줘야 함.
+
+4-6. 조립 콘텐츠 구현 : 5일
+Timebar UI
+AssetActor -> Component
+Interaction (--|> Timebar > UClip)
+Content Class 
+
++
+
+프로파일링 : 2일
+그래픽스 API / 셰이더 : 10 일
+
+
+= 19일 (3주)
+
++
+
+서버 데이터 처리 로직 (swagger)
+파싱 로직 보강
+
+
+-----------------------------------------------
+1. 기능 개발 (2주일) -> REST API
+로그인 - 동진
+	TLS/SSL
+업로드 - 성진 
+	파일 업로드 UI (Dropzone.js / Axios)
+	signedURL
+	인덱싱
+	프론트 - 1일
+
+	swagger
+
+
+2. UE 호출 (2주일)
+- 이론적 RnD 기간 : 1주일
+	실행 버튼 누름 > 로컬에 .exe 안착
+	PC 로컬에 .exe가 다운 되어 있는지 검사하는 로직
+
+- 실제 호출하는 기능 구현 : 1주일
+
+
+3. 보안 & 최적화 (2주)
+DB 보안 injection
+
+** DB 확장성 고려
+DB 캐싱
+UE API log
+비동기 파일 처리 (Spring WebFlux)
+
+웹소켓
+
+
+쿠버네티스/도커
+
