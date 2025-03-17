@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
-#include "HttpDependency.h"
-#include "HttpRequest.h"
+#include "Infra/Network/HTTP_Connection/Private/HttpDependency.h"
+#include "Infra/Network/HTTP_Connection/Private/HttpRequest.h"
 
 
 

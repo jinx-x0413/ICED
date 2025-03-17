@@ -8,7 +8,7 @@
 #include "EasyFileDialog/Public/EFDFunctionLibrary.h"
 #include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
-//#include "HTTP_Connection.h"
+#include "HTTP_Connection.h"
 
 #include "EntryPoint.generated.h"
 
