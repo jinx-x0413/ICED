@@ -18,7 +18,7 @@ void FUEViewer::ShutdownModule()
 	ShutdownAndUnloadModule(TEXT("AssetActor"));
 	ShutdownAndUnloadModule(TEXT("AssetContent"));
 	ShutdownAndUnloadModule(TEXT("Utility"));
-	ShutdownAndUnloadModule(TEXT("Network"));
+	ShutdownAndUnloadModule(TEXT("HTTP_Connection"));
 	ShutdownAndUnloadModule(TEXT("Command"));
 	ShutdownAndUnloadModule(TEXT("UIComponent"));
 
@@ -31,7 +31,7 @@ void FUEViewer::InitializeRootModule()
 	RegisterSubModule(TEXT("AssetActor"));
 	RegisterSubModule(TEXT("AssetContent"));
 	RegisterSubModule(TEXT("Utility"));
-	RegisterSubModule(TEXT("Network"));
+	RegisterSubModule(TEXT("HTTP_Connection"));
 	RegisterSubModule(TEXT("Command"));
 	RegisterSubModule(TEXT("UIComponent"));
 	

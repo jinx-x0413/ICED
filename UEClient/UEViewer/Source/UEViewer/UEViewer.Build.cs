@@ -17,6 +17,7 @@ public class UEViewer : ModuleRules
 			, "glTFRuntime"
 			, "glTFRuntimeFBX"
 			, "RuntimeTransformer"
+			, "HTTP_Connection"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
