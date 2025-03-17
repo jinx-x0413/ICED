@@ -13,6 +13,7 @@
 /**
  * 
  */
+
 UCLASS()
 class UHttpRequest : public UObject
 {

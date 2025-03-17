@@ -2,6 +2,7 @@
 
 
 #include "HttpRequest.h"
+#include "HttpDependency.h"
 
 UHttpRequest::UHttpRequest()
 {
