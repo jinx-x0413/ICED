@@ -8,6 +8,7 @@ public class UEViewerTarget : TargetRules
 	public UEViewerTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+		ExtraModuleNames.AddRange( new string[] { "Profiling" } );
 		ExtraModuleNames.AddRange( new string[] { "Command" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetContent" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetActor" } );

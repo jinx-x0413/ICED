@@ -36,6 +36,11 @@
 			"AdditionalDependencies": [
 				"CoreUObject"
 			]
+		},
+		{
+			"name": "Profiling",
+			"type": "Runtime",
+			"loadingPhase": "Default"
 		}
 	],
 	"Plugins": [

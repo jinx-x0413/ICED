@@ -17,6 +17,7 @@ public class UEViewer : ModuleRules
 			, "glTFRuntime"
 			, "glTFRuntimeFBX"
 			, "RuntimeTransformer"
+			, "Profiling"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
