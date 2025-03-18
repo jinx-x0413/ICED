@@ -14,6 +14,18 @@
  * 
  */
 
+USTRUCT(BlueprintType)
+struct FOpenApiTest
+{
+	GENERATED_USTRUCT_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	FString Gender = "";
+
+};
+
+
 UCLASS()
 class UHttpRequest : public UObject
 {
@@ -21,10 +33,10 @@ class UHttpRequest : public UObject
 	
 public:
 	UHttpRequest();
-	~UHttpRequest();
+	virtual ~UHttpRequest();
 
 	UFUNCTION(BlueprintCallable)
-	virtual void SendUserDataHttpRequest();
+	void SendUserDataHttpRequest();
 
 private:
 	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);

@@ -14,4 +14,6 @@ class UEVIEWER_API AUEViewerGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+	AUEViewerGameModeBase();
+	~AUEViewerGameModeBase();
 };

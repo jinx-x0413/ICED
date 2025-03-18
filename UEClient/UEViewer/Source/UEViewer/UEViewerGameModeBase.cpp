@@ -2,4 +2,13 @@
 
 
 #include "UEViewerGameModeBase.h"
+#include "UEViewerPlayerController.h"
 
+AUEViewerGameModeBase::AUEViewerGameModeBase()
+{
+	PlayerControllerClass = AUEViewerPlayerController::StaticClass();
+}
+
+AUEViewerGameModeBase::~AUEViewerGameModeBase()
+{
+}

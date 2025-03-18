@@ -26,7 +26,8 @@ public:
 	UFUNCTION()
 	static void LoadActor();
 
+	/*UFUNCTION(BlueprintCallable)
+	static void SendUserDataHttpRequest();*/
 	UFUNCTION(BlueprintCallable)
 	static void SendUserDataHttpRequest();
-
 };

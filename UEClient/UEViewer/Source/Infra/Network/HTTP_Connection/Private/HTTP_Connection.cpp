@@ -6,11 +6,15 @@ DEFINE_LOG_CATEGORY(HTTP_Connection);
 
 void FHTTP_Connection::StartupModule()
 {
-	UE_LOG(HTTP_Connection, Warning, TEXT("HTTP_Connection module has been loaded"));
-	if (IsValid(HttpRequest))
+	UE_LOG(HTTP_Connection, Warning, TEXT("HTTP_Connection module has been loaded"))
+	HttpRequest = NewObject<UHttpRequest>();
+	if (HttpRequest)
 	{
-		HttpRequest->SendUserDataHttpRequest();
-
+		UE_LOG(LogTemp, Log, TEXT("HttpRequest initialized successfully using NewObject"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to initialize HttpRequest!"));
 	}
 }
 

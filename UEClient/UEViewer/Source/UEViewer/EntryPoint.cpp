@@ -17,9 +17,17 @@ void UEntryPoint::SendUserDataHttpRequest()
 		{
 			return Module->HttpRequest->SendUserDataHttpRequest();
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to get module pointer"));
-		}
 	}
 }
+
+//void UEntryPoint::SendUserDataHttpRequest()
+//{
+//	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
+//	{
+//		FHTTP_Connection* Module = FModuleManager::Get().GetModulePtr<FHTTP_Connection>("HTTP_Connection");
+//		if (Module)
+//		{
+//			return Module->HttpRequest->SendUserDataHttpRequest();
+//		}
+//	}
+//}
