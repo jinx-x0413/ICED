@@ -10,15 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.concurrent.CompletableFuture;
 
 @RestController
-@RequestMapping("/api/upload")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class UploadController {
 
     private final UploadService uploadService;
 
-    @PostMapping
+    @PostMapping("/upload")
     public CompletableFuture<ResponseEntity<UploadResponseDto>> uploadFile(@RequestParam("file") MultipartFile file) {
-        return uploadService.uploadFileAsync(file)
+        return uploadService.uploadFile(file)
                 .thenApply(ResponseEntity::ok);
     }
 }

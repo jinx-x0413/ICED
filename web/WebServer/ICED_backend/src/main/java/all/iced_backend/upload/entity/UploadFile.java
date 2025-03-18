@@ -16,15 +16,12 @@ public class UploadFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 업로드된 파일 이름
-    @Column(name = "file_name", nullable = false)
+    // 원본 파일명
     private String fileName;
 
-    // 파일 저장 경로 (또는 URL)
-    @Column(name = "file_uri", nullable = false)
+    // FTPS 서버에 저장된 경로 (ex: "/uploads/Bed.fbx")
     private String fileUri;
 
-    // 업로드 시각
-    @Column(name = "created_at")
+    // 업로드된 시간
     private LocalDateTime createdAt = LocalDateTime.now();
 }
