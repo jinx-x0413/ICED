@@ -42,5 +42,5 @@ void AUEViewerPlayerController::OnPressOneKey()
 
     UE_LOG(LogTemp, Error, TEXT("Pressed 1 Key!"));
 
-    //UEntryPoint::SendUserDataHttpRequest();
+    UEntryPoint::SendUserDataHttpRequest();
 }

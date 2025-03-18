@@ -31,35 +31,43 @@ void UHttpRequest::SendUserDataHttpRequest()
 
 void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	FOpenApiTest OpenApi;
-	FString OpenApiGender;
-
 	// 서버와 성공적으로 통신이 완료되었는지 검사
 	if (!bWasSuccessful || !Response.IsValid())
 	{
 		UE_LOG(LogTemp, Error, TEXT("HTTP Response Failed."));
 		return;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("GetUserDataCallBack"));
 
 	FString ContentString = Response->GetContentAsString();
 
+	UE_LOG(LogTemp, Warning, TEXT("Response Content: %s"), *ContentString);
+
 	//Json 데이터를 저장하기 위한 배열
-	TArray<TSharedPtr<FJsonValue>> JsonArray;
+	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
 
-	if (FJsonSerializer::Deserialize(Reader, JsonArray))
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
-		UE_LOG(LogTemp, Log, TEXT("JSON  Parse Successed: %s"), *ContentString);
+		UE_LOG(LogTemp, Warning, TEXT("JSON  Parse Successed: %s"), *ContentString);
+
+		TArray<TSharedPtr<FJsonValue>> ResultsArray = JsonObject->GetArrayField(TEXT("results"));
+		if (ResultsArray.Num() > 0)
+		{
+			TSharedPtr<FJsonObject> UserObject = ResultsArray[0]->AsObject();
+			FOpenApiTest OpenApi;
+
+			OpenApi.Gender = UserObject->GetStringField(TEXT("gender"));
+
+			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
+		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("JSON Parse Failed: %s"), *ContentString);
 	}
 
-	for (TSharedPtr<FJsonValue> RootData : JsonArray)
-	{
-		RootData.Get()->AsObject()->TryGetStringField(TEXT("gender"), OpenApiGender);
-	}
+	
+	
 
-	UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApiGender);
 }

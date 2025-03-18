@@ -19,9 +19,8 @@ struct FOpenApiTest
 {
 	GENERATED_USTRUCT_BODY()
 
-public:
-	UPROPERTY(BlueprintReadWrite)
-	FString Gender = "";
+	UPROPERTY()
+	FString Gender;
 
 };
 
@@ -36,7 +35,7 @@ public:
 	virtual ~UHttpRequest();
 
 	UFUNCTION(BlueprintCallable)
-	void SendUserDataHttpRequest();
+	virtual void SendUserDataHttpRequest();
 
 private:
 	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
