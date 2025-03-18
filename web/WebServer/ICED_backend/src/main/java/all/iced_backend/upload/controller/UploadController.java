@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @RequestMapping("/api/upload")
 @RequiredArgsConstructor
@@ -15,8 +17,8 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping
-    public ResponseEntity<UploadResponseDto> uploadFile(@RequestParam("file") MultipartFile file) {
-        UploadResponseDto response = uploadService.uploadFile(file);
-        return ResponseEntity.ok(response);
+    public CompletableFuture<ResponseEntity<UploadResponseDto>> uploadFile(@RequestParam("file") MultipartFile file) {
+        return uploadService.uploadFileAsync(file)
+                .thenApply(ResponseEntity::ok);
     }
 }
