@@ -59,6 +59,8 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 			OpenApi.Gender = UserObject->GetStringField(TEXT("gender"));
 
+			UserDataDelivery.Broadcast(OpenApi.Gender);
+
 			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
 		}
 	}

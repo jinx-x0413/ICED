@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "EntryPoint.h"
+#include "UEViewer/Tests/NetworkTest/TestUserWidget.h"
 #include "UEViewerPlayerController.generated.h"
 
 /**
@@ -16,11 +17,18 @@ class UEVIEWER_API AUEViewerPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 	AUEViewerPlayerController();
-	~AUEViewerPlayerController();
+	virtual ~AUEViewerPlayerController();
 
 public:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UTestUserWidget> UserWidgetClass;
 
 	virtual void SetupInputComponent() override;
 
 	void OnPressOneKey();
+
+private:
+	UTestUserWidget* UserWidgetInstance;
 };

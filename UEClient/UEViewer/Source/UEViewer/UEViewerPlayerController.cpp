@@ -11,6 +11,25 @@ AUEViewerPlayerController::~AUEViewerPlayerController()
 {
 }
 
+void AUEViewerPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if (UserWidgetClass)
+    {
+        // 위젯 생성
+        UserWidgetInstance = CreateWidget<UTestUserWidget>(this, UserWidgetClass);
+        if (UserWidgetInstance)
+        {
+            // 화면에 추가
+            UserWidgetInstance->AddToViewport();
+
+        }
+    }
+
+    
+}
+
 void AUEViewerPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();

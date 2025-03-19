@@ -14,6 +14,9 @@
  * 
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FString&, Gender);
+
+
 USTRUCT(BlueprintType)
 struct FOpenApiTest
 {
@@ -33,6 +36,9 @@ class UHttpRequest : public UObject
 public:
 	UHttpRequest();
 	virtual ~UHttpRequest();
+
+	UPROPERTY(BlueprintAssignable, Category = "HTTP")
+	FUserDataDelivery UserDataDelivery;
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SendUserDataHttpRequest();
