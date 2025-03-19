@@ -38,9 +38,13 @@
 			]
 		},
 		{
-			"name": "Profiling",
-			"type": "Runtime",
-			"loadingPhase": "Default"
+			"Name": "Profiling",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
