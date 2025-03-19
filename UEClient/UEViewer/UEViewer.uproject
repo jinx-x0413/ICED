@@ -36,6 +36,15 @@
 			"AdditionalDependencies": [
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "UIComponent",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [
