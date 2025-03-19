@@ -18,5 +18,7 @@ public class JoinDTO {
 
     private String username; // username 컬럼에 해당
 
+    private String role; // role 컬럼에 해당
+
     private LocalDateTime createdAt; // createdat 컬럼에 해당
 }

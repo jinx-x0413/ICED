@@ -28,6 +28,7 @@ public class JoinService {
         String email = joinDTO.getEmail();
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
+        String role = "사용자";
 
 
         Boolean isExist = userRepository.existsByUserid(userid);
@@ -43,6 +44,7 @@ public class JoinService {
         data.setUsername(username);
         data.setPassword(bCryptPasswordEncoder.encode(password));
         data.setCreatedAt(LocalDateTime.now());
+        data.setRole(role);
 
         userRepository.save(data);
 
