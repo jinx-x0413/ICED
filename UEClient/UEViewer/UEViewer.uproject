@@ -37,6 +37,14 @@
 			"AdditionalDependencies": [
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "HTTP_Connection",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject"
+			]
 		}
 	],
 	"Plugins": [
