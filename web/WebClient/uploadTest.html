@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .progress { width: 300px; height: 20px; border: 1px solid #ccc; margin-top: 10px; }
+        .progress-bar { width: 0; height: 100%; background-color: #4caf50; transition: width 0.2s; }
+    </style>
+</head>
+<body>
+<h1>Upload File</h1>
+<form id="uploadForm">
+    <input type="file" id="fileInput" name="file" />
+    <button type="submit">Upload</button>
+</form>
+<div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+<div id="status"></div>
+
+<script>
+    document.getElementById("uploadForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        var fileInput = document.getElementById("fileInput");
+        if (!fileInput.files || fileInput.files.length === 0) {
+            document.getElementById("status").innerText = "Please select a file.";
+            return;
+        }
+
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append("file", file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:8080/api/upload", true);
+
+        // 진행률 표시
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percent = (event.loaded / event.total) * 100;
+                document.getElementById("progressBar").style.width = percent + "%";
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById("status").innerText = "Upload successful: " + xhr.responseText;
+            } else {
+                document.getElementById("status").innerText = "Upload failed: HTTP " + xhr.status;
+            }
+        };
+
+        xhr.send(formData);
+        document.getElementById("status").innerText = "Uploading...";
+    });
+</script>
+</body>
+</html>

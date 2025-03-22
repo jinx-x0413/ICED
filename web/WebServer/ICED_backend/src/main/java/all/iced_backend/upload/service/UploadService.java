@@ -32,7 +32,23 @@ public class UploadService {
     private final UploadFileRepository uploadFileRepository;
 
     // FTPS 업로더 유틸
-    private final FtpsUploader ftpsUploader = new FtpsUploader();
+    //private final FtpsUploader ftpsUploader = new FtpsUploader();
+
+    // FTP 서버 설정
+    @Value("${ftps.host}")
+    private String ftpHost;
+    @Value("${ftps.port}")
+    private int ftpPort;
+    @Value("${ftps.username}")
+    private String ftpUser;
+    @Value("${ftps.password}")
+    private String ftpPass;
+    @Value("${ftps.remote-dir}")
+    private String ftpRemoteDir;
+
+    // 🔄 FTPSUploader → FTPUploader (테스트용)
+    private final FtpUploader ftpUploader = new FtpUploader();
+
 
     /**
      * 비동기(Async) 방식으로 파일 업로드
@@ -54,9 +70,15 @@ public class UploadService {
         }
 
         // 2) FTPS 서버에 업로드
-        String remotePath = ftpsUploader.uploadFile(
-                ftpsHost, ftpsPort, ftpsUser, ftpsPass,
-                tempFile, ftpsRemoteDir
+//        String remotePath = ftpsUploader.uploadFile(
+//                ftpsHost, ftpsPort, ftpsUser, ftpsPass,
+//                tempFile, ftpsRemoteDir
+//        );
+
+        // FTP 업로드 시도
+        String remotePath = ftpUploader.uploadFile(
+                ftpHost, ftpPort, ftpUser, ftpPass,
+                tempFile, ftpRemoteDir
         );
         // 임시 파일 삭제
         tempFile.delete();

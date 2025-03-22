@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UploadController {
 

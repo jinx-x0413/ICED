@@ -35,8 +35,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-# 애플리케이션 설정 파일 무시
-/src/main/resources/application.properties
-/build/
-/out/
