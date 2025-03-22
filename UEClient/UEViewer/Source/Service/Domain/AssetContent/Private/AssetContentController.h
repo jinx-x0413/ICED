@@ -6,9 +6,9 @@
 #include "UObject/NoExportTypes.h"
 #include "AssetContentController.generated.h"
 
-/**
- * 
- */
+class UInteractionBase;
+
+
 UCLASS()
 class UAssetContentController : public UObject
 {
@@ -23,6 +23,6 @@ public:
 
 	// business logic
 public:
-
+	virtual UInteractionBase* CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass);
 
 };

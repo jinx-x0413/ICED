@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 
 #include "AssetContentController.h"
+#include "Interactions/InteractionDependency.h"
 
 #include "AssetContentDependency.generated.h"
 

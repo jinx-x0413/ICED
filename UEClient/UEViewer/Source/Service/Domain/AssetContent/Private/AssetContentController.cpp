@@ -17,3 +17,8 @@ UAssetContentController::~UAssetContentController()
 		MarkAsGarbage();
 	}
 }
+
+UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass)
+{
+	return nullptr;
+}
