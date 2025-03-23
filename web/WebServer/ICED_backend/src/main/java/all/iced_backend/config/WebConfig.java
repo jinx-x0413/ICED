@@ -12,16 +12,16 @@ import org.springframework.security.config.Customizer;
 public class WebConfig {
 
     // Security 설정
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults()) // ⭐ CORS 허용 설정 추가
-                .csrf(csrf -> csrf.disable())   // 필요 시 CSRF 비활성화
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
-        return http.build();
-    }
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors(Customizer.withDefaults()) // ⭐ CORS 허용 설정 추가
+//                .csrf(csrf -> csrf.disable())   // 필요 시 CSRF 비활성화
+//                .authorizeHttpRequests(auth -> auth
+//                        .anyRequest().permitAll()
+//                );
+//        return http.build();
+//    }
 
     // CORS 설정 따로 분리해도 됨
     @Bean
