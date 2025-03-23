@@ -18,8 +18,12 @@ public class UploadController {
     private final UploadService uploadService;
 
     @PostMapping("/upload")
-    public CompletableFuture<ResponseEntity<UploadResponseDto>> uploadFile(@RequestParam("file") MultipartFile file) {
-        return uploadService.uploadFile(file)
+    public CompletableFuture<ResponseEntity<UploadResponseDto>> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @ModelAttribute UploadResponseDto uploadResponseDto) {
+
+        return uploadService.uploadFile(file, uploadResponseDto)
                 .thenApply(ResponseEntity::ok);
     }
+
 }
