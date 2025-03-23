@@ -1,0 +1,68 @@
+/* main.css */
+
+.container {
+    justify-content: left;
+    font-family: 'Arial', sans-serif;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f8f8;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.menu {
+    display: flex;
+}
+
+.menuItem {
+    margin-right: 10px;
+    background-color: #4a6cf7;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* 일관된 폰트 크기 */
+}
+
+.userSection {
+    display: flex;
+    align-items: center;
+}
+
+.userId {
+    margin-right: 10px;
+    font-size: 14px; /* 일관된 폰트 크기 */
+}
+
+.actionButton {
+    background-color: #f44336; /* 로그아웃 색상 */
+    color: #fff;
+    border: none;
+    padding: 10px 15px; /* 다른 버튼과 동일한 패딩 */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px; /* 일관된 폰트 크기 */
+}
+
+.runButton {
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 14px; /* 일관된 폰트 크기 */
+}
