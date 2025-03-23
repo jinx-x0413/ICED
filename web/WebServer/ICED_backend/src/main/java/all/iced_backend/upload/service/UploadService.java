@@ -32,23 +32,7 @@ public class UploadService {
     private final UploadFileRepository uploadFileRepository;
 
     // FTPS 업로더 유틸
-    //private final FtpsUploader ftpsUploader = new FtpsUploader();
-
-    // FTP 서버 설정
-    @Value("${ftps.host}")
-    private String ftpHost;
-    @Value("${ftps.port}")
-    private int ftpPort;
-    @Value("${ftps.username}")
-    private String ftpUser;
-    @Value("${ftps.password}")
-    private String ftpPass;
-    @Value("${ftps.remote-dir}")
-    private String ftpRemoteDir;
-
-    // 🔄 FTPSUploader → FTPUploader (테스트용)
-    private final FtpUploader ftpUploader = new FtpUploader();
-
+    private final FtpsUploader ftpsUploader = new FtpsUploader();
 
     /**
      * 비동기(Async) 방식으로 파일 업로드
@@ -60,41 +44,46 @@ public class UploadService {
             throw new IllegalArgumentException("Invalid file name.");
         }
 
-        // 1) 임시 파일 생성
-        File tempFile;
+        File tempFile = null;
         try {
-            tempFile = File.createTempFile("upload_", "_" + originalFilename);
-            file.transferTo(tempFile);
+            // 1) 매 업로드마다 고유한 임시 파일 생성
+            String prefix = "upload_" + System.currentTimeMillis() + "_";
+            tempFile = File.createTempFile(prefix, "_" + originalFilename);
+            file.transferTo(tempFile); // MultipartFile → 임시 File 변환
+
+            // 2) FTPS 서버에 업로드
+            String remotePath = ftpsUploader.uploadFile(
+                    ftpsHost, ftpsPort, ftpsUser, ftpsPass,
+                    tempFile, ftpsRemoteDir
+            );
+
+            if (remotePath == null) {
+                throw new RuntimeException("FTPS 업로드 실패");
+            }
+
+            // 3) DB 저장
+            UploadFile uploadFile = new UploadFile();
+            uploadFile.setFileName(originalFilename);
+            uploadFile.setFileUri(remotePath);
+            UploadFile saved = uploadFileRepository.save(uploadFile);
+
+            // 4) 결과 DTO 반환
+            UploadResponseDto dto = new UploadResponseDto(
+                    saved.getId(), saved.getFileName(), saved.getFileUri()
+            );
+            return CompletableFuture.completedFuture(dto);
+
         } catch (IOException e) {
-            throw new RuntimeException("임시 파일 생성 실패: " + e.getMessage());
+            throw new RuntimeException("파일 업로드 실패: " + e.getMessage(), e);
+
+        } finally {
+            // 5) 항상 임시 파일 삭제 (성공/실패 무관하게)
+            if (tempFile != null && tempFile.exists()) {
+                boolean deleted = tempFile.delete();
+                if (!deleted) {
+                    System.err.println("임시 파일 삭제 실패: " + tempFile.getAbsolutePath());
+                }
+            }
         }
-
-        // 2) FTPS 서버에 업로드
-//        String remotePath = ftpsUploader.uploadFile(
-//                ftpsHost, ftpsPort, ftpsUser, ftpsPass,
-//                tempFile, ftpsRemoteDir
-//        );
-
-        // FTP 업로드 시도
-        String remotePath = ftpUploader.uploadFile(
-                ftpHost, ftpPort, ftpUser, ftpPass,
-                tempFile, ftpRemoteDir
-        );
-        // 임시 파일 삭제
-        tempFile.delete();
-
-        if (remotePath == null) {
-            throw new RuntimeException("FTPS 업로드 실패");
-        }
-
-        // 3) DB 저장
-        UploadFile uploadFile = new UploadFile();
-        uploadFile.setFileName(originalFilename);
-        uploadFile.setFileUri(remotePath);
-        UploadFile saved = uploadFileRepository.save(uploadFile);
-
-        // 4) DTO 반환
-        UploadResponseDto dto = new UploadResponseDto(saved.getId(), saved.getFileName(), saved.getFileUri());
-        return CompletableFuture.completedFuture(dto);
     }
 }

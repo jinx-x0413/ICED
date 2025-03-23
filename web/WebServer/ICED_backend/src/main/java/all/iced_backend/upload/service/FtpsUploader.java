@@ -2,8 +2,6 @@ package all.iced_backend.upload.service;
 
 import org.apache.commons.net.ftp.FTPSClient;
 import org.apache.commons.net.ftp.FTPReply;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +26,7 @@ public class FtpsUploader {
      */
     public String uploadFile(String server, int port, String user, String pass,
                              File localFile, String remoteDir) {
-        // Explicit FTPS (TLS)
+        // Explicit FTPS 연결 (TLS)
         FTPSClient ftpsClient = new FTPSClient("TLS", false);
 
         try {
@@ -44,32 +42,52 @@ public class FtpsUploader {
                 return null;
             }
 
-            // 패시브 모드
+            // FTPS 보안 설정
+            ftpsClient.execPBSZ(0);            // 프로토콜 보호 버퍼 크기 설정
+            ftpsClient.execPROT("P");          // 데이터 채널 보호 설정
+
+            // Passive 모드 설정 (반드시 있어야 함)
             ftpsClient.enterLocalPassiveMode();
-            // 바이너리 전송
+
+            // 바이너리 파일 모드 (이미지, zip 등 깨짐 방지)
             ftpsClient.setFileType(FTPSClient.BINARY_FILE_TYPE);
 
-            // 원격 디렉토리 이동
-            ftpsClient.changeWorkingDirectory(remoteDir);
+            // 디렉토리 이동
+            if (!ftpsClient.changeWorkingDirectory(remoteDir)) {
+                System.out.println("원격 디렉토리 이동 실패: " + remoteDir);
+                return null;
+            }
 
+            System.out.println("접속 후 디렉토리 이동 시도: " + remoteDir);
+            boolean changed = ftpsClient.changeWorkingDirectory(remoteDir);
+            if (!changed) {
+                System.out.println("❌ 디렉토리 이동 실패. 실제 서버에 디렉토리 없음");
+                return null;
+            }
             // 파일 업로드
-            String remoteFileName = localFile.getName();
+            String originalFileName = localFile.getName();
+            String safeFileName = originalFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
+            System.out.println("📁 업로드용 안전 파일명: " + safeFileName);
+
             try (InputStream inputStream = new FileInputStream(localFile)) {
-                boolean done = ftpsClient.storeFile(remoteFileName, inputStream);
+                boolean done = ftpsClient.storeFile(safeFileName, inputStream);
                 if (done) {
-                    System.out.println("FTPS 업로드 성공: " + remoteFileName);
-                    // 예: "/uploads/filename.ext"
+                    System.out.println("✅ FTPS 업로드 성공: " + safeFileName);
                     return remoteDir.endsWith("/")
-                            ? remoteDir + remoteFileName
-                            : remoteDir + "/" + remoteFileName;
+                            ? remoteDir + safeFileName
+                            : remoteDir + "/" + safeFileName;
                 } else {
-                    System.out.println("FTPS 업로드 실패");
+                    System.out.println("❌ FTPS 업로드 실패: storeFile()");
+                    System.out.println("응답 코드: " + ftpsClient.getReplyCode());
+                    System.out.println("응답 메시지: " + ftpsClient.getReplyString());
                     return null;
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+
         } finally {
             try {
                 if (ftpsClient.isConnected()) {
