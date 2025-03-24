@@ -1,5 +1,5 @@
 // components/Layout.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './css/layout.css';
@@ -9,10 +9,10 @@ const Layout = ({ children }) => {
     const user = state.user;
     const navigate = useNavigate();
     const location = useLocation();
+    const [showInstallGuide, setShowInstallGuide] = useState(false);
     
     // 현재 경로에 따라 활성화된 메뉴 항목 결정
     const isActive = (path) => location.pathname === path;
-
 
     const logout = async () => {
         try {
@@ -39,11 +39,25 @@ const Layout = ({ children }) => {
         navigate(path);
     };
 
-    const runClient = () => {
-        window.electron.send('run-client');
-        window.electron.receive('run-client-response', (message) => {
-            alert(message);
-        });
+    const launchClient = () => {
+        try {
+            // 프로토콜 호출
+            window.location.href = 'iceduecli://start';
+            
+            // 오류 처리를 위한 타임아웃 설정
+            setTimeout(() => {
+                setShowInstallGuide(true);
+            }, 1000);
+        } catch (error) {
+            console.error('프로토콜 호출 오류:', error);
+            setShowInstallGuide(true);
+        }
+    };
+    
+    // 설치 프로그램 다운로드 버튼 클릭 시 install.js 페이지로 이동
+    const downloadInstaller = () => {
+        setShowInstallGuide(false); // 모달 닫기
+        navigateTo('/install'); // install.js 페이지로 이동
     };
 
     return (
@@ -70,19 +84,19 @@ const Layout = ({ children }) => {
                                 파일 업로드
                             </button>
                         </li>
-                            <li className="nav-item">
-                                <button 
-                                    className={`nav-button ${isActive('/mylist') ? 'active' : ''}`}
-                                    onClick={() => navigateTo('/mylist')}
-                                >
-                                    업로드 목록 조회
-                                </button>
-                            </li>
+                        <li className="nav-item">
+                            <button 
+                                className={`nav-button ${isActive('/mylist') ? 'active' : ''}`}
+                                onClick={() => navigateTo('/mylist')}
+                            >
+                                업로드 목록 조회
+                            </button>
+                        </li>
                     </ul>
                 </div>
                 <div className="user-section">
                     <div className="action-buttons">
-                        <button className="run-button" onClick={runClient}>
+                        <button className="run-button" onClick={launchClient}>
                             클라이언트 실행
                         </button>
                         
@@ -109,6 +123,17 @@ const Layout = ({ children }) => {
             <main className="content">
                 {children}
             </main>
+            
+            {showInstallGuide && (
+                <div className="installation-guide">
+                    <div className="guide-content">
+                        <h3>클라이언트 실행이 안되나요?</h3>
+                        <p>클라이언트 설치가 필요합니다.</p>
+                        <button onClick={downloadInstaller} className="download-button">설치 프로그램 다운로드</button>
+                        <button onClick={() => setShowInstallGuide(false)} className="close-button">닫기</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

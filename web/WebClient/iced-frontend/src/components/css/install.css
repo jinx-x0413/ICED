@@ -1,0 +1,244 @@
+/* components/css/install.css */
+.install-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    color: #333;
+}
+
+.install-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.install-header h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #1a73e8;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #666;
+}
+
+.install-content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.install-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.install-section h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #1a73e8;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.install-section h3:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 50px;
+    height: 3px;
+    background-color: #1a73e8;
+}
+
+.install-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.step-number {
+    background-color: #1a73e8;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.step-content p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+}
+
+.requirements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.requirement {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.requirement h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.requirement ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.requirement li {
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.download-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f7ff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.download-button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+}
+
+.download-button:hover {
+    background-color: #0d62c9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.4);
+}
+
+.download-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.4);
+}
+
+.download-button.downloading {
+    background-color: #78a9f5;
+    cursor: not-allowed;
+}
+
+.download-info {
+    margin-top: 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #1a73e8;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.faq-section .faq-item {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+.faq-section .faq-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.faq-section h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 18px;
+}
+
+.faq-section p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .install-container {
+        padding: 20px 15px;
+    }
+    
+    .install-header h2 {
+        font-size: 26px;
+    }
+    
+    .subtitle {
+        font-size: 16px;
+    }
+    
+    .install-section {
+        padding: 20px;
+    }
+    
+    .install-section h3 {
+        font-size: 20px;
+    }
+    
+    .download-button {
+        padding: 12px 30px;
+        font-size: 16px;
+    }
+}
