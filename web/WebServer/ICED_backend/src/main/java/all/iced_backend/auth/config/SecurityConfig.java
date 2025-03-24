@@ -94,7 +94,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/join").permitAll()
                         //.requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
-                        .requestMatchers("/api/upload").permitAll()
+                        .requestMatchers("/ftp-image").permitAll()
                         .anyRequest().authenticated());
 
         http
