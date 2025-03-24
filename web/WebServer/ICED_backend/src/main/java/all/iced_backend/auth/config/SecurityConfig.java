@@ -63,7 +63,8 @@ public class SecurityConfig {
 
                                 configuration.setAllowedOrigins(List.of(
                                         "http://localhost:3000",
-                                        "http://localhost:63342"
+                                        "http://localhost:63342",
+                                        "http://localhost:5500"
                                 ));
                                 configuration.setAllowedMethods(Collections.singletonList("*"));
                                 configuration.setAllowCredentials(true);
@@ -93,7 +94,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/join").permitAll()
                         //.requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
-                        .requestMatchers("/api/upload").permitAll()
+                        .requestMatchers("/ftp-image").permitAll()
                         .anyRequest().authenticated());
 
         http

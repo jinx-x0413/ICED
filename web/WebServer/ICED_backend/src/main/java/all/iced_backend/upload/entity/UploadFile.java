@@ -22,6 +22,15 @@ public class UploadFile {
     // FTPS 서버에 저장된 경로 (ex: "/uploads/Bed.fbx")
     private String fileUri;
 
+    // FTPS 서버에 저장된 경로 (업로드한 userid)
+    private String uploader_id;
+    
+    //파일 설명
+    private String description;
+
+    //파일 크기
+    private Double size;
+
     // 업로드된 시간
     private LocalDateTime createdAt = LocalDateTime.now();
 }

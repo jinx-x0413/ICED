@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -37,53 +39,65 @@ public class UploadService {
     /**
      * 비동기(Async) 방식으로 파일 업로드
      */
-    @Async
-    public CompletableFuture<UploadResponseDto> uploadFile(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || originalFilename.isEmpty()) {
-            throw new IllegalArgumentException("Invalid file name.");
-        }
-
-        File tempFile = null;
-        try {
-            // 1) 매 업로드마다 고유한 임시 파일 생성
-            String prefix = "upload_" + System.currentTimeMillis() + "_";
-            tempFile = File.createTempFile(prefix, "_" + originalFilename);
-            file.transferTo(tempFile); // MultipartFile → 임시 File 변환
-
-            // 2) FTPS 서버에 업로드
-            String remotePath = ftpsUploader.uploadFile(
-                    ftpsHost, ftpsPort, ftpsUser, ftpsPass,
-                    tempFile, ftpsRemoteDir
-            );
-
-            if (remotePath == null) {
-                throw new RuntimeException("FTPS 업로드 실패");
+        @Async
+        public CompletableFuture<UploadResponseDto> uploadFile(MultipartFile file, UploadResponseDto uploadResponseDto) {
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.isEmpty()) {
+                throw new IllegalArgumentException("Invalid file name.");
             }
 
-            // 3) DB 저장
-            UploadFile uploadFile = new UploadFile();
-            uploadFile.setFileName(originalFilename);
-            uploadFile.setFileUri(remotePath);
-            UploadFile saved = uploadFileRepository.save(uploadFile);
+            // 요청에서 받은 데이터 활용
+            String uploaderId = uploadResponseDto.getUploader_id();
+            String description = uploadResponseDto.getDescription();
+            double sizeInMB = file.getSize() / (1024.0 * 1024.0);   // 파일 크기는 저장
 
-            // 4) 결과 DTO 반환
-            UploadResponseDto dto = new UploadResponseDto(
-                    saved.getId(), saved.getFileName(), saved.getFileUri()
-            );
-            return CompletableFuture.completedFuture(dto);
+            //소숫점 둘째자리까지
+            BigDecimal roundedSize = new BigDecimal(sizeInMB).setScale(2, RoundingMode.HALF_UP);
+            double finalSize = roundedSize.doubleValue();
 
-        } catch (IOException e) {
-            throw new RuntimeException("파일 업로드 실패: " + e.getMessage(), e);
+            File tempFile = null;
+            try {
+                // 1) 임시 파일 생성
+                String prefix = "upload_" + System.currentTimeMillis() + "_";
+                tempFile = File.createTempFile(prefix, "_" + originalFilename);
+                file.transferTo(tempFile);
 
-        } finally {
-            // 5) 항상 임시 파일 삭제 (성공/실패 무관하게)
-            if (tempFile != null && tempFile.exists()) {
-                boolean deleted = tempFile.delete();
-                if (!deleted) {
+                // 2) FTPS 서버에 업로드
+                String remotePath = ftpsUploader.uploadFile(
+                        ftpsHost, ftpsPort, ftpsUser, ftpsPass,
+                        tempFile, ftpsRemoteDir
+                );
+
+                if (remotePath == null) {
+                    throw new RuntimeException("FTPS 업로드 실패");
+                }
+
+                // 3) DB 저장
+                UploadFile uploadFile = new UploadFile();
+                uploadFile.setFileName(originalFilename);
+                uploadFile.setFileUri(remotePath);
+                uploadFile.setUploader_id(uploaderId);
+                uploadFile.setDescription(description);
+                uploadFile.setSize(finalSize);
+                UploadFile saved = uploadFileRepository.save(uploadFile);
+
+                // 4) 응답 DTO 생성 후 반환
+                UploadResponseDto responseDto = new UploadResponseDto(
+                        saved.getId(), saved.getFileName(), saved.getFileUri(),
+                        saved.getUploader_id(), saved.getDescription(), saved.getSize()
+                );
+
+                return CompletableFuture.completedFuture(responseDto);
+
+            } catch (IOException e) {
+                throw new RuntimeException("파일 업로드 실패: " + e.getMessage(), e);
+
+            } finally {
+                // 5) 임시 파일 삭제
+                if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
                     System.err.println("임시 파일 삭제 실패: " + tempFile.getAbsolutePath());
                 }
             }
         }
+
     }
-}
