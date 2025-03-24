@@ -6,9 +6,13 @@ import App from './App';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
-import LoginPage from './components/login'; // 로그인 페이지 컴포넌트
-import Main from './components/main'; // 메인 페이지 컴포넌트
-import Upload from './components/upload'; // 업로드 페이지 컴포넌트
+import Layout from './components/Layout';
+import LoginPage from './components/login';
+import Main from './components/main';
+import Upload from './components/upload';
+import Install from './components/install';
+import MyList from './components/mylist';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -17,10 +21,13 @@ root.render(
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<App />} />
-                    <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} /> {/* 로그인 하지 않은경우만 이동가능 */}
-                    <Route path="/main" element={<Main />} /> 
-                    <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} /> {/* 로그인 한경우에만 이동가능 */}
+                    <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+                    <Route path="/" element={<Layout><App /></Layout>} />
+                    <Route path="/main" element={<Layout><Main /></Layout>} />
+                    <Route path="/upload" element={<Layout><ProtectedRoute><Upload /></ProtectedRoute></Layout>} />
+                    <Route path="/install" element={<Layout><Install /></Layout>} />
+                    <Route path="/mylist" element={<Layout><ProtectedRoute><MyList /></ProtectedRoute></Layout>} />
+
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
