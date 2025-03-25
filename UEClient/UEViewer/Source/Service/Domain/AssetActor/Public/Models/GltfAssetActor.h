@@ -22,6 +22,7 @@ struct FActorHierarchyData
 	int Depth;
 	UPROPERTY(BlueprintReadWrite)
 	TWeakObjectPtr<USceneComponent> TargetComponent;
+
 };
 
 

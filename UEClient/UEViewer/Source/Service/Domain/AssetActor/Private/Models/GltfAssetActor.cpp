@@ -130,7 +130,7 @@ void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
 	NewData.NodeName = GetName(); // 생성한 이름 적용
 	NewData.Depth = IndentLevel;
 	HierarchyData.Add(NewData);
-
+	
 	USceneComponent* InRootComponent = GetRootComponent();
 	if (InRootComponent)
 	{
