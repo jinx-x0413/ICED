@@ -4,26 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "glTFRuntimeAssetActor.h"
-
+#include "Hierarchy/HierarchyManager.h"
 #include "GltfAssetActor.generated.h"
 
-USTRUCT(BlueprintType)
-struct FActorHierarchyData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	FString NodeName;
-
-	UPROPERTY(BlueprintReadWrite)
-	FString DisplayName;
-
-	UPROPERTY(BlueprintReadWrite)
-	int Depth;
-	UPROPERTY(BlueprintReadWrite)
-	TWeakObjectPtr<USceneComponent> TargetComponent;
-
-};
+//USTRUCT(BlueprintType)
+//struct FActorHierarchyData
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FString NodeName;
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FString DisplayName;
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	int Depth;
+//	UPROPERTY(BlueprintReadWrite)
+//	TWeakObjectPtr<USceneComponent> TargetComponent;
+//
+//};
 
 
 UCLASS()
@@ -51,6 +51,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class  USceneComponent* SceneComponent;
 
+private:
+	UPROPERTY()
+	UHierarchyManager* HierarchyManager;
 
 	// feature
 public:
@@ -71,9 +74,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FActorHierarchyData> HierarchyData;
 
+	/*
 	void ResetHierarchyData();
 	void GetHierarchyDataRecursive(int IndentLevel);
-	void GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel);
+	void GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel);*/
 
 	//// Outline
 	void SetOutline(bool bIsActivated);
