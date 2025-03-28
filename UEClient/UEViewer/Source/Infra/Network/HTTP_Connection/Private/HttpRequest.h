@@ -45,4 +45,12 @@ public:
 
 private:
 	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+
+
+
+
+	// login
+private:
+	FString GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
+
 };

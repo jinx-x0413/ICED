@@ -8,6 +8,27 @@ void UEntryPoint::LoadActor()
 
 }
 
+UHttpRequest* UEntryPoint::GetHttpRequest()
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
+	{
+		FHTTP_Connection* Module = FModuleManager::Get().GetModulePtr<FHTTP_Connection>("HTTP_Connection");
+		if (Module)
+		{
+			if (Module->HttpRequest) // NULL 체크 추가
+			{
+				return Module->HttpRequest;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("HttpRequest is NULL!"));
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 void UEntryPoint::SendUserDataHttpRequest()
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))

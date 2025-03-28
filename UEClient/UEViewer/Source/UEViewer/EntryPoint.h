@@ -28,6 +28,13 @@ public:
 
 	/*UFUNCTION(BlueprintCallable)
 	static void SendUserDataHttpRequest();*/
+
+
+	// Http
+public:
+	UFUNCTION(BlueprintCallable)
+	static UHttpRequest* GetHttpRequest();
+
 	UFUNCTION(BlueprintCallable)
 	static void SendUserDataHttpRequest();
 };

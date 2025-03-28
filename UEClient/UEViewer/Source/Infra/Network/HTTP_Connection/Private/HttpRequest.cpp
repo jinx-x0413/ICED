@@ -15,8 +15,18 @@ UHttpRequest::~UHttpRequest()
 void UHttpRequest::SendUserDataHttpRequest()
 {
 	UE_LOG(LogTemp, Warning, TEXT("SendUserDataHttpRequest is run"));
+	
+	// get login URL from JSON
+	FString URL = GetURLFromConfig();
+	if (URL.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("URL is missing in the JSON file"));
+		return;
+	}
+
+	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UserHttpRequest = FHttpModule::Get().CreateRequest();
-	UserHttpRequest->SetURL("https://randomuser.me/api/");
+	UserHttpRequest->SetURL(URL);
 	UserHttpRequest->SetVerb("GET");
 
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
@@ -71,5 +81,33 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 	
 	
+
+}
+
+FString UHttpRequest::GetURLFromConfig()
+{
+	FString FilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
+	FString JsonRaw;
+
+	if (!FFileHelper::LoadFileToString(JsonRaw, *FilePath))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *FilePath);
+		return TEXT("");
+	}
+
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(JsonRaw);
+
+	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+	{
+		FString URL = JsonObject->GetStringField(TEXT("URL"));
+		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *URL);
+		return URL;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON file."));
+		return TEXT("");
+	}
 
 }
