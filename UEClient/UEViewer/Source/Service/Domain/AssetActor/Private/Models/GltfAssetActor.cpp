@@ -22,6 +22,9 @@ AGltfAssetActor::AGltfAssetActor()
 
 	// Debug
 	BoxComponent->bHiddenInGame = false;
+
+	//HierarchyManager
+	HierarchyManager = NewObject<UHierarchyManager>(this, FName(TEXT("HierarchyManager")));
 }
 
 AGltfAssetActor::~AGltfAssetActor()
@@ -35,6 +38,13 @@ void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (IsValid(this) && IsRooted())
 	{
 		RemoveFromRoot();
+	}
+
+	// HierarchyManager 해제
+	if (HierarchyManager)
+	{
+		HierarchyManager->ConditionalBeginDestroy();
+		HierarchyManager = nullptr;
 	}
 }
 
@@ -67,7 +77,13 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 	InitializeAsset();
 	SetInitialBoundBoxExtent();
 
-	ResetHierarchyData();
+	/*ResetHierarchyData();*/
+
+	if (HierarchyManager)
+	{
+		HierarchyManager->InitializeHierarchy(this);
+		HierarchyData = HierarchyManager->GetHierarchyData();
+	}
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()
@@ -118,56 +134,56 @@ void AGltfAssetActor::SetScale(FVector InScale)
 
 
 //// Hierarchy Data
-void AGltfAssetActor::ResetHierarchyData()
-{
-	HierarchyData.Empty(0);
-	GetHierarchyDataRecursive(0); // recursive
-}
-
-void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
-{
-	FActorHierarchyData NewData;
-	NewData.NodeName = GetName(); // 생성한 이름 적용
-	NewData.Depth = IndentLevel;
-	HierarchyData.Add(NewData);
-
-	USceneComponent* InRootComponent = GetRootComponent();
-	if (InRootComponent)
-	{
-		GetComponentHierarchyRecursive(InRootComponent, IndentLevel + 1);
-	}
-}
-
-void AGltfAssetActor::GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel)
-{
-	if (!InComponent || InComponent->GetFName() == FName("RootScene"))
-	{
-		return;
-	}
-
-	FActorHierarchyData NewData;
-	if (Cast<USkeletalMeshComponent>(InComponent))
-	{
-		NewData.NodeName = InComponent->GetName();
-		NewData.Depth = IndentLevel;
-		NewData.TargetComponent = InComponent;
-		HierarchyData.Add(NewData);
-
-		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
-		for (USceneComponent* InChild : InChildren)
-		{
-			GetComponentHierarchyRecursive(InChild, IndentLevel + 1);
-		}
-	}
-	else
-	{
-		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
-		for (USceneComponent* InChild : InChildren)
-		{
-			GetComponentHierarchyRecursive(InChild, IndentLevel);
-		}
-	}
-}
+//void AGltfAssetActor::ResetHierarchyData()
+//{
+//	HierarchyData.Empty(0);
+//	GetHierarchyDataRecursive(0); // recursive
+//}
+//
+//void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
+//{
+//	FActorHierarchyData NewData;
+//	NewData.NodeName = GetName(); // 생성한 이름 적용
+//	NewData.Depth = IndentLevel;
+//	HierarchyData.Add(NewData);
+//	
+//	USceneComponent* InRootComponent = GetRootComponent();
+//	if (InRootComponent)
+//	{
+//		GetComponentHierarchyRecursive(InRootComponent, IndentLevel + 1);
+//	}
+//}
+//
+//void AGltfAssetActor::GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel)
+//{
+//	if (!InComponent || InComponent->GetFName() == FName("RootScene"))
+//	{
+//		return;
+//	}
+//
+//	FActorHierarchyData NewData;
+//	if (Cast<USkeletalMeshComponent>(InComponent))
+//	{
+//		NewData.NodeName = InComponent->GetName();
+//		NewData.Depth = IndentLevel;
+//		NewData.TargetComponent = InComponent;
+//		HierarchyData.Add(NewData);
+//
+//		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
+//		for (USceneComponent* InChild : InChildren)
+//		{
+//			GetComponentHierarchyRecursive(InChild, IndentLevel + 1);
+//		}
+//	}
+//	else
+//	{
+//		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
+//		for (USceneComponent* InChild : InChildren)
+//		{
+//			GetComponentHierarchyRecursive(InChild, IndentLevel);
+//		}
+//	}
+//}
 
 void AGltfAssetActor::SetOutline(bool bIsActivated)
 {

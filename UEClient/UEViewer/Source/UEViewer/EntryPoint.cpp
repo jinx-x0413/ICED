@@ -8,6 +8,7 @@ void UEntryPoint::LoadActor()
 
 }
 
+<<<<<<< HEAD
 UHttpRequest* UEntryPoint::GetHttpRequest()
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
@@ -48,3 +49,17 @@ void UEntryPoint::SendUserDataHttpRequest()
 	}
 }
 
+=======
+void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetActor")))
+	{
+		FAssetActor* Module = FModuleManager::Get().GetModulePtr<FAssetActor>("AssetActor");
+
+		if (Module)
+		{
+			Module->Controller->CreateGltfAssetActor(AssetActorClass, InTransform, InAsset, FilePath, InFileName);
+		}
+	}
+}
+>>>>>>> UE_AssetActor

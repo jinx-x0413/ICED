@@ -8,8 +8,12 @@
 #include "EasyFileDialog/Public/EFDFunctionLibrary.h"
 #include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
+<<<<<<< HEAD
 #include "HTTP_Connection.h"
 
+=======
+#include "Service/Domain/AssetActor/public/AssetActor.h"
+>>>>>>> UE_AssetActor
 #include "EntryPoint.generated.h"
 
 /**
@@ -26,6 +30,7 @@ public:
 	UFUNCTION()
 	static void LoadActor();
 
+<<<<<<< HEAD
 	/*UFUNCTION(BlueprintCallable)
 	static void SendUserDataHttpRequest();*/
 
@@ -37,4 +42,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SendUserDataHttpRequest();
+=======
+	UFUNCTION(BlueprintCallable)
+	static void CreateGltfAssetActor(
+		TSubclassOf<AGltfAssetActor> AssetActorClass
+		, FTransform InTransform
+		, class UglTFRuntimeAsset* InAsset
+		, const FString& FilePath
+		, FString InFileName);
+>>>>>>> UE_AssetActor
 };
