@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,7 +10,7 @@
 
 
 UCLASS()
-class ASSETACTOR_API AGltfAssetActor : public AglTFRuntimeAssetActor
+class ASSETACTOR_API AGltfAssetActor : public AglTFRuntimeAssetActor, public IHierarchyManagerInterface
 {
 	GENERATED_BODY()
 	
@@ -41,12 +41,12 @@ private:
 	/*UPROPERTY()
 	UHierarchyManager* HierarchyManager;*/
 
-	//±¸Á¶Ã¼ µ¥ÀÌÅÍ¸¦ Á÷Á¢ º¸À¯
+	//êµ¬ì¡°ì²´ ë°ì´í„°ë¥¼ ì§ì ‘ ë³´ìœ 
 	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FActorHierarchyData> HierarchyData;*/
 
-	// ÀÎÅÍÆäÀÌ½º Æ÷ÀÎÅÍ
-	IHierarchyManagerInterface* HierarchyManagerInterface;
+	// ì¸í„°í˜ì´ìŠ¤ í¬ì¸í„°
+	///IHierarchyManagerInterface* HierarchyManagerInterface;
 
 	// feature
 public:
@@ -67,15 +67,21 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FActorHierarchyData> ActorHierarchyData;
 
-	//´Ù¸¥ Å¬·¡½º¿¡¼­ hierarchydata ÇÊ¿äÇÒ ¶§ »ç¿ë
+	//ë‹¤ë¥¸ í´ë˜ìŠ¤ì—ì„œ hierarchydata í•„ìš”í•  ë•Œ ì‚¬ìš©
 	//const TArray<FActorHierarchyData>& GetHierarchyData() const { return HierarchyData; }
 
 
-	/*
-	void ResetHierarchyData();
-	void GetHierarchyDataRecursive(int IndentLevel);
-	void GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel);*/
+	//
+	//void ResetHierarchyData();
+	//void GetHierarchyDataRecursive(int IndentLevel);
+	//void GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel);
 
 	//// Outline
 	void SetOutline(bool bIsActivated);
+
+
+	// Interface : Hierarchy Data
+public:
+	UFUNCTION(BlueprintCallable)
+	const TArray<FActorHierarchyData>& GetInterfaceHierarchyData() const;
 };

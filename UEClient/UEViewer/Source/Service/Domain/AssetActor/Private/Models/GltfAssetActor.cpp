@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Models/GltfAssetActor.h"
@@ -35,17 +35,19 @@ void AGltfAssetActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
+
 	//HierarchyManagerInterface
-	HierarchyManagerInterface = NewObject<UHierarchyDataUpdate>(this, FName(TEXT("HierarchyDataUpdate")));
+	//HierarchyManagerInterface = NewObject<UHierarchyDataUpdate>(this, FName(TEXT("HierarchyDataUpdate")));
 
-	/*UpdateHierarchy();*/
+	///*UpdateHierarchy();*/
 
-	if (HierarchyManagerInterface)
-	{
-		HierarchyManagerInterface->UpdateHierarchyData(this);
+	//if (HierarchyManagerInterface)
+	//{
+	//	HierarchyManagerInterface->UpdateHierarchyData(this);
 
-		ActorHierarchyData = HierarchyManagerInterface->GetHierarchyData();
-	}
+	//	ActorHierarchyData = HierarchyManagerInterface->GetHierarchyData();
+	//}
 }
 
 void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -57,12 +59,12 @@ void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		RemoveFromRoot();
 	}
 
-	// HierarchyManager «ÿ¡¶
-	if (HierarchyManagerInterface)
-	{
-		//HierarchyManagerInterface->ConditionalBeginDestroy();
-		HierarchyManagerInterface = nullptr;
-	}
+	// HierarchyManager Ìï¥Ï†ú
+	//if (HierarchyManagerInterface)
+	//{
+	//	//HierarchyManagerInterface->ConditionalBeginDestroy();
+	//	HierarchyManagerInterface = nullptr;
+	//}
 }
 
 void AGltfAssetActor::UpdateHierarchy()
@@ -106,6 +108,7 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 		HierarchyManager->InitializeHierarchy(this);
 		HierarchyData = HierarchyManager->GetHierarchyData();
 	}*/
+	UpdateHierarchyData(this);
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()
@@ -165,7 +168,7 @@ void AGltfAssetActor::SetScale(FVector InScale)
 //void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
 //{
 //	FActorHierarchyData NewData;
-//	NewData.NodeName = GetName(); // ª˝º∫«— ¿Ã∏ß ¿˚øÎ
+//	NewData.NodeName = GetName(); // ÏÉùÏÑ±Ìïú Ïù¥Î¶Ñ Ï†ÅÏö©
 //	NewData.Depth = IndentLevel;
 //	HierarchyData.Add(NewData);
 //	
@@ -224,4 +227,11 @@ void AGltfAssetActor::SetOutline(bool bIsActivated)
 			}
 		}
 	}
+}
+
+const TArray<FActorHierarchyData>& AGltfAssetActor::GetInterfaceHierarchyData() const
+{
+	
+
+	return GetHierarchyData();
 }
