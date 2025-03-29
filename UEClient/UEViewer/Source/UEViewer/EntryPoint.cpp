@@ -3,12 +3,8 @@
 
 #include "EntryPoint.h"
 
-void UEntryPoint::LoadActor()
-{
 
-}
-
-<<<<<<< HEAD
+// http
 UHttpRequest* UEntryPoint::GetHttpRequest()
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
@@ -49,7 +45,7 @@ void UEntryPoint::SendUserDataHttpRequest()
 	}
 }
 
-=======
+// asset actor
 void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetActor")))
@@ -62,4 +58,4 @@ void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorCl
 		}
 	}
 }
->>>>>>> UE_AssetActor
+
