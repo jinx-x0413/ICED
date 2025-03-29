@@ -3,6 +3,8 @@
 
 #include "Models/GltfAssetActor.h"
 #include "Service/Domain/AssetActor/Private/AssetActorDependency.h"
+#include "Hierarchy/HierarchyDataUpdate.h"
+
 
 AGltfAssetActor::AGltfAssetActor()
 {
@@ -23,12 +25,27 @@ AGltfAssetActor::AGltfAssetActor()
 	// Debug
 	BoxComponent->bHiddenInGame = false;
 
-	//HierarchyManager
-	HierarchyManager = NewObject<UHierarchyManager>(this, FName(TEXT("HierarchyManager")));
 }
 
 AGltfAssetActor::~AGltfAssetActor()
 {
+}
+
+void AGltfAssetActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//HierarchyManagerInterface
+	HierarchyManagerInterface = NewObject<UHierarchyDataUpdate>(this, FName(TEXT("HierarchyDataUpdate")));
+
+	/*UpdateHierarchy();*/
+
+	if (HierarchyManagerInterface)
+	{
+		HierarchyManagerInterface->UpdateHierarchyData(this);
+
+		ActorHierarchyData = HierarchyManagerInterface->GetHierarchyData();
+	}
 }
 
 void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -41,11 +58,16 @@ void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	// HierarchyManager ÇØÁ¦
-	if (HierarchyManager)
+	if (HierarchyManagerInterface)
 	{
-		HierarchyManager->ConditionalBeginDestroy();
-		HierarchyManager = nullptr;
+		//HierarchyManagerInterface->ConditionalBeginDestroy();
+		HierarchyManagerInterface = nullptr;
 	}
+}
+
+void AGltfAssetActor::UpdateHierarchy()
+{
+	
 }
 
 
@@ -79,11 +101,11 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 
 	/*ResetHierarchyData();*/
 
-	if (HierarchyManager)
+	/*if (HierarchyManager)
 	{
 		HierarchyManager->InitializeHierarchy(this);
 		HierarchyData = HierarchyManager->GetHierarchyData();
-	}
+	}*/
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()
