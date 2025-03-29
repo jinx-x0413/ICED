@@ -4,9 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "glTFRuntimeAssetActor.h"
-#include "Hierarchy/HierarchyManagerInterface.h"
-
+#include "Hierarchy/HierarchyManager.h"
 #include "GltfAssetActor.generated.h"
+
+//USTRUCT(BlueprintType)
+//struct FActorHierarchyData
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FString NodeName;
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FString DisplayName;
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	int Depth;
+//	UPROPERTY(BlueprintReadWrite)
+//	TWeakObjectPtr<USceneComponent> TargetComponent;
+//
+//};
 
 
 UCLASS()
@@ -18,12 +35,9 @@ class ASSETACTOR_API AGltfAssetActor : public AglTFRuntimeAssetActor
 public:
 	AGltfAssetActor();
 	virtual ~AGltfAssetActor();
-
-	virtual void BeginPlay() override;
-
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason);
 
-	void UpdateHierarchy();
+
 
 	// Asset
 public:
@@ -38,15 +52,8 @@ protected:
 	class  USceneComponent* SceneComponent;
 
 private:
-	/*UPROPERTY()
-	UHierarchyManager* HierarchyManager;*/
-
-	//구조체 데이터를 직접 보유
-	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FActorHierarchyData> HierarchyData;*/
-
-	// 인터페이스 포인터
-	IHierarchyManagerInterface* HierarchyManagerInterface;
+	UPROPERTY()
+	UHierarchyManager* HierarchyManager;
 
 	// feature
 public:
@@ -64,12 +71,8 @@ public:
 	void ResetTransform() { SetActorTransform(InitialTransform); }
 
 	//// Hierarchy Data
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FActorHierarchyData> ActorHierarchyData;
-
-	//다른 클래스에서 hierarchydata 필요할 때 사용
-	//const TArray<FActorHierarchyData>& GetHierarchyData() const { return HierarchyData; }
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FActorHierarchyData> HierarchyData;
 
 	/*
 	void ResetHierarchyData();

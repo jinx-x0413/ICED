@@ -7,23 +7,23 @@
 #include "HierarchyManager.generated.h"
 
 
-//USTRUCT(BlueprintType)
-//struct FActorHierarchyData
-//{
-//	GENERATED_BODY()
-//
-//	UPROPERTY(BlueprintReadWrite)
-//	FString NodeName;
-//
-//	UPROPERTY(BlueprintReadWrite)
-//	FString DisplayName;
-//
-//	UPROPERTY(BlueprintReadWrite)
-//	int Depth;
-//	UPROPERTY(BlueprintReadWrite)
-//	TWeakObjectPtr<USceneComponent> TargetComponent;
-//
-//};
+USTRUCT(BlueprintType)
+struct FActorHierarchyData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	FString NodeName;
+
+	UPROPERTY(BlueprintReadWrite)
+	FString DisplayName;
+
+	UPROPERTY(BlueprintReadWrite)
+	int Depth;
+	UPROPERTY(BlueprintReadWrite)
+	TWeakObjectPtr<USceneComponent> TargetComponent;
+
+};
 
 /**
  * 
@@ -37,15 +37,15 @@ public:
 	void InitializeHierarchy(AActor* InOwner);
 
 	//다른 클래스에서 hierarchydata 필요할 때 사용
-	//const TArray<FActorHierarchyData>& GetHierarchyData() const { return HierarchyData; }
+	const TArray<FActorHierarchyData>& GetHierarchyData() const { return HierarchyData; }
 
 private:
 	void ResetHierarchyData();
 	void GetHierarchyDataRecursive(AActor* InActor, int32 IndentLevel);
 	void GetComponentHierarchyRecursive(USceneComponent* InComponent, int32 IndentLevel);
 
-//private:
-//	UPROPERTY()
-//	TArray<FActorHierarchyData> HierarchyData;
+private:
+	UPROPERTY()
+	TArray<FActorHierarchyData> HierarchyData;
 
 };
