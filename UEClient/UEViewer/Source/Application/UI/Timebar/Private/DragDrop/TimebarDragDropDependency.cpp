@@ -6,7 +6,7 @@
 namespace Variables
 {
 	float SnapInterval = 10.f;  // 최소 10픽셀 단위로 스냅
-	float ConvertedValue = 50.0f; // DeltaSecond <-> Viewport
+	float ConvertedValue = 60.0f; // DeltaSecond <-> Viewport
 	float ScaleMultiplier = 1.0f;
 	float MinClipLength = 30.0f; // 최소 클립 길이 설정
 	float ResizeThreshold = 10.0f;

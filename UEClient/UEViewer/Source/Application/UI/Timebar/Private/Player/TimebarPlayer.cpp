@@ -10,6 +10,7 @@
 UTimebarPlayer* UTimebarPlayer::Instance = nullptr;
 
 UTimebarPlayer::UTimebarPlayer()
+	: CurrentTime(0.0f)
 {
 }
 

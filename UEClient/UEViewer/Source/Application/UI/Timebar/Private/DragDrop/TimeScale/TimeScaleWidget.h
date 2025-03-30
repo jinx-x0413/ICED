@@ -74,6 +74,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<class UBorder*> RulerTickArray;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<class UTextBlock*> RulerTickLableArray;
+
 	UFUNCTION(BlueprintCallable)
 	void DrawRuler();
 

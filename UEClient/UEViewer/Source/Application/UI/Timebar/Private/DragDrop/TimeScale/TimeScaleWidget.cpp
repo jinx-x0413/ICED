@@ -25,7 +25,8 @@ void UTimeScaleWidget::NativeConstruct()
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Slot);
 	
 
-	CurrentRulerSpacing = Variables::InitialRulerSpacing;
+	//CurrentRulerSpacing = Variables::InitialRulerSpacing;
+	CurrentRulerSpacing = Variables::ConvertedValue / 10;
 	CurrentZoomScale = Variables::InitialZoomScale;
 	//DrawRuler();
 }
@@ -155,6 +156,10 @@ void UTimeScaleWidget::DrawRuler()
 		{
 			Tick->RemoveFromParent();
 		}
+		for (auto& Label : RulerTickLableArray)
+		{
+			Label->RemoveFromParent();
+		}
 		RulerTickArray.Empty();
 	}
 
@@ -205,17 +210,40 @@ void UTimeScaleWidget::DrawRuler()
 			
 
 			// 필요시 TextBlock을 추가하여 간격 표시
-			//UTextBlock* TickLabel = NewObject<UTextBlock>(this);
-			//
-			//// TextBlock을 캔버스에 추가
-			//CanvasPanel->AddChild(TickLabel);
+			if (RulerTickArray.Num() % 10 == 1)
+			{
+				UTextBlock* TickLabel = NewObject<UTextBlock>(this);
+				RulerTickLableArray.Add(TickLabel);
+				// TextBlock을 캔버스에 추가
+				CanvasPanel->AddChild(TickLabel);
 
-			//TickLabel->SetText(FText::AsNumber(i));
-			//CanvasSlot = Cast<UCanvasPanelSlot>(TickLabel->Slot);
-			//if (CanvasSlot)
-			//{
-			//	CanvasSlot->SetPosition(FVector2D(i, 25)); // 눈금 아래에 숫자 표시
-			//}
+				int32 IntI = FMath::FloorToInt(i / (Variables::ConvertedValue * Variables::ScaleMultiplier) );  // i를 int로 변환 (소수점 이하 버림) // 분
+				int32 Minutes = FMath::FloorToInt(IntI / 360.0f);  // 분 계산
+				int32 Seconds = FMath::FloorToInt(IntI / 60.0f);  // 초 계산
+				int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI, 60.0f));  // 밀리초 계산
+				//int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI * 1000.0f, 1000.0f));  // 밀리초 계산
+
+				
+
+				// mm:ss 형식으로 포맷
+				//FText TimeText = FText::Format(NSLOCTEXT("YourNamespace", "TimeFormat", "{0}:{1}:{2}"), FText::AsNumber(Minutes), FText::AsNumber(Seconds), FText::AsNumber(Milliseconds));
+				FString TimeTextString = FString::Printf(TEXT("%02d:%02d:%02d"), Minutes, Seconds, Milliseconds);
+				FText TimeText = FText::FromString(TimeTextString);
+				//FText TimeText = FText::Format(NSLOCTEXT("YourNamespace", "TimeFormat", "{0}:{1}"), FText::AsNumber(Minutes), FText::AsNumber(Seconds));
+				TickLabel->SetText(TimeText);
+
+				FSlateFontInfo NewFontInfo = TickLabel->Font;
+				NewFontInfo.Size = 8;  // 원하는 폰트 크기 설정
+				TickLabel->SetFont(NewFontInfo);
+				CanvasSlot = Cast<UCanvasPanelSlot>(TickLabel->Slot);
+				if (CanvasSlot)
+				{
+					CanvasSlot->SetPosition(FVector2D(i - 10, 5));
+					
+				}
+			}
+
+			
 
 			
 		}
