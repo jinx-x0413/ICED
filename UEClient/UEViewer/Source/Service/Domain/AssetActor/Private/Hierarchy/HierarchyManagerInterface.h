@@ -20,9 +20,12 @@ struct FActorHierarchyData
 
 	UPROPERTY(BlueprintReadWrite)
 	int Depth;
+
 	UPROPERTY(BlueprintReadWrite)
 	TWeakObjectPtr<USceneComponent> TargetComponent;
 
+	UPROPERTY(BlueprintReadWrite)
+	USkeletalMesh* SkeletalMesh;
 };
 
 // This class does not need to be modified.
@@ -75,12 +78,20 @@ public:
 		}
 
 		FActorHierarchyData NewData;
-		if (Cast<USkeletalMeshComponent>(InComponent))
+		if (USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(InComponent))
 		{
 			NewData.NodeName = InComponent->GetName();
 			NewData.Depth = IndentLevel;
 			NewData.TargetComponent = InComponent;
+			NewData.SkeletalMesh = SkeletalMeshComponent->GetSkeletalMeshAsset();
+			
+			if (NewData.SkeletalMesh)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("SkeletalMesh Added: %s"), *NewData.SkeletalMesh->GetName());
+			}
+
 			HierarchyData.Add(NewData);
+
 
 			const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
 			for (USceneComponent* InChild : InChildren)
