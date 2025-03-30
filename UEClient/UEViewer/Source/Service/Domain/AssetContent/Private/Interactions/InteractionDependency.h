@@ -10,6 +10,7 @@
 #include "HiddenInteraction.h"
 #include "HighlightInteraction.h"
 #include "PopupInteraction.h"
+#include "Application/UI/Timebar/Public/Timebar.h"
 
 #include "InteractionDependency.generated.h"
 

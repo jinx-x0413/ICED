@@ -7,6 +7,7 @@
 
 #include "AssetContentController.h"
 #include "Interactions/InteractionDependency.h"
+#include "Application/UI/Timebar/Public/Timebar.h"
 
 #include "AssetContentDependency.generated.h"
 

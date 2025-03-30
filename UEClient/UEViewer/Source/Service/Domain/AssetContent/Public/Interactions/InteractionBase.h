@@ -4,10 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+
+#include "Application/UI/Timebar/Private/Player/Clip.h"
+
 #include "InteractionBase.generated.h"
 
+class UClip;
+
 UCLASS()
-class ASSETCONTENT_API UInteractionBase : public UObject
+class ASSETCONTENT_API UInteractionBase : public UClip
 {
 	GENERATED_BODY()
 	

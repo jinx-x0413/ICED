@@ -6,7 +6,10 @@ public class AssetContent : ModuleRules
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine"});
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", "CoreUObject", "Engine", "UMG"
+			, "Timebar"
+		});
  
 		PublicIncludePaths.AddRange(new string[] {"AssetContent/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"AssetContent/Private"});
