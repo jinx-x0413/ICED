@@ -36,6 +36,24 @@
 			"AdditionalDependencies": [
 				"CoreUObject"
 			]
+		},
+		{
+			"Name": "UIComponent",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
+			]
+		},
+		{
+			"Name": "Timebar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [
