@@ -9,6 +9,7 @@
 #include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
+#include "Service/Domain/AssetContent/Public/AssetContent.h"
 
 #include "EntryPoint.generated.h"
 
@@ -25,6 +26,11 @@ class UEVIEWER_API UEntryPoint : public UObject
 public:
 	UFUNCTION()
 	static void LoadActor();
+
+	// AssetContent
+public:
+	UFUNCTION(BlueprintCallable)
+	static UInteractionBase* CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	// Timebar
 public:

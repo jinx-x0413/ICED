@@ -18,7 +18,22 @@ UAssetContentController::~UAssetContentController()
 	}
 }
 
-UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass)
+UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
 {
-	return nullptr;
+    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+    {
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
+        //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->Initialize(InInteractionData);
+        NewInteraction->StartTime = InStartTime;
+        NewInteraction->EndTime = InEndTime;
+        NewInteraction->ClipLength = InEndTime - InStartTime;
+        NewInteraction->Name = InInteractionData.Name.ToString();
+        NewInteraction->AddToRoot();
+
+        return NewInteraction;
+    }
+
+    return nullptr;
 }
+

@@ -8,6 +8,27 @@ void UEntryPoint::LoadActor()
 
 }
 
+UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+{
+	// AssetContent :: Interaction
+	UInteractionBase* ReturnInteraction = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetContent")))
+	{
+		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
+		if (Module)
+		{
+			ReturnInteraction = Module->Controller->CreateInteraction(InInteractionData, InTrack, InStartTime, InEndTime);
+		}
+	}
+
+
+	// Timebar
+	UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, ReturnInteraction);
+	//UTimebarPlayer::GetTimebarPlayer()->OnTrackSelected.Broadcast(InTrack);
+
+	return ReturnInteraction;
+}
+
 
 
 // Timebar
