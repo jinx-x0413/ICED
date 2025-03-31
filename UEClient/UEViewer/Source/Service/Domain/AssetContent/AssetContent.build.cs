@@ -9,6 +9,7 @@ public class AssetContent : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", "CoreUObject", "Engine", "UMG"
 			, "Timebar"
+			, "UEViewer"
 		});
  
 		PublicIncludePaths.AddRange(new string[] {"AssetContent/Public"});

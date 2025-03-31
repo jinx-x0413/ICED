@@ -126,4 +126,11 @@ protected:
 	FInteractionData TargetData;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsInteracting = false;
+
+
+
+	// common feature
+public:
+	UFUNCTION()
+	FVector GetTargetActorCenter();
 };

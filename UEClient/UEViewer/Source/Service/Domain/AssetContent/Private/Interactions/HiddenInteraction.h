@@ -14,4 +14,12 @@ class UHiddenInteraction : public UInteractionBase
 {
 	GENERATED_BODY()
 	
+
+	// Interaction overriding
+public:
+	virtual void Start() override;
+	virtual void Finish() override;
+	virtual void Reset() override;
+
+
 };

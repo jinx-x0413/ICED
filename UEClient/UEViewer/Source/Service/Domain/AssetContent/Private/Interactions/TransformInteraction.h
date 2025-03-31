@@ -29,7 +29,4 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector CurrentLocation;
-
-	//UFUNCTION(meta=(AllowPrivateAccess=true))
-	FVector GetTargetActorCenter();
 };
