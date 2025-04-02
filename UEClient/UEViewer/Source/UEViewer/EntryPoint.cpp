@@ -59,3 +59,12 @@ void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorCl
 	}
 }
 
+void UEntryPoint::StartSetAssetActorTransform(FTransform& InTransform)
+{
+	
+}
+
+void UEntryPoint::EndSetAssetActorTransform(FTransform& InTransform)
+{
+}
+

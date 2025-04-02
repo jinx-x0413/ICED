@@ -44,4 +44,13 @@ public:
 		, const FString& FilePath
 		, FString InFileName);
 
+
+
+	// command
+public:
+	UFUNCTION()
+	static void StartSetAssetActorTransform(FTransform& InTransform);
+
+	UFUNCTION()
+	static void EndSetAssetActorTransform(FTransform& InTransform);
 };

@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/SphereComponent.h"
+#include "../EntryPoint.h"
 
 ACorePawn::ACorePawn()
 {
@@ -44,6 +45,8 @@ ACorePawn::ACorePawn()
 	CamGoal = SpringArm->TargetArmLength;
 
 	//SelectedActor = nullptr;
+
+	
 }
 
 void ACorePawn::BeginPlay()
@@ -378,8 +381,18 @@ void ACorePawn::InitializeGizmoDelegate()
 	if (TransformerPawn)
 	{
 
-		/*TransformerPawn->OnGizmoPressed.AddDynamic(UEventDispatcher::GetEventDispatcher(), &UEventDispatcher::StartGltfAssetActorTransform);
-		TransformerPawn->OnGizmoReleased.AddDynamic(UEventDispatcher::GetEventDispatcher(), &UEventDispatcher::UpdateGltfAssetActorTransform);
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Gizmo Delegate Initialized at CorePawn"));*/
+		TransformerPawn->OnGizmoPressed.AddDynamic(this, &ACorePawn::InvokeSetStartAssetActorTransform);
+		TransformerPawn->OnGizmoReleased.AddDynamic(this, &ACorePawn::InvokeSetEndAssetActorTransform);
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Cyan, TEXT("Gizmo Delegate Initialized at CorePawn"));
 	}
+}
+
+void ACorePawn::InvokeSetStartAssetActorTransform(FTransform InTransform)
+{
+	UEntryPoint::StartSetAssetActorTransform(InTransform);
+}
+
+void ACorePawn::InvokeSetEndAssetActorTransform(FTransform InTransform)
+{
+	UEntryPoint::EndSetAssetActorTransform(InTransform);
 }
