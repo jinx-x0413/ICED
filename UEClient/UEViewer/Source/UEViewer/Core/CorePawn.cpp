@@ -389,10 +389,18 @@ void ACorePawn::InitializeGizmoDelegate()
 
 void ACorePawn::InvokeSetStartAssetActorTransform(FTransform InTransform)
 {
-	UEntryPoint::StartSetAssetActorTransform(InTransform);
+	if (IsValid(TransformerPawn) && IsValid(TransformerPawn->CurrentSelectActor))
+	{
+		UEntryPoint::StartSetAssetActorTransform(TransformerPawn->CurrentSelectActor, InTransform);
+	}
+	
 }
 
 void ACorePawn::InvokeSetEndAssetActorTransform(FTransform InTransform)
 {
-	UEntryPoint::EndSetAssetActorTransform(InTransform);
+	if (IsValid(TransformerPawn) && IsValid(TransformerPawn->CurrentSelectActor))
+	{
+		UEntryPoint::EndSetAssetActorTransform(TransformerPawn->CurrentSelectActor, InTransform);
+	}
+	
 }

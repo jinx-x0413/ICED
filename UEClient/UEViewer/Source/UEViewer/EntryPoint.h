@@ -11,6 +11,7 @@
 
 #include "HTTP_Connection.h"
 #include "Service/Domain/AssetActor/public/AssetActor.h"
+#include "Application/Command/public/Command.h"
 
 #include "EntryPoint.generated.h"
 
@@ -48,9 +49,12 @@ public:
 
 	// command
 public:
-	UFUNCTION()
-	static void StartSetAssetActorTransform(FTransform& InTransform);
+	UFUNCTION(BlueprintCallable)
+	static void Undo();
 
 	UFUNCTION()
-	static void EndSetAssetActorTransform(FTransform& InTransform);
+	static void StartSetAssetActorTransform(AActor* InActor, FTransform& InTransform);
+
+	UFUNCTION()
+	static void EndSetAssetActorTransform(AActor* InActor, FTransform& InTransform);
 };

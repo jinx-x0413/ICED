@@ -51,10 +51,44 @@ UCommandHistory* UCommandStack::GetHistory()
 
 void UCommandStack::AddCommandToHistory(UCommandBase* InCommand)
 {
+	if (!History)
+	{
+		History = GetHistory();
+	}
+
 	if (IsValid(History))
 	{
 		History->AddCommandToHistory(InCommand);
 	}
+}
+
+UCommandBase* UCommandStack::GetLastCommand()
+{
+	if (!History)
+	{
+		History = GetHistory();
+	}
+
+	if (IsValid(History) && History->GetCommands().Num() > 0)
+	{
+		return History->GetCommands()[History->GetCommands().Num() - 1];
+	}
+	return nullptr;
+}
+
+UCommandBase* UCommandStack::PopLastCommand()
+{
+	if (!History)
+	{
+		History = GetHistory();
+	}
+
+	if (IsValid(History))
+	{
+		return History->PopCommand();
+	}
+	
+	return nullptr;
 }
 
 void UCommandStack::ExecuteCommand(UCommandBase* InCommand)
@@ -75,4 +109,27 @@ void UCommandStack::Undo()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Last Command is not valid at CommandStack"));
 	}
+}
+
+
+
+
+// factory
+UCommandBase* UCommandStack::CreateCommand(ECommandType InType)
+{
+	UCommandBase* NewCommand;
+	switch (InType)
+	{
+	case ECommandType::ASSETACTOR_TRANSFORM :
+		NewCommand = NewObject<USetAssetActorTransformCommand>();
+		break;
+		
+	default:
+		return nullptr;
+		break;
+	}
+	
+	NewCommand->AddToRoot();
+	AddCommandToHistory(NewCommand);
+	return NewCommand;
 }
