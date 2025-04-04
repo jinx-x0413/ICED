@@ -26,39 +26,46 @@ const Upload = () => {
 
     const handleFileUpload = async (e) => {
         e.preventDefault();
-
+    
         if (!window.confirm("업로드하시겠습니까?")) {
             return;
         }
-
+    
         const fileInput = fileInputRef.current;
         const file = fileInput.files[0];
-
+    
         if (!file) {
             setStatus("파일을 선택해주세요.");
             setStatusType('error');
             return;
         }
-
+    
         const formData = new FormData();
         formData.append("file", file);
         formData.append("uploader_id", user.userid);
         formData.append("description", description);
-
+    
         setProgress(0);
         setStatus("업로드 중...");
         setStatusType('loading');
-
+    
         const xhr = new XMLHttpRequest();
         xhr.open("POST", "http://localhost:8080/api/upload", true);
-
+    
+        // LocalStorage에서 토큰 가져오기
+        const token = localStorage.getItem("accessToken");
+    
+        // 요청 헤더에 Authorization과 credentials 추가
+        xhr.setRequestHeader('Authorization', `${token}`);
+        xhr.withCredentials = true; // credentials: "include"와 동일하게 작동
+    
         xhr.upload.onprogress = function(event) {
             if (event.lengthComputable) {
                 const percent = (event.loaded / event.total) * 100;
                 setProgress(percent);
             }
         };
-
+    
         xhr.onload = function() {
             if (xhr.status === 200) {
                 setStatus("업로드 성공!");
@@ -72,12 +79,12 @@ const Upload = () => {
                 setStatusType('error');
             }
         };
-
+    
         xhr.onerror = function() {
             setStatus("네트워크 오류가 발생했습니다.");
             setStatusType('error');
         };
-
+    
         xhr.send(formData);
     };
 
@@ -127,9 +134,9 @@ const Upload = () => {
                     </button>
                 </form>
 
-                <div className="progress-container">
-                    <div className="progress">
-                        <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+                <div className="upload-progress-container">
+                    <div className="upload-progress-track">
+                        <div className="upload-progress-indicator" style={{ width: `${progress}%` }}></div>
                     </div>
                     {status && (
                         <div className={`status ${statusType}`}>

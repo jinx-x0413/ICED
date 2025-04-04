@@ -5,27 +5,70 @@ import './css/install.css';
 const Install = () => {
     const [downloading, setDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
+    const [error, setError] = useState(null);
 
-    const handleDownload = () => {
+    const handleDownload = async () => {
         setDownloading(true);
-        // 다운로드 시작을 시뮬레이션하기 위한 코드
         setDownloadProgress(0);
-        
-        // 진행 상황을 시뮬레이션하기 위한 간단한 타이머
-        const interval = setInterval(() => {
-            setDownloadProgress(prev => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        setDownloading(false);
-                        // 실제 다운로드 시작
-                        window.location.href = 'http://localhost:8080/download/installer';
-                    }, 500);
-                    return 100;
-                }
-                return prev + 5;
+        setError(null);
+
+        try {
+            let token = localStorage.getItem("accessToken");
+            const response = await fetch('http://localhost:8080/download/installer', {
+                method: 'GET',
+                credentials: "include",
+                headers: { Authorization: token }
             });
-        }, 150);
+
+            if (!response.ok) {
+                throw new Error(`다운로드 오류: ${response.status} ${response.statusText}`);
+            }
+
+            // 응답 헤더에서 content-length를 얻어와 전체 파일 크기 계산
+            const contentLength = response.headers.get('content-length');
+            const totalSize = contentLength ? parseInt(contentLength, 10) : 0;
+            
+            // 데이터를 수신하기 위한 ReadableStream 읽기
+            const reader = response.body.getReader();
+            let receivedSize = 0;
+            const chunks = [];
+
+            while (true) {
+                const { done, value } = await reader.read();
+                
+                if (done) {
+                    break;
+                }
+                
+                chunks.push(value);
+                receivedSize += value.length;
+                
+                // 다운로드 진행률 업데이트
+                if (totalSize) {
+                    const progress = Math.round((receivedSize / totalSize) * 100);
+                    setDownloadProgress(progress);
+                }
+            }
+            
+            // 모든 청크를 결합하여 Blob 생성
+            const blob = new Blob(chunks);
+            
+            // 다운로드 링크 생성
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'iced-client-installer.exe');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setDownloading(false);
+            setDownloadProgress(100);
+        } catch (err) {
+            console.error("다운로드 오류:", err);
+            setError(err.message);
+            setDownloading(false);
+        }
     };
 
     return (
@@ -103,6 +146,11 @@ const Install = () => {
                                 <div className="progress" style={{ width: `${downloadProgress}%` }}></div>
                             </div>
                             <span className="progress-text">{downloadProgress}%</span>
+                        </div>
+                    )}
+                    {error && (
+                        <div className="error-message">
+                            {error}
                         </div>
                     )}
                     <p className="download-info">

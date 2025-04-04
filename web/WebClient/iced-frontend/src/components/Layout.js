@@ -129,7 +129,7 @@ const Layout = ({ children }) => {
                     <div className="guide-content">
                         <h3>클라이언트 실행이 안되나요?</h3>
                         <p>클라이언트 설치가 필요합니다.</p>
-                        <button onClick={downloadInstaller} className="download-button">설치 프로그램 다운로드</button>
+                        <button onClick={downloadInstaller} className="laydownload-button">설치 프로그램 다운로드</button>
                         <button onClick={() => setShowInstallGuide(false)} className="close-button">닫기</button>
                     </div>
                 </div>
