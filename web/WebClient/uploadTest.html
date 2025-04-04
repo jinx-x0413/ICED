@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .progress { width: 300px; height: 20px; border: 1px solid #ccc; margin-top: 10px; }
+        .progress-bar { width: 0; height: 100%; background-color: #4caf50; transition: width 0.2s; }
+        .error { color: red; font-size: 14px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<h1>Upload File</h1>
+<img src="http://localhost:8080/ftp-image?filename=cloth.jpg" alt="FTP 이미지">
+
+
+</body>
+<script>
+    function checkForm() {
+        var descriptionInput = document.getElementById("descriptionInput").value.trim();
+        var uploadButton = document.getElementById("uploadButton");
+
+        if (descriptionInput === "") {
+            uploadButton.disabled = true;
+        } else {
+            uploadButton.disabled = false;
+        }
+    }
+
+    document.getElementById("uploadForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        if (!confirm("업로드하시겠습니까?")) {
+            return; // 사용자가 "취소"를 누르면 업로드 중지
+        }
+
+        var fileInput = document.getElementById("fileInput");
+        var descriptionInput = document.getElementById("descriptionInput");
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            document.getElementById("status").innerText = "Please select a file.";
+            return;
+        }
+
+        var file = fileInput.files[0];
+        var description = descriptionInput.value.trim();
+
+        var formData = new FormData();
+        formData.append("file", file);
+        formData.append("uploader_id", "test_user");  // 고정된 업로더 ID
+        formData.append("description", description);  // 사용자가 입력한 설명
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:8080/api/upload", true);
+
+        // 진행률 표시
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percent = (event.loaded / event.total) * 100;
+                document.getElementById("progressBar").style.width = percent + "%";
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.getElementById("status").innerText = "Upload successful: 업로드 성공";
+            } else {
+                document.getElementById("status").innerText = "Upload failed: HTTP 업로드 실패";
+            }
+        };
+
+        xhr.send(formData);
+        document.getElementById("status").innerText = "Uploading...";
+    });
+</script>
+
+</body>
+</html>
