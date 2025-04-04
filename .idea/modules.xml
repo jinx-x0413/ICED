@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ICED.iml" filepath="$PROJECT_DIR$/.idea/ICED.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ICED_backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ICED_backend.main.iml" />
     </modules>
   </component>
 </project>
