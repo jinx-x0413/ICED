@@ -12,10 +12,20 @@
 </head>
 <body>
 <h1>Upload File</h1>
-<img src="http://localhost:8080/ftp-image?filename=cloth.jpg" alt="FTP 이미지">
+<form id="uploadForm">
+    <input type="file" id="fileInput" name="file" /><br><br>
+    
+    <input type="text" id="descriptionInput" name="description" placeholder="입력해주세요" oninput="checkForm()"/>
+    <br><br>
+    
+    <button type="submit" id="uploadButton" disabled>Upload</button>
+</form>
 
+<div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+<div id="status"></div>
 
-</body>
 <script>
     function checkForm() {
         var descriptionInput = document.getElementById("descriptionInput").value.trim();
