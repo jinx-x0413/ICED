@@ -84,6 +84,49 @@
     box-sizing: border-box;
 }
 
+/* 썸네일 업로드 컨테이너 */
+.thumbnail-input-container {
+    margin-bottom: 20px;
+}
+
+/* 썸네일 선택 버튼 */
+.thumbnail-select-button {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.thumbnail-select-button:hover {
+    background-color: #dde2e6;
+}
+
+/* 숨겨진 썸네일 파일 입력 */
+.hidden-thumbnail-input {
+    display: none;
+}
+
+/* 썸네일 미리보기 컨테이너 */
+.thumbnail-preview {
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* 썸네일 이미지 */
+.thumbnail-image {
+    max-width: 100%;
+    max-height: 200px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
 .upload-button {
     background-color: #4a6cf7;
     color: white;
