@@ -8,7 +8,11 @@ public class UEViewerEditorTarget : TargetRules
 	public UEViewerEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
+<<<<<<< HEAD
 		ExtraModuleNames.AddRange( new string[] { "HTTP_Connection" } );
+=======
+		ExtraModuleNames.AddRange( new string[] { "Profiling" } );
+>>>>>>> UE_Core
 		ExtraModuleNames.AddRange( new string[] { "Command" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetContent" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetActor" } );
