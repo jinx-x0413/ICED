@@ -19,6 +19,7 @@ public class UEViewer : ModuleRules
 			, "RuntimeTransformer"
 			, "HTTP_Connection"
 			, "UMG"
+			, "Profiling"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
