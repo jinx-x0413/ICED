@@ -20,9 +20,9 @@ struct FActorHierarchyData
 
 	UPROPERTY(BlueprintReadWrite)
 	int Depth;
+
 	UPROPERTY(BlueprintReadWrite)
 	TWeakObjectPtr<USceneComponent> TargetComponent;
-
 };
 
 // This class does not need to be modified.
@@ -80,7 +80,9 @@ public:
 			NewData.NodeName = InComponent->GetName();
 			NewData.Depth = IndentLevel;
 			NewData.TargetComponent = InComponent;
+			
 			HierarchyData.Add(NewData);
+
 
 			const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
 			for (USceneComponent* InChild : InChildren)

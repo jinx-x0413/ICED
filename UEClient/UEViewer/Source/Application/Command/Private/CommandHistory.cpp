@@ -4,16 +4,17 @@
 #include "CommandHistory.h"
 #include "CommandDependency.h"
 
+
 void UCommandHistory::AddCommandToHistory(UCommandBase* InCommand)
 {
-	GetCommands().Add(InCommand);
+	Commands.Add(InCommand);
 }
 
 UCommandBase* UCommandHistory::PopCommand()
 {
 	if (GetCommands().Num() > 0)
 	{
-		UCommandBase* LastCommand = GetCommands().Pop();
+		UCommandBase* LastCommand = Commands.Pop();
 		if (IsValid(LastCommand) && LastCommand->IsRooted())
 		{
 			LastCommand->RemoveFromRoot();

@@ -6,9 +6,14 @@
 #include "UObject/NoExportTypes.h"
 #include "CommandStack.generated.h"
 
-/**
- * 
- */
+
+UENUM(Blueprintable)
+enum class ECommandType : uint8
+{
+	ASSETACTOR_TRANSFORM		UMETA(DisplayName = "Set AssetActor Transform")
+
+};
+
 UCLASS()
 class COMMAND_API UCommandStack : public UObject
 {
@@ -35,8 +40,22 @@ public:
 	virtual void AddCommandToHistory(UCommandBase* InCommand);
 
 	UFUNCTION(meta = (AllowPrivateAccess = true))
+	virtual UCommandBase* GetLastCommand();
+
+	UFUNCTION(meta = (AllowPrivateAccess = true))
+	virtual UCommandBase* PopLastCommand();
+
+	UFUNCTION(meta = (AllowPrivateAccess = true))
 	virtual void ExecuteCommand(UCommandBase* InCommand);
 
 	UFUNCTION(meta = (AllowPrivateAccess = true))
 	virtual void Undo();
+
+
+
+
+	// factory
+public:
+	UFUNCTION(meta = (AllowPrivateAccess = true))
+	virtual UCommandBase* CreateCommand(ECommandType InType);
 };

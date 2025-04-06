@@ -121,5 +121,8 @@ public:
 	// Gizmo Delegate : AssetActorTransform Command
 public:
 	void InitializeGizmoDelegate();
-
+	UFUNCTION()
+	void InvokeSetStartAssetActorTransform(FTransform InTransform);
+	UFUNCTION()
+	void InvokeSetEndAssetActorTransform(FTransform InTransform);
 };
