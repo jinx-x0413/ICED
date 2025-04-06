@@ -39,10 +39,18 @@
 			]
 		},
 		{
+<<<<<<< HEAD
 			"Name": "HTTP_Connection",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
+=======
+			"Name": "Profiling",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+>>>>>>> UE_Core
 				"CoreUObject"
 			]
 		}
