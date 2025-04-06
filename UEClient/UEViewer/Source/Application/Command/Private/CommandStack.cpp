@@ -103,7 +103,14 @@ void UCommandStack::Undo()
 {
 	if (GetHistory() && GetHistory()->GetCommands().Num() > 0)
 	{
-		GetHistory()->PopCommand()->Undo();
+		if (UCommandBase* PopCommand = GetHistory()->PopCommand())
+		{
+			PopCommand->Undo();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Last Command at Command History"));
+		}
 	}
 	else
 	{
