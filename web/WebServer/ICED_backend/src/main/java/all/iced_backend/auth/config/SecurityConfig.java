@@ -94,6 +94,7 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/join","/download/installer").permitAll()
                         //.requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
+                        .requestMatchers("/api/upload").permitAll()
                         .anyRequest().authenticated());
 
         http

@@ -33,4 +33,7 @@ public class UploadFile {
 
     // 업로드된 시간
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // 썸네일 경로 추가
+    private String thumbnailUri;
 }

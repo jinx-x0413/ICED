@@ -14,5 +14,5 @@ public class UploadResponseDto {
     private String uploader_id; // FTPS 서버에 저장된 경로 (업로드한 userid)
     private String description; //파일 설명
     private Double size; //파일 크기
-
+    private String thumbnailUri; // 썸네일 경로 추가
 }

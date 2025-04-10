@@ -55,14 +55,11 @@ public class FtpsUploader {
             // 디렉토리 이동
             if (!ftpsClient.changeWorkingDirectory(remoteDir)) {
                 System.out.println("원격 디렉토리 이동 실패: " + remoteDir);
-                return null;
-            }
-
-            System.out.println("접속 후 디렉토리 이동 시도: " + remoteDir);
-            boolean changed = ftpsClient.changeWorkingDirectory(remoteDir);
-            if (!changed) {
-                System.out.println("❌ 디렉토리 이동 실패. 실제 서버에 디렉토리 없음");
-                return null;
+                System.out.println("현재 디렉토리: " + ftpsClient.printWorkingDirectory());
+                if (!createRemoteDirectory(ftpsClient, remoteDir)) {
+                    System.out.println("원격 디렉토리 생성 실패: " + remoteDir);
+                    return null;
+                }
             }
             // 파일 업로드
             String originalFileName = localFile.getName();
@@ -87,6 +84,59 @@ public class FtpsUploader {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+
+        } finally {
+            try {
+                if (ftpsClient.isConnected()) {
+                    ftpsClient.logout();
+                    ftpsClient.disconnect();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private boolean createRemoteDirectory(FTPSClient ftpsClient, String remoteDir) {
+        try {
+            String[] directories = remoteDir.split("/");
+            String currentPath = "";
+            for (String dir : directories) {
+                if (dir.isEmpty()) continue;
+                currentPath += "/" + dir;
+                if (!ftpsClient.changeWorkingDirectory(currentPath)) {
+                    if (!ftpsClient.makeDirectory(currentPath)) {
+                        System.out.println("디렉토리 생성 실패: " + currentPath);
+                        return false;
+                    }
+                    System.out.println("디렉토리 생성 성공: " + currentPath);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean ensureDirectoryExists(String server, int port, String user, String pass, String remoteDir) {
+        FTPSClient ftpsClient = new FTPSClient("TLS", false);
+        try {
+            ftpsClient.connect(server, port);
+            if (!ftpsClient.login(user, pass)) {
+                System.out.println("FTPS 로그인 실패");
+                return false;
+            }
+
+            ftpsClient.execPBSZ(0);
+            ftpsClient.execPROT("P");
+            ftpsClient.enterLocalPassiveMode();
+
+            return createRemoteDirectory(ftpsClient, remoteDir);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
 
         } finally {
             try {
