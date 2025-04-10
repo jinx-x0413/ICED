@@ -102,7 +102,13 @@ const Upload = () => {
         const token = localStorage.getItem("accessToken");
     
         // 요청 헤더에 Authorization과 credentials 추가
-        xhr.setRequestHeader('Authorization', `${token}`);
+        if (token) {
+            if (token.startsWith('Bearer ')) {
+                xhr.setRequestHeader('Authorization', token);
+            } else {
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+            }
+        }
         xhr.withCredentials = true; // credentials: "include"와 동일하게 작동
     
         xhr.upload.onprogress = function(event) {
@@ -122,6 +128,7 @@ const Upload = () => {
                 setThumbnail(null); // 썸네일 초기화
                 fileInput.value = '';
             } else {
+                console.error("서버 응답:", xhr.status, xhr.statusText, xhr.responseText);
                 setStatus("업로드 실패. 다시 시도해주세요.");
                 setStatusType('error');
             }
@@ -131,8 +138,8 @@ const Upload = () => {
             setStatus("네트워크 오류가 발생했습니다.");
             setStatusType('error');
         };
-    
         xhr.send(formData);
+
     };
 
     return (
