@@ -73,6 +73,37 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
 		}
+
+		const TArray<TSharedPtr<FJsonValue>>* Users;
+		if (JsonObject->TryGetArrayField("User", Users))
+		{
+			FOpenApiTest OpenApi;
+			for (auto& UserValue : *Users)
+			{
+				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
+				OpenApi.UserName = UserObject->GetStringField("UserName");
+				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
+			}
+		}
+
+		// Objects ¹è¿­ ÆÄ½Ì
+		const TArray<TSharedPtr<FJsonValue>>* Objects;
+		if (JsonObject->TryGetArrayField("Objects", Objects))
+		{
+			FOpenApiTest OpenApi;
+			for (auto& ObjectValue : *Objects)
+			{
+				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
+				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
+				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
+
+				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
+				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
+				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);
+			}
+		}
+
+
 	}
 	else
 	{
@@ -86,12 +117,12 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 FString UHttpRequest::GetURLFromConfig()
 {
-	FString FilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
+	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
 	FString JsonRaw;
 
-	if (!FFileHelper::LoadFileToString(JsonRaw, *FilePath))
+	if (!FFileHelper::LoadFileToString(JsonRaw, *ProjectFilePath))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *FilePath);
+		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *ProjectFilePath);
 		return TEXT("");
 	}
 
@@ -102,6 +133,38 @@ FString UHttpRequest::GetURLFromConfig()
 	{
 		FString URL = JsonObject->GetStringField(TEXT("URL"));
 		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *URL);
+
+		const TArray<TSharedPtr<FJsonValue>>* Users;
+		if (JsonObject->TryGetArrayField("User", Users))
+		{
+			FOpenApiTest OpenApi;
+			for (auto& UserValue : *Users)
+			{
+				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
+				OpenApi.UserName = UserObject->GetStringField("UserName");
+				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
+			}
+		}
+
+		// Objects ¹è¿­ ÆÄ½Ì
+		const TArray<TSharedPtr<FJsonValue>>* Objects;
+		if (JsonObject->TryGetArrayField("Objects", Objects))
+		{
+			FOpenApiTest OpenApi;
+			for (auto& ObjectValue : *Objects)
+			{
+				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
+				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
+				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
+
+				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
+				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
+				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);
+			}
+		}
+
+
+
 		return URL;
 	}
 	else

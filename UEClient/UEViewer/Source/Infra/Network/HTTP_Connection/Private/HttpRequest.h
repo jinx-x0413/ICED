@@ -22,8 +22,18 @@ struct FOpenApiTest
 {
 	GENERATED_USTRUCT_BODY()
 
+
 	UPROPERTY()
 	FString Gender;
+
+	UPROPERTY()
+	FString UserName;
+
+	UPROPERTY()
+	FString ObjectName;
+
+	UPROPERTY()
+	FString FilePath;
 
 };
 

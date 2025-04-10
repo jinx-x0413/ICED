@@ -1,3 +1,14 @@
 {
-  "URL": "https://randomuser.me/api/"
+  "URL": "https://randomuser.me/api/",
+  "User": [
+    {
+      "UserName": "Gemini"
+    }
+  ],
+  "Objects": [
+    {
+      "ObjectName": "Car",
+      "FilePath": "C:\\Project\\UEClient\\UEViewer\\Settings"
+    }
+  ]
 }
