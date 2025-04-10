@@ -36,18 +36,9 @@ void AGltfAssetActor::BeginPlay()
 	Super::BeginPlay();
 
 	
+	
 
-	//HierarchyManagerInterface
-	//HierarchyManagerInterface = NewObject<UHierarchyDataUpdate>(this, FName(TEXT("HierarchyDataUpdate")));
-
-	///*UpdateHierarchy();*/
-
-	//if (HierarchyManagerInterface)
-	//{
-	//	HierarchyManagerInterface->UpdateHierarchyData(this);
-
-	//	ActorHierarchyData = HierarchyManagerInterface->GetHierarchyData();
-	//}
+	
 }
 
 void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -59,12 +50,21 @@ void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		RemoveFromRoot();
 	}
 
-	// HierarchyManager 해제
-	//if (HierarchyManagerInterface)
-	//{
-	//	//HierarchyManagerInterface->ConditionalBeginDestroy();
-	//	HierarchyManagerInterface = nullptr;
-	//}
+	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
+	{
+		if (ACorePawn* CurrentCorePawn = Cast<ACorePawn>(PlayerPawn))
+		{
+			if (CurrentCorePawn->TransformerPawn->OnActiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnActiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnActiveSelect.RemoveDynamic(this, &AGltfAssetActor::CallbackOnActiveSelected);
+			}
+			if (CurrentCorePawn->TransformerPawn->OnDeactiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnDeactiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnDeactiveSelect.RemoveDynamic(this, &AGltfAssetActor::CallbackOnDeactiveSelected);
+			}
+		}
+
+	}
 }
 
 void AGltfAssetActor::UpdateHierarchy()
@@ -109,6 +109,22 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 		HierarchyData = HierarchyManager->GetHierarchyData();
 	}*/
 	UpdateHierarchyData(this);
+
+	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
+	{
+		if (ACorePawn* CurrentCorePawn = Cast<ACorePawn>(PlayerPawn))
+		{
+			if (!CurrentCorePawn->TransformerPawn->OnActiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnActiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnActiveSelect.AddDynamic(this, &AGltfAssetActor::CallbackOnActiveSelected);
+			}
+			if (!CurrentCorePawn->TransformerPawn->OnDeactiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnDeactiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnDeactiveSelect.AddDynamic(this, &AGltfAssetActor::CallbackOnDeactiveSelected);
+			}
+		}
+
+	}
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()
@@ -227,6 +243,16 @@ void AGltfAssetActor::SetOutline(bool bIsActivated)
 			}
 		}
 	}
+}
+
+void AGltfAssetActor::CallbackOnActiveSelected()
+{
+	SetOutline(true);
+}
+
+void AGltfAssetActor::CallbackOnDeactiveSelected()
+{
+	SetOutline(false);
 }
 
 const TArray<FActorHierarchyData>& AGltfAssetActor::GetInterfaceHierarchyData() const

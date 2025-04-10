@@ -78,6 +78,10 @@ public:
 
 	//// Outline
 	void SetOutline(bool bIsActivated);
+	UFUNCTION()
+	void CallbackOnActiveSelected();
+		UFUNCTION()
+		void CallbackOnDeactiveSelected();
 
 
 	// Interface : Hierarchy Data

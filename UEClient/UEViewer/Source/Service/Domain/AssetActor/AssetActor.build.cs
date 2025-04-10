@@ -9,6 +9,7 @@ public class AssetActor : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { 
 			"Core", "CoreUObject", "Engine"
 			, "glTFRuntime"
+			, "UEViewer"
         });
  
 		PublicIncludePaths.AddRange(new string[] {"AssetActor/Public"});
