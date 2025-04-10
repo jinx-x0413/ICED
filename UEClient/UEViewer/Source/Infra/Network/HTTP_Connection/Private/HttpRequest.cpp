@@ -17,7 +17,7 @@ void UHttpRequest::SendUserDataHttpRequest()
 	UE_LOG(LogTemp, Warning, TEXT("SendUserDataHttpRequest is run"));
 	
 	// get login URL from JSON
-	FString URL = GetURLFromConfig();
+	FString URL = GetURLFromConfig().URL;
 	if (URL.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("URL is missing in the JSON file"));
@@ -56,7 +56,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	//Json 데이터를 저장하기 위한 배열
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
-
+	
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("JSON  Parse Successed: %s"), *ContentString);
@@ -65,11 +65,11 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 		if (ResultsArray.Num() > 0)
 		{
 			TSharedPtr<FJsonObject> UserObject = ResultsArray[0]->AsObject();
-			FOpenApiTest OpenApi;
+			
 
 			OpenApi.Gender = UserObject->GetStringField(TEXT("gender"));
 
-			UserDataDelivery.Broadcast(OpenApi.Gender);
+			
 
 			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
 		}
@@ -77,7 +77,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 		const TArray<TSharedPtr<FJsonValue>>* Users;
 		if (JsonObject->TryGetArrayField("User", Users))
 		{
-			FOpenApiTest OpenApi;
+			
 			for (auto& UserValue : *Users)
 			{
 				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
@@ -90,7 +90,6 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 		const TArray<TSharedPtr<FJsonValue>>* Objects;
 		if (JsonObject->TryGetArrayField("Objects", Objects))
 		{
-			FOpenApiTest OpenApi;
 			for (auto& ObjectValue : *Objects)
 			{
 				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
@@ -103,7 +102,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 			}
 		}
 
-
+		UserDataDelivery.Broadcast(OpenApi);
 	}
 	else
 	{
@@ -115,7 +114,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 }
 
-FString UHttpRequest::GetURLFromConfig()
+FOpenApiTest UHttpRequest::GetURLFromConfig()
 {
 	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
 	FString JsonRaw;
@@ -123,21 +122,21 @@ FString UHttpRequest::GetURLFromConfig()
 	if (!FFileHelper::LoadFileToString(JsonRaw, *ProjectFilePath))
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *ProjectFilePath);
-		return TEXT("");
+		return OpenApi;
 	}
 
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(JsonRaw);
+	
 
 	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
-		FString URL = JsonObject->GetStringField(TEXT("URL"));
-		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *URL);
+		OpenApi.URL = JsonObject->GetStringField(TEXT("URL"));
+		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *OpenApi.URL);
 
 		const TArray<TSharedPtr<FJsonValue>>* Users;
 		if (JsonObject->TryGetArrayField("User", Users))
 		{
-			FOpenApiTest OpenApi;
 			for (auto& UserValue : *Users)
 			{
 				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
@@ -150,7 +149,6 @@ FString UHttpRequest::GetURLFromConfig()
 		const TArray<TSharedPtr<FJsonValue>>* Objects;
 		if (JsonObject->TryGetArrayField("Objects", Objects))
 		{
-			FOpenApiTest OpenApi;
 			for (auto& ObjectValue : *Objects)
 			{
 				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
@@ -163,14 +161,12 @@ FString UHttpRequest::GetURLFromConfig()
 			}
 		}
 
-
-
-		return URL;
+		return OpenApi;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON file."));
-		return TEXT("");
+		return OpenApi;
 	}
 
 }
