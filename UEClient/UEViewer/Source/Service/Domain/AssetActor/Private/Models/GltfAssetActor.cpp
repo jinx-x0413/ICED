@@ -149,6 +149,7 @@ void AGltfAssetActor::GetComponentHierarchyRecursive(USceneComponent* InComponen
 	if (Cast<USkeletalMeshComponent>(InComponent))
 	{
 		NewData.NodeName = InComponent->GetName();
+		NewData.DisplayName = NewData.NodeName;
 		NewData.Depth = IndentLevel;
 		NewData.TargetComponent = InComponent;
 		HierarchyData.Add(NewData);

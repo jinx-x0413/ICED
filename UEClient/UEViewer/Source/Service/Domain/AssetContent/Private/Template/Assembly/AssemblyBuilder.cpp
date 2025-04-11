@@ -38,7 +38,7 @@ void UAssemblyBuilder::Build()
 		{
 			for (auto& Row : TargetTableData.Rows)
 			{
-				if (Row.RowName == CurrentData[i + 1].NodeName)
+				if (Row.RowName == CurrentData[i + 1].DisplayName)
 				{
 					
 					if (CurrentData[i + 1].TargetComponent.IsValid())
@@ -153,6 +153,7 @@ float UAssemblyBuilder::SetClip(
 		TargetInteractionData.TargetActor = TargetActor;
 		TargetInteractionData.TargetComponent = TargetComponent;
 		TargetInteractionData.Name = InInteractionName;
+		TargetInteractionData.TargetClass = InInteractionClass;
 
 
 		TargetInteractionData.bIsHighlighted = true;

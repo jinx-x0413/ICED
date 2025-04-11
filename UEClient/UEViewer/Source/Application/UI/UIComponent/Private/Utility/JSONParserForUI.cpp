@@ -145,7 +145,7 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 						continue;
 					}
 					TempRowData.RowIndex = i;
-					TempRowData.RowName = InActorHierarchyData[i].NodeName;
+					TempRowData.RowName = InActorHierarchyData[i].DisplayName;
 
 					// 3. parse Field
 					if (SampleRowData->HasField(TEXT("Fields")))

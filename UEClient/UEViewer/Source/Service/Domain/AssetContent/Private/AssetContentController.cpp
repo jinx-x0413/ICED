@@ -31,6 +31,8 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
         NewInteraction->Name = InInteractionData.Name.ToString();
         NewInteraction->AddToRoot();
 
+        UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, NewInteraction);
+
         return NewInteraction;
     }
 

@@ -29,4 +29,6 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FVector CurrentLocation;
+	void SetStartEndTransformAuto();
+	void SetStartEndTransformDirection(ETransformInteractionDirection InDirection);
 };
