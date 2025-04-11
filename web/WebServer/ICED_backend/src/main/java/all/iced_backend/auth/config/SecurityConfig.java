@@ -91,7 +91,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join","/download/installer").permitAll()
+                        .requestMatchers("/login", "/", "/join","/download/installer","/thumbnail/**","/api/files").permitAll()
                         //.requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/reissue").permitAll()
                         .requestMatchers("/api/upload").permitAll()

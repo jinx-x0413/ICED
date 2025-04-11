@@ -24,6 +24,20 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+
+        // Security Config에 설정된 permitAll 경로들
+        return path.equals("/login") ||
+                path.equals("/") ||
+                path.equals("/join") ||
+                path.equals("/download/installer") ||
+                path.startsWith("/thumbnail/") ||
+                path.equals("/api/files") ||
+                path.equals("/reissue");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
