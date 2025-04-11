@@ -64,19 +64,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ResetTransform() { SetActorTransform(InitialTransform); }
 
-	//// Hierarchy Data
-	UPROPERTY(BlueprintReadWrite)
-	TArray<FActorHierarchyData> ActorHierarchyData;
-
-	//다른 클래스에서 hierarchydata 필요할 때 사용
-	//const TArray<FActorHierarchyData>& GetHierarchyData() const { return HierarchyData; }
-
-
-	//
-	//void ResetHierarchyData();
-	//void GetHierarchyDataRecursive(int IndentLevel);
-	//void GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel);
-
 	//// Outline
 	void SetOutline(bool bIsActivated);
 	UFUNCTION()
