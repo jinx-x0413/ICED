@@ -2,88 +2,341 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Page</title>
+    <title>내 업로드 파일 관리</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .progress { width: 300px; height: 20px; border: 1px solid #ccc; margin-top: 10px; }
-        .progress-bar { width: 0; height: 100%; background-color: #4caf50; transition: width 0.2s; }
-        .error { color: red; font-size: 14px; margin-top: 5px; }
+        /* 간단한 스타일링 (요청에 따라 최소화) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+        }
+        .close {
+            float: right;
+            cursor: pointer;
+        }
+        .file-actions {
+            margin-top: 10px;
+        }
+        .file-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        /* 알림 메시지 스타일 */
+        .notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
-<h1>Upload File</h1>
-<form id="uploadForm">
-    <input type="file" id="fileInput" name="file" /><br><br>
+    <h1>내 업로드 파일 목록</h1>
     
-    <input type="text" id="descriptionInput" name="description" placeholder="입력해주세요" oninput="checkForm()"/>
-    <br><br>
+    <!-- 알림 메시지 -->
+    <div id="notification" class="notification"></div>
     
-    <button type="submit" id="uploadButton" disabled>Upload</button>
-</form>
+    <!-- 사용자 정보 표시 -->
+    <div id="user-info">
+        로딩 중...
+    </div>
+    
+    <!-- 파일 목록 표시 -->
+    <div id="file-list">
+        로딩 중...
+    </div>
 
-<div class="progress">
-    <div class="progress-bar" id="progressBar"></div>
-</div>
-<div id="status"></div>
+    <!-- 수정 모달 -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>파일 정보 수정</h2>
+            <form id="edit-form">
+                <input type="hidden" id="edit-file-id">
+                <div>
+                    <label for="edit-description">설명:</label>
+                    <textarea id="edit-description" rows="3" style="width: 100%;"></textarea>
+                </div>
+                <div>
+                    <label for="edit-file">모델 파일 교체 (선택사항):</label>
+                    <input type="file" id="edit-file">
+                </div>
+                <div>
+                    <label for="edit-thumbnail">썸네일 교체 (선택사항):</label>
+                    <input type="file" id="edit-thumbnail" accept="image/*">
+                </div>
+                <button type="submit" style="margin-top: 10px;">수정 완료</button>
+            </form>
+        </div>
+    </div>
 
-<script>
-    function checkForm() {
-        var descriptionInput = document.getElementById("descriptionInput").value.trim();
-        var uploadButton = document.getElementById("uploadButton");
-
-        if (descriptionInput === "") {
-            uploadButton.disabled = true;
-        } else {
-            uploadButton.disabled = false;
-        }
-    }
-
-    document.getElementById("uploadForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-
-        if (!confirm("업로드하시겠습니까?")) {
-            return; // 사용자가 "취소"를 누르면 업로드 중지
-        }
-
-        var fileInput = document.getElementById("fileInput");
-        var descriptionInput = document.getElementById("descriptionInput");
-
-        if (!fileInput.files || fileInput.files.length === 0) {
-            document.getElementById("status").innerText = "Please select a file.";
-            return;
-        }
-
-        var file = fileInput.files[0];
-        var description = descriptionInput.value.trim();
-
-        var formData = new FormData();
-        formData.append("file", file);
-        formData.append("uploader_id", "test_user");  // 고정된 업로더 ID
-        formData.append("description", description);  // 사용자가 입력한 설명
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:8080/api/upload", true);
-
-        // 진행률 표시
-        xhr.upload.onprogress = function(event) {
-            if (event.lengthComputable) {
-                var percent = (event.loaded / event.total) * 100;
-                document.getElementById("progressBar").style.width = percent + "%";
+    <script>
+        // 페이지 로드 시 즉시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInfoContainer = document.getElementById('user-info');
+            const fileList = document.getElementById('file-list');
+            
+            // 하드코딩된 토큰 사용 (테스트용)
+            const token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ0MzgyNjI0LCJleHAiOjE3NDQzOTM0MjR9.0UCgyoGIQ_mQFqG27z57J-7Rvzc6iK7gm3vR3PDIkqYdlrj";
+            
+            // 로컬스토리지에 저장 (실제 애플리케이션에서는 이미 저장되어 있을 것임)
+            localStorage.setItem('accessToken', token);
+            
+            // Bearer 접두사 제거
+            const jwtToken = token.startsWith('Bearer ') ? token.substring(7) : token;
+            
+            // JWT 토큰에서 사용자 ID 추출
+            const userId = extractUserIdFromToken(jwtToken);
+            
+            if (!userId) {
+                userInfoContainer.textContent = '토큰에서 사용자 ID를 추출할 수 없습니다.';
+                fileList.textContent = '파일 목록을 불러올 수 없습니다.';
+                return;
             }
-        };
+            
+            // 사용자 정보 표시
+            userInfoContainer.textContent = `사용자 ID: ${userId}`;
+            
+            // 사용자의 파일 목록 가져오기
+            fetchUserFiles(userId);
 
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                document.getElementById("status").innerText = "Upload successful: 업로드 성공";
-            } else {
-                document.getElementById("status").innerText = "Upload failed: HTTP 업로드 실패";
+            // 수정 폼 제출 이벤트 핸들러
+            document.getElementById('edit-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const fileId = document.getElementById('edit-file-id').value;
+                const description = document.getElementById('edit-description').value;
+                const file = document.getElementById('edit-file').files[0];
+                const thumbnail = document.getElementById('edit-thumbnail').files[0];
+                
+                updateFile(fileId, description, file, thumbnail);
+            });
+        });
+        
+        // 알림 메시지 표시 함수
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            
+            // 알림 유형에 따른 색상 설정
+            if (type === 'success') {
+                notification.style.backgroundColor = '#4CAF50'; // 녹색
+            } else if (type === 'error') {
+                notification.style.backgroundColor = '#f44336'; // 빨간색
+            } else if (type === 'warning') {
+                notification.style.backgroundColor = '#ff9800'; // 주황색
             }
-        };
+            
+            // 알림 표시
+            notification.style.display = 'block';
+            
+            // 3초 후 자동으로 사라짐
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // JWT 토큰에서 사용자 ID 추출
+        function extractUserIdFromToken(token) {
+            try {
+                // JWT 토큰의 payload 부분 디코딩
+                const parts = token.split('.');
+                if (parts.length !== 3) {
+                    console.error('Invalid token format');
+                    return null;
+                }
+                
+                // Base64 디코딩
+                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                console.log('Decoded JWT payload:', payload);
+                
+                // 이 JWT에서는 'userid' 필드에 사용자 ID가 있음
+                return payload.userid || payload.sub || payload.user_id || payload.id;
+                
+            } catch (error) {
+                console.error('JWT 디코딩 오류:', error);
+                return null;
+            }
+        }
+        
+        // 사용자 파일 목록 가져오기
+        function fetchUserFiles(userId) {
+            const fileList = document.getElementById('file-list');
+            fileList.textContent = '파일 목록을 불러오는 중...';
+            
+            fetch(`http://localhost:8080/api/files/user/${userId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('API 응답 데이터:', data);
+                    
+                    if (!data || data.length === 0) {
+                        fileList.textContent = '업로드한 파일이 없습니다.';
+                        return;
+                    }
+                    
+                    // 파일 목록 표시
+                    fileList.innerHTML = '';
+                    data.forEach(file => {
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'file-item';
+                        fileItem.dataset.fileId = file.id;
+                        
+                        // 썸네일 이미지
+                        const thumbnail = document.createElement('img');
+                        if (file.thumbnailUri) {
+                            thumbnail.src = `http://localhost:8080${file.thumbnailUri}`;
+                            thumbnail.alt = file.fileName || 'Image';
+                            thumbnail.width = 100; // 간단한 크기 조정
+                        }
+                        
+                        // 파일 정보
+                        const info = document.createElement('div');
+                        info.innerHTML = `
+                            <p><strong>파일명:</strong> ${file.fileName || 'Unknown'}</p>
+                            <p><strong>설명:</strong> <span class="file-description">${file.description || 'No description'}</span></p>
+                            <p><strong>크기:</strong> ${file.size ? `${file.size.toFixed(2)} MB` : 'Unknown'}</p>
+                        `;
+                        
+                        // 수정/삭제 버튼
+                        const actions = document.createElement('div');
+                        actions.className = 'file-actions';
+                        actions.innerHTML = `
+                            <button onclick="openEditModal(${file.id}, '${file.description || ''}')">수정</button>
+                            <button onclick="confirmDelete(${file.id})">삭제</button>
+                        `;
+                        
+                        // 요소 추가
+                        fileItem.appendChild(thumbnail);
+                        fileItem.appendChild(info);
+                        fileItem.appendChild(actions);
+                        fileItem.appendChild(document.createElement('hr'));
+                        fileList.appendChild(fileItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching files:', error);
+                    fileList.textContent = `파일 목록을 불러오는데 실패했습니다: ${error.message}`;
+                });
+        }
 
-        xhr.send(formData);
-        document.getElementById("status").innerText = "Uploading...";
-    });
-</script>
+        // 수정 모달 열기
+        function openEditModal(fileId, description) {
+            document.getElementById('edit-file-id').value = fileId;
+            document.getElementById('edit-description').value = description;
+            document.getElementById('edit-modal').style.display = 'block';
+        }
 
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        // 파일 수정
+        function updateFile(fileId, description, file, thumbnail) {
+            const formData = new FormData();
+            if (description) formData.append('description', description);
+            if (file) formData.append('file', file);
+            if (thumbnail) formData.append('thumbnail', thumbnail);
+
+            fetch(`http://localhost:8080/api/files/${fileId}/update`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('파일 업데이트 성공:', data);
+                closeModal();
+                
+                // 수정 완료 알림 표시
+                showNotification('파일 수정이 완료되었습니다.', 'success');
+                
+                // 수정된 내용 화면에 반영
+                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                if (fileItem) {
+                    const descElement = fileItem.querySelector('.file-description');
+                    if (descElement) {
+                        descElement.textContent = description || 'No description';
+                    }
+                    
+                    // 파일이나 썸네일이 변경된 경우 페이지 새로고침
+                    if (file || thumbnail) {
+                        const userId = extractUserIdFromToken(localStorage.getItem('accessToken'));
+                        fetchUserFiles(userId);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('파일 업데이트 실패:', error);
+                showNotification('파일 업데이트에 실패했습니다: ' + error.message, 'error');
+            });
+        }
+
+        // 삭제 확인
+        function confirmDelete(fileId) {
+            if (confirm('정말로 이 파일을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                deleteFile(fileId);
+            }
+        }
+
+        // 파일 삭제
+        function deleteFile(fileId) {
+            fetch(`http://localhost:8080/api/files/${fileId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류: ' + response.status);
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('파일 삭제 성공:', data);
+                
+                // 삭제 완료 알림 표시
+                showNotification('파일이 성공적으로 삭제되었습니다.', 'success');
+                
+                // 삭제된 파일 항목 제거
+                const fileItem = document.querySelector(`.file-item[data-file-id="${fileId}"]`);
+                if (fileItem) {
+                    fileItem.remove();
+                }
+                
+                // 목록이 비었는지 확인
+                if (document.querySelectorAll('.file-item').length === 0) {
+                    document.getElementById('file-list').textContent = '업로드한 파일이 없습니다.';
+                }
+            })
+            .catch(error => {
+                console.error('파일 삭제 실패:', error);
+                showNotification('파일 삭제에 실패했습니다: ' + error.message, 'error');
+            });
+        }
+    </script>
 </body>
 </html>

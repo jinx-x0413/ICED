@@ -1,0 +1,937 @@
+/* components/css/mylist.css */
+.mylist-main-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 80px);
+}
+
+/* 검색 영역 */
+.mylist-controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.mylist-search-box {
+  position: relative;
+}
+
+.mylist-search-box input {
+  width: 300px;
+  padding: 12px 15px 12px 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: white;
+  transition: all 0.3s;
+}
+
+.mylist-search-box input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.15);
+}
+
+.mylist-search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #555;
+}
+
+/* 상태 바 */
+.mylist-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+/* 파일 그리드 */
+.mylist-file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+  width: 100%;
+  animation: mylist-fadeIn 0.3s ease;
+}
+
+.mylist-file-item {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #eaeaea;
+  height: 350px; /* 아이템 높이 고정 - 계산에 사용되는 값과 일치 */
+}
+
+.mylist-file-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.mylist-file-thumbnail {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.mylist-file-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.mylist-file-item:hover .mylist-file-thumbnail img {
+  transform: scale(1.05);
+}
+
+.mylist-file-info {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.mylist-file-description {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 15px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mylist-file-details {
+  display: flex;
+  justify-content: space-between;
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.mylist-file-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.mylist-action-button {
+  flex: 1;
+  padding: 8px 0;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mylist-action-button.mylist-preview {
+  background-color: #4a6cf7;
+  color: white;
+}
+
+.mylist-action-button.mylist-preview:hover {
+  background-color: #3a5cd8;
+}
+
+.mylist-action-button.mylist-edit {
+  background-color: #28a745;
+  color: white;
+}
+
+.mylist-action-button.mylist-edit:hover {
+  background-color: #218838;
+}
+
+.mylist-action-button.mylist-delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.mylist-action-button.mylist-delete:hover {
+  background-color: #c82333;
+}
+
+/* 로딩 컨테이너 */
+.mylist-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.mylist-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4a6cf7;
+  border-radius: 50%;
+  animation: mylist-spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes mylist-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 빈 상태 */
+.mylist-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.mylist-empty-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #c5c5c5;
+}
+
+.mylist-empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.mylist-empty-state p {
+  color: #777;
+  max-width: 400px;
+}
+
+/* 오류 메시지 스타일 */
+.mylist-error-message {
+  background-color: #fff3f3;
+  border-left: 4px solid #f44336;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  color: #d32f2f;
+  font-size: 14px;
+}
+
+.mylist-error-icon {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+/* 페이지네이션 */
+.mylist-pagination {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+.mylist-pagination-button {
+  margin: 0 5px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.mylist-pagination-button:hover:not(:disabled) {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.mylist-pagination-button.active {
+  background-color: #4a6cf7;
+  color: white;
+  border-color: #4a6cf7;
+}
+
+.mylist-pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mylist-pagination-button.mylist-prev,
+.mylist-pagination-button.mylist-next {
+  font-weight: bold;
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+  .mylist-controls-container {
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  
+  .mylist-search-box {
+      width: 100%;
+      margin-bottom: 15px;
+  }
+  
+  .mylist-search-box input {
+      width: 100%;
+  }
+}
+
+/* 이미지 로딩 관련 스타일 */
+.mylist-image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mylist-image-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.mylist-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  animation: mylist-spin 1s linear infinite;
+}
+
+.mylist-image-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffeeee;
+  color: #e74c3c;
+  text-align: center;
+  padding: 10px;
+}
+
+.mylist-thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes mylist-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mylist-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.mylist-skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(90deg, 
+      rgba(255, 255, 255, 0) 0%, 
+      rgba(255, 255, 255, 0.2) 20%, 
+      rgba(255, 255, 255, 0.5) 60%, 
+      rgba(255, 255, 255, 0) 100%);
+  animation: mylist-shimmer 2s infinite;
+  transform: translateX(-100%);
+}
+
+@keyframes mylist-shimmer {
+  100% {
+      transform: translateX(100%);
+  }
+}
+
+/* skeleton UI 스타일 */
+.mylist-skeleton-image {
+  width: 100%;
+  height: 180px;
+  background-color: #eaeaea;
+  border-radius: 5px 5px 0 0;
+}
+
+.mylist-skeleton-text {
+  height: 16px;
+  margin: 10px 0;
+  background-color: #eaeaea;
+  border-radius: 4px;
+}
+
+.mylist-skeleton-text-short {
+  width: 60%;
+}
+
+.mylist-skeleton-button {
+  flex: 1;
+  height: 32px;
+  background-color: #eaeaea;
+  border-radius: 4px;
+  margin: 5px;
+}
+
+/* 모달 스타일 */
+.mylist-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.mylist-modal-content {
+  background-color: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  animation: mylist-modalFadeIn 0.3s ease;
+}
+
+.mylist-detail-modal {
+  max-width: 800px;
+}
+
+.mylist-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.mylist-modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.mylist-close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.2s;
+}
+
+.mylist-close-button:hover {
+  color: #000;
+}
+
+.mylist-form-group {
+  margin-bottom: 20px;
+}
+
+.mylist-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.mylist-form-row .mylist-form-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.mylist-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.mylist-form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.mylist-form-group input[type="file"] {
+  display: block;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.mylist-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mylist-action-button.mylist-cancel {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.mylist-action-button.mylist-submit {
+  background-color: #4a6cf7;
+  color: white;
+}
+
+.mylist-action-button.mylist-cancel:hover {
+  background-color: #e0e0e0;
+}
+
+.mylist-action-button.mylist-submit:hover {
+  background-color: #3959c7;
+}
+
+.mylist-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mylist-thumbnail-preview {
+  margin-top: 10px;
+  max-width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.mylist-thumbnail-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.mylist-file-info-preview {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+@keyframes mylist-modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 상세보기 스타일 */
+.mylist-detail-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .mylist-detail-content {
+      flex-direction: row;
+      gap: 30px;
+  }
+}
+
+.mylist-detail-image {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .mylist-detail-image {
+      margin-bottom: 0;
+  }
+}
+
+.mylist-detail-image img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mylist-no-thumbnail-large {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  color: #6c757d;
+  font-size: 1.2rem;
+  border-radius: 8px;
+}
+
+.mylist-detail-info {
+  flex: 1;
+}
+
+.mylist-detail-info h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.mylist-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.mylist-detail-table th, 
+.mylist-detail-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.mylist-detail-table th {
+  width: 30%;
+  color: #555;
+  font-weight: 600;
+  vertical-align: top;
+}
+
+.mylist-action-button.mylist-large {
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+.mylist-detail-actions {
+  margin-top: 20px;
+}
+
+/* 알림 메시지 */
+/* 알림 메시지 기본 스타일 */
+.mylist-notification {
+  position: fixed;
+  padding: 12px 15px;
+  min-width: 300px;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+}
+
+/* 우측 상단 위치 (기본값) */
+.mylist-notification.top-right {
+  top: 20px;
+  right: 20px;
+  animation: mylist-slideIn 0.3s ease, mylist-fadeOut 0.3s ease 2.7s;
+}
+
+/* 중앙 알림 스타일 */
+.mylist-notification.center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: mylist-fadeIn 0.3s ease, mylist-fadeOut 0.3s ease 2.7s;
+  text-align: center;
+  justify-content: center;
+}
+
+@keyframes mylist-fadeIn {
+  from { opacity: 0; transform: translate(-50%, -60%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.mylist-notification.success {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+  color: #155724;
+}
+
+.mylist-notification.error {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+  color: #721c24;
+}
+
+.mylist-notification.warning {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  color: #856404;
+}
+
+.mylist-notification .mylist-icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+.mylist-notification .mylist-message {
+  flex: 1;
+}
+
+@keyframes mylist-slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes mylist-fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* mylist.css에 아래 스타일 추가 */
+
+/* 수정 모달 폼 스타일 */
+.mylist-form {
+  padding: 20px;
+}
+
+.mylist-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.mylist-file-input {
+  display: block;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.mylist-form-group {
+  margin-bottom: 20px;
+}
+
+.mylist-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: white;
+}
+
+.mylist-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.mylist-form-row .mylist-form-group {
+  flex: 1;
+  min-width: 250px;
+}
+
+.mylist-file-info-preview {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+.mylist-thumbnail-preview {
+  margin-top: 10px;
+  max-width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+}
+
+.mylist-thumbnail-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.mylist-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.mylist-action-button.mylist-cancel {
+  background-color: #f1f1f1;
+  color: #333;
+  padding: 10px 16px;
+}
+
+.mylist-action-button.mylist-submit {
+  background-color: #4a6cf7;
+  color: white;
+  padding: 10px 16px;
+}
+
+.mylist-action-button.mylist-cancel:hover {
+  background-color: #e0e0e0;
+}
+
+.mylist-action-button.mylist-submit:hover {
+  background-color: #3959c7;
+}
+
+/* 파일 입력 필드 스타일 개선 */
+.mylist-file-input-hidden {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.mylist-file-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.mylist-custom-file-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #4a6cf7;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+}
+
+.mylist-custom-file-button:hover {
+    background-color: #3959c7;
+    transform: translateY(-1px);
+}
+
+.mylist-custom-file-button:active {
+    transform: translateY(0);
+}
+
+.mylist-file-name {
+    color: #666;
+    font-size: 14px;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 더 예쁜 파일 정보 미리보기 */
+.mylist-file-info-preview {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background-color: #f0f4ff;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #4a5568;
+    border-left: 3px solid #4a6cf7;
+}
+
+/* 더 예쁜 썸네일 미리보기 */
+.mylist-thumbnail-preview {
+    margin-top: 12px;
+    max-width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eaeaea;
+}
+
+.mylist-thumbnail-preview img {
+    width: 100%;
+    height: auto;
+    max-height: 180px;
+    object-fit: contain;
+    display: block;
+}
+
+/* 수정 폼 버튼 스타일 개선 */
+.mylist-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.mylist-action-button.mylist-cancel,
+.mylist-action-button.mylist-submit {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.mylist-action-button.mylist-cancel {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+.mylist-action-button.mylist-submit {
+    background-color: #4a6cf7;
+    color: white;
+    border: 1px solid transparent;
+}
+
+.mylist-action-button.mylist-cancel:hover {
+    background-color: #e5e7eb;
+}
+
+.mylist-action-button.mylist-submit:hover {
+    background-color: #3959c7;
+}
+
+.mylist-action-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+

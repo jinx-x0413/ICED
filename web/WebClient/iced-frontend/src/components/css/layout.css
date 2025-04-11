@@ -206,3 +206,67 @@
     font-weight: bold;
   }
   
+/* 검색 및 정렬 컨트롤 개선 */
+.mylist-controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.mylist-search-box {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+}
+
+.mylist-sort-control {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.mylist-sort-control label {
+    margin-right: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.mylist-sort-control select {
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    background-color: white;
+    color: #4b5563;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.mylist-sort-control select:focus {
+    outline: none;
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.1);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+    .mylist-controls-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .mylist-search-box {
+        max-width: none;
+        width: 100%;
+    }
+    
+    .mylist-sort-control {
+        width: fit-content;
+    }
+}
