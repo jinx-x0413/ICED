@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UPopupInteraction : public UInteractionBase
+class ASSETCONTENT_API UPopupInteraction : public UInteractionBase
 {
 	GENERATED_BODY()
 

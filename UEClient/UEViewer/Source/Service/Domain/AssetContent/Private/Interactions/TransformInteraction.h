@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UTransformInteraction : public UInteractionBase
+class ASSETCONTENT_API UTransformInteraction : public UInteractionBase
 {
 	GENERATED_BODY()
 	

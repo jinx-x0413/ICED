@@ -7,6 +7,7 @@
 
 #include "../../Public/Interactions/InteractionBase.h"
 #include "TransformInteraction.h"
+#include "CameraInteraction.h"
 #include "HiddenInteraction.h"
 #include "HighlightInteraction.h"
 #include "PopupInteraction.h"

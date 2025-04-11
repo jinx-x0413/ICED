@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UCameraInteraction : public UInteractionBase
+class ASSETCONTENT_API UCameraInteraction : public UInteractionBase
 {
 	GENERATED_BODY()
 

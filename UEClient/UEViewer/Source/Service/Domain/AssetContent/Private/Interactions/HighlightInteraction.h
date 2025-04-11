@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class UHighlightInteraction : public UInteractionBase
+class ASSETCONTENT_API UHighlightInteraction : public UInteractionBase
 {
 	GENERATED_BODY()
 
