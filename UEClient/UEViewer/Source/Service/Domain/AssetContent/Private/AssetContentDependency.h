@@ -9,6 +9,9 @@
 #include "Interactions/InteractionDependency.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 
+#include "Template/TemplateBuildDependency.h"
+#include "Table/TableManager.h"
+
 #include "AssetContentDependency.generated.h"
 
 /**

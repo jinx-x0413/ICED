@@ -39,6 +39,17 @@ enum class ETransformInteractionType : uint8
 	SCALE
 };
 
+UENUM(BlueprintType)
+enum class ETransformInteractionDirection : uint8
+{
+	AUTO				UMETA(DisplayName = "Auto"),
+	UP					UMETA(DisplayName = "Up"),
+	DOWN				UMETA(DisplayName = "Down"),
+	LEFT				UMETA(DisplayName = "Left"),
+	RIGHT				UMETA(DisplayName = "Right")
+};
+
+
 USTRUCT(BlueprintType)
 struct FInteractionData
 {
@@ -74,6 +85,8 @@ struct FInteractionData
 	FTransform StartTransform;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FTransform EndTransform;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	ETransformInteractionDirection TransformDirection;
 
 	// PopupInteraction
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -95,6 +108,7 @@ struct FInteractionData
 		, TargetComponent(nullptr)
 		, StartTransform()
 		, EndTransform()
+		, TransformDirection(ETransformInteractionDirection::AUTO)
 
 		, TargetPopupWidget(nullptr)
 	{

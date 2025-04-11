@@ -10,6 +10,8 @@ public class AssetContent : ModuleRules
 			"Core", "CoreUObject", "Engine", "UMG"
 			, "Timebar"
 			, "UEViewer"
+			, "AssetActor"
+			, "UIComponent"
 		});
  
 		PublicIncludePaths.AddRange(new string[] {"AssetContent/Public"});

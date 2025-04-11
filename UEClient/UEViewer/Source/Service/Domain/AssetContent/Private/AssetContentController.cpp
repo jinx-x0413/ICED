@@ -37,3 +37,15 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
     return nullptr;
 }
 
+void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData)
+{
+    if (!IsValid(TemplateBuilder))
+    {
+        TemplateBuilder = NewObject<UTemplateBuilder>();
+        TemplateBuilder->AddToRoot();
+    }
+    TemplateBuilder->SetTargetActor(InActor);
+    TemplateBuilder->SetController(this);
+    TemplateBuilder->Build(InTemplateType, InTableData);
+}
+
