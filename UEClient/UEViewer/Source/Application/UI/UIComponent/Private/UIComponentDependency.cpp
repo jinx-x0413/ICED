@@ -3,3 +3,8 @@
 
 #include "UIComponentDependency.h"
 
+
+namespace UIComponentVars
+{
+	FString TableAssetPath = TEXT("Widgets/AssetContent/Template/DataTable");
+}
