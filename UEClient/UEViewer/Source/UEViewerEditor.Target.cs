@@ -8,6 +8,7 @@ public class UEViewerEditorTarget : TargetRules
 	public UEViewerEditorTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
+		ExtraModuleNames.AddRange( new string[] { "Log" } );
         ExtraModuleNames.AddRange(new string[] { "Timebar" });
         ExtraModuleNames.AddRange( new string[] { "UIComponent" } );
 		ExtraModuleNames.AddRange( new string[] { "Command" } );

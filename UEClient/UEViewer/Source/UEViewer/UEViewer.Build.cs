@@ -21,6 +21,7 @@ public class UEViewer : ModuleRules
 			, "Timebar"
 			, "HTTP_Connection"
 			, "Profiling"
+			, "Log"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
