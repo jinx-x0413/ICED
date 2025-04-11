@@ -64,6 +64,15 @@
 			"Name": "HTTP_Connection",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Log",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [
