@@ -29,6 +29,25 @@ UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInt
 	return ReturnInteraction;
 }
 
+void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
+{
+	// Get Table Data
+	FTableData CurrentTableData = UTableManager::GetTableManager()->TableData;
+
+	// Build Content
+	UInteractionBase* ReturnInteraction = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetContent")))
+	{
+		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
+		if (Module)
+		{
+			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
+			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			Module->Controller->BuildTemplate(ETemplateType::ASSEMBLY, InActor, CurrentTableData);
+		}
+	}
+}
+
 
 
 // Timebar

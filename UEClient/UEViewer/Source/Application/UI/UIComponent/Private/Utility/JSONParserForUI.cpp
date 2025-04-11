@@ -123,59 +123,9 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 	if (JsonObject->HasField(TEXT("Content")))
 	{
 		TArray<TSharedPtr<FJsonValue>> ContentData = JsonObject->GetArrayField(TEXT("Content"));
-
-		if (InTableName == TEXT("부품설명"))
+		if (InTableName == TEXT("분해"))
 		{
 			TSharedPtr<FJsonObject> TargetContentData = ContentData[0]->AsObject();
-
-			if (TargetContentData->HasField(TEXT("Rows")))
-			{
-				// 2. parse Row
-				TArray<TSharedPtr<FJsonValue>> RowData = TargetContentData->GetArrayField(TEXT("Rows"));
-				TSharedPtr<FJsonObject> SampleRowData = RowData[0]->AsObject();
-				for (int i = 0; i < InActorHierarchyData.Num(); i++)
-				{
-					FTableRowData TempRowData;
-					if (!InActorHierarchyData[i].TargetComponent.IsValid())
-					{
-						continue;
-					}
-					TempRowData.RowIndex = i;
-					TempRowData.RowName = InActorHierarchyData[i].NodeName;
-
-					// 3. parse Field
-					if (SampleRowData->HasField(TEXT("Fields")))
-					{
-						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("Fields"));
-
-						for (int j = 0; j < FieldData.Num(); j++)
-						{
-							FTableFieldData TempFieldData;
-							TSharedPtr<FJsonObject> EachFieldData = FieldData[j]->AsObject();
-							TempFieldData.FieldIndex = j;
-
-							// field class
-							FString TempClassString;
-							FString TempFieldName;
-							EachFieldData->TryGetStringField(TEXT("FieldClass"), TempClassString);
-							TempFieldData.FieldClass = ConvertStringToWBPClass(TempClassString);
-							EachFieldData->TryGetStringField(TEXT("FieldName"), TempFieldData.FieldName);
-							EachFieldData->TryGetStringField(TEXT("FieldValue"), TempFieldData.FieldValue);
-
-
-							TempRowData.Fields.Add(TempFieldData);
-						}
-					}
-
-					TempTableData.Rows.Add(TempRowData);
-
-				}
-			}
-
-		}
-		else if (InTableName == TEXT("분해/조립"))
-		{
-			TSharedPtr<FJsonObject> TargetContentData = ContentData[1]->AsObject();
 
 			if (!TargetContentData.IsValid())
 			{

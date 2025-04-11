@@ -10,6 +10,7 @@
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 #include "Service/Domain/AssetContent/Public/AssetContent.h"
+#include "Application/UI/UIComponent/Public/Table/TableManager.h"
 
 #include "EntryPoint.generated.h"
 
@@ -31,6 +32,10 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 	static UInteractionBase* CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+
+	UFUNCTION(BlueprintCallable)
+	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
+
 
 	// Timebar
 public:

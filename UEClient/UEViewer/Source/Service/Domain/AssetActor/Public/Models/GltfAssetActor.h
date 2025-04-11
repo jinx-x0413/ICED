@@ -40,6 +40,7 @@ public:
 
 	// Asset
 public:
+	UFUNCTION(BlueprintCallable)
 	void Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTransform InTransform, const FString& InFilePath, FString InName);
 	void SetInitialBoundBoxExtent();
 
