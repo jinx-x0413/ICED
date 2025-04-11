@@ -47,7 +47,7 @@ void UEntryPoint::SendUserDataHttpRequest()
 }
 
 // asset actor
-void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)
+AGltfAssetActor* UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetActor")))
 	{
@@ -55,9 +55,11 @@ void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorCl
 
 		if (Module)
 		{
-			Module->Controller->CreateGltfAssetActor(AssetActorClass, InTransform, InAsset, FilePath, InFileName);
+			return Module->Controller->CreateGltfAssetActor(AssetActorClass, InTransform, InAsset, FilePath, InFileName);
 		}
 	}
+
+	return nullptr;
 }
 
 UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)

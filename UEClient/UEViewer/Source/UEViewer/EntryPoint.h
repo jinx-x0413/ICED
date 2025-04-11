@@ -47,7 +47,7 @@ public:
 	// asset actor
 public:
 	UFUNCTION(BlueprintCallable)
-	static void CreateGltfAssetActor(
+	static AGltfAssetActor* CreateGltfAssetActor(
 		TSubclassOf<AGltfAssetActor> AssetActorClass
 		, FTransform InTransform
 		, class UglTFRuntimeAsset* InAsset
