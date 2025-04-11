@@ -13,19 +13,32 @@
 /**
  * 
  */
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FString&, Gender);
-
-
 USTRUCT(BlueprintType)
 struct FOpenApiTest
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString URL;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Gender;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString UserName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString ObjectName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString FilePath;
+
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FOpenApiTest&, ApiTest);
+
+
 
 
 UCLASS()
@@ -51,6 +64,6 @@ private:
 
 	// login
 private:
-	FString GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
-
+	FOpenApiTest GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
+	FOpenApiTest OpenApi;
 };

@@ -17,7 +17,7 @@ void UHttpRequest::SendUserDataHttpRequest()
 	UE_LOG(LogTemp, Warning, TEXT("SendUserDataHttpRequest is run"));
 	
 	// get login URL from JSON
-	FString URL = GetURLFromConfig();
+	FString URL = GetURLFromConfig().URL;
 	if (URL.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("URL is missing in the JSON file"));
@@ -56,7 +56,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	//Json 데이터를 저장하기 위한 배열
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
-
+	
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("JSON  Parse Successed: %s"), *ContentString);
@@ -65,14 +65,44 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 		if (ResultsArray.Num() > 0)
 		{
 			TSharedPtr<FJsonObject> UserObject = ResultsArray[0]->AsObject();
-			FOpenApiTest OpenApi;
+			
 
 			OpenApi.Gender = UserObject->GetStringField(TEXT("gender"));
 
-			UserDataDelivery.Broadcast(OpenApi.Gender);
+			
 
 			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
 		}
+
+		const TArray<TSharedPtr<FJsonValue>>* Users;
+		if (JsonObject->TryGetArrayField("User", Users))
+		{
+			
+			for (auto& UserValue : *Users)
+			{
+				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
+				OpenApi.UserName = UserObject->GetStringField("UserName");
+				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
+			}
+		}
+
+		// Objects 배열 파싱
+		const TArray<TSharedPtr<FJsonValue>>* Objects;
+		if (JsonObject->TryGetArrayField("Objects", Objects))
+		{
+			for (auto& ObjectValue : *Objects)
+			{
+				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
+				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
+				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
+
+				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
+				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
+				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);
+			}
+		}
+
+		UserDataDelivery.Broadcast(OpenApi);
 	}
 	else
 	{
@@ -84,30 +114,59 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 }
 
-FString UHttpRequest::GetURLFromConfig()
+FOpenApiTest UHttpRequest::GetURLFromConfig()
 {
-	FString FilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
+	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
 	FString JsonRaw;
 
-	if (!FFileHelper::LoadFileToString(JsonRaw, *FilePath))
+	if (!FFileHelper::LoadFileToString(JsonRaw, *ProjectFilePath))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *FilePath);
-		return TEXT("");
+		UE_LOG(LogTemp, Error, TEXT("Failed to load JSON file: %s"), *ProjectFilePath);
+		return OpenApi;
 	}
 
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(JsonRaw);
+	
 
 	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
-		FString URL = JsonObject->GetStringField(TEXT("URL"));
-		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *URL);
-		return URL;
+		OpenApi.URL = JsonObject->GetStringField(TEXT("URL"));
+		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *OpenApi.URL);
+
+		const TArray<TSharedPtr<FJsonValue>>* Users;
+		if (JsonObject->TryGetArrayField("User", Users))
+		{
+			for (auto& UserValue : *Users)
+			{
+				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
+				OpenApi.UserName = UserObject->GetStringField("UserName");
+				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
+			}
+		}
+
+		// Objects 배열 파싱
+		const TArray<TSharedPtr<FJsonValue>>* Objects;
+		if (JsonObject->TryGetArrayField("Objects", Objects))
+		{
+			for (auto& ObjectValue : *Objects)
+			{
+				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
+				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
+				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
+
+				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
+				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
+				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);
+			}
+		}
+
+		return OpenApi;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON file."));
-		return TEXT("");
+		return OpenApi;
 	}
 
 }
