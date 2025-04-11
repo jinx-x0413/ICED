@@ -54,6 +54,16 @@
 				"CoreUObject",
 				"UMG"
 			]
+		},
+		{
+			"Name": "Profiling",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "HTTP_Connection",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

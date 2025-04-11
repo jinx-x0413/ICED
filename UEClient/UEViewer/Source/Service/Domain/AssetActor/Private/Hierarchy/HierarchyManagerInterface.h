@@ -55,6 +55,7 @@ public:
 		// 루트 노드 추가
 		FActorHierarchyData NewData;
 		NewData.NodeName = OwnerActor->GetName();
+		NewData.DisplayName = NewData.NodeName;
 		NewData.Depth = 0;
 		NewData.TargetComponent = OwnerActor->GetRootComponent();
 		HierarchyData.Add(NewData);

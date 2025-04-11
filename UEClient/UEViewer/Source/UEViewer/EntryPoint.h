@@ -6,20 +6,21 @@
 #include "UObject/NoExportTypes.h"
 
 #include "EasyFileDialog/Public/EFDFunctionLibrary.h"
-<<<<<<< HEAD
+
 //#include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 //#include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 
-#include "HTTP_Connection.h"
+#include "Infra/Network/HTTP_Connection/Public/HTTP_Connection.h"
+
 #include "Service/Domain/AssetActor/public/AssetActor.h"
 #include "Application/Command/public/Command.h"
-=======
+
 #include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 #include "Service/Domain/AssetContent/Public/AssetContent.h"
 #include "Application/UI/UIComponent/Public/Table/TableManager.h"
->>>>>>> UE_AssetContent
+
 
 #include "EntryPoint.generated.h"
 
@@ -61,12 +62,10 @@ public:
 	static void Undo();
 
 	UFUNCTION()
-<<<<<<< HEAD
 	static void StartSetAssetActorTransform(AActor* InActor, FTransform& InTransform);
 
 	UFUNCTION()
 	static void EndSetAssetActorTransform(AActor* InActor, FTransform& InTransform);
-=======
 	static void LoadActor();
 
 	// AssetContent
@@ -104,5 +103,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetTimebarCurrentTime(float InCurrentTime);
->>>>>>> UE_AssetContent
 };

@@ -19,6 +19,8 @@ public class UEViewer : ModuleRules
 			, "RuntimeTransformer"
 			, "UIComponent"
 			, "Timebar"
+			, "HTTP_Connection"
+			, "Profiling"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

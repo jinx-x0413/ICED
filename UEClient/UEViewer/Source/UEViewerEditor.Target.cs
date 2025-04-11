@@ -13,7 +13,9 @@ public class UEViewerEditorTarget : TargetRules
 		ExtraModuleNames.AddRange( new string[] { "Command" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetContent" } );
 		ExtraModuleNames.AddRange( new string[] { "AssetActor" } );
-		DefaultBuildSettings = BuildSettingsVersion.V4;
+        ExtraModuleNames.AddRange(new string[] { "HTTP_Connection" });
+        ExtraModuleNames.AddRange(new string[] { "Profiling" });
+        DefaultBuildSettings = BuildSettingsVersion.V4;
 
 		ExtraModuleNames.AddRange( new string[] { "UEViewer" } );
 	}
