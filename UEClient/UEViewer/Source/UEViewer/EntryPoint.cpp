@@ -26,6 +26,7 @@ UHttpRequest* UEntryPoint::GetHttpRequest()
 	return nullptr;
 }
 
+<<<<<<< HEAD
 void UEntryPoint::SendUserDataHttpRequest()
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
@@ -55,12 +56,51 @@ void UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorCl
 		if (Module)
 		{
 			Module->Controller->CreateGltfAssetActor(AssetActorClass, InTransform, InAsset, FilePath, InFileName);
+=======
+UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+{
+	// AssetContent :: Interaction
+	UInteractionBase* ReturnInteraction = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetContent")))
+	{
+		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
+		if (Module)
+		{
+			ReturnInteraction = Module->Controller->CreateInteraction(InInteractionData, InTrack, InStartTime, InEndTime);
+		}
+	}
+
+
+	// Timebar
+	UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, ReturnInteraction);
+	//UTimebarPlayer::GetTimebarPlayer()->OnTrackSelected.Broadcast(InTrack);
+
+	return ReturnInteraction;
+}
+
+void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
+{
+	// Get Table Data
+	FTableData CurrentTableData = UTableManager::GetTableManager()->TableData;
+
+	// Build Content
+	UInteractionBase* ReturnInteraction = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetContent")))
+	{
+		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
+		if (Module)
+		{
+			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
+			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			Module->Controller->BuildTemplate(ETemplateType::ASSEMBLY, InActor, CurrentTableData);
+>>>>>>> UE_AssetContent
 		}
 	}
 }
 
 
 
+<<<<<<< HEAD
 
 // command
 void UEntryPoint::Undo()
@@ -72,10 +112,23 @@ void UEntryPoint::Undo()
 		if (Module)
 		{
 			Module->Stack->Undo();
+=======
+// Timebar
+
+void UEntryPoint::CreateTrackToTimebar(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->CreateTrack(InHeaderWidget, InContentWidget, InName);
+>>>>>>> UE_AssetContent
 		}
 	}
 }
 
+<<<<<<< HEAD
 void UEntryPoint::StartSetAssetActorTransform(AActor* InActor, FTransform& InTransform)
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("Command")))
@@ -90,10 +143,21 @@ void UEntryPoint::StartSetAssetActorTransform(AActor* InActor, FTransform& InTra
 			UCommandBase* NewCommand = Module->Stack->CreateCommand(ECommandType::ASSETACTOR_TRANSFORM);
 			NewCommand->Initialize(NewCommandData);
 			// subscribe with observer
+=======
+void UEntryPoint::DeleteTrackFromTimebar(UUserWidget* InTrackWidget)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->DeleteTrack(InTrackWidget);
+>>>>>>> UE_AssetContent
 		}
 	}
 }
 
+<<<<<<< HEAD
 void UEntryPoint::EndSetAssetActorTransform(AActor* InActor, FTransform& InTransform)
 {
 	if (FModuleManager::Get().IsModuleLoaded(TEXT("Command")))
@@ -109,7 +173,79 @@ void UEntryPoint::EndSetAssetActorTransform(AActor* InActor, FTransform& InTrans
 			NewCommandData.NewTransform = LastCommand->TargetData.TargetActor->GetActorTransform();
 			LastCommand->Initialize(NewCommandData);
 			// subscribe with observer
+=======
+void UEntryPoint::CreateClipToTimebar(UUserWidget* InTrackWidget, float InStartTime, float InEndTime, FString InName)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->CreateClip(InTrackWidget, InStartTime, InEndTime, InName);
+>>>>>>> UE_AssetContent
 		}
 	}
 }
 
+<<<<<<< HEAD
+=======
+void UEntryPoint::DeleteClipFromTimebar(UUserWidget* InClipWidget)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->DeleteClip(InClipWidget);
+		}
+	}
+}
+
+void UEntryPoint::StartTimebar()
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->Start();
+		}
+	}
+}
+
+void UEntryPoint::PauseTimebar()
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->Pause();
+		}
+	}
+}
+
+void UEntryPoint::StopTimebar()
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->Stop();
+		}
+	}
+}
+
+void UEntryPoint::SetTimebarCurrentTime(float InCurrentTime)
+{
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->SetCurrentTime(InCurrentTime);
+		}
+	}
+}
+>>>>>>> UE_AssetContent

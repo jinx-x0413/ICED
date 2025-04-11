@@ -1,0 +1,52 @@
+﻿{
+  "Content": [
+    {
+      "TableName": "분해",
+      "Rows": [
+        {
+          "RowIndex": "0",
+          "RowName": "RowName",
+          "Fields": [
+            {
+              "FieldIndex": "0",
+              "FieldClass": "WBP_TableFieldCheckbox",
+              "FieldName": "카메라 이동",
+              "FieldValue": "true",
+              "InteractionClassName": "UCameraInteraction"
+            },
+            {
+              "FieldIndex": "1",
+              "FieldClass": "WBP_TableFieldCheckbox",
+              "FieldName": "하이라이트 효과",
+              "FieldValue": "true",
+              "InteractionClassName": "UHighlightInteraction"
+            },
+            {
+              "FieldIndex": "2",
+              "FieldClass": "WBP_TableFieldCombobox",
+              "FieldName": "이동",
+              "FieldValue": "Auto",
+              "InteractionClassName": "UTransformInteraction"
+            },
+            {
+              "FieldIndex": "3",
+              "FieldClass": "WBP_TableFieldCheckbox",
+              "FieldName": "숨기기",
+              "FieldValue": "true",
+              "InteractionClassName": "UHiddenInteraction"
+            },
+            {
+              "FieldIndex": "4",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "설명",
+              "FieldValue": "",
+              "InteractionClassName": "UPopupInteraction"
+            }
+          ]
+        }
+      ]
+
+    }
+
+  ]
+}

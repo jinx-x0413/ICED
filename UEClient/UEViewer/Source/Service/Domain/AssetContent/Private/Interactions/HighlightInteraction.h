@@ -1,0 +1,22 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Interactions/InteractionBase.h"
+#include "HighlightInteraction.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class ASSETCONTENT_API UHighlightInteraction : public UInteractionBase
+{
+	GENERATED_BODY()
+
+	// Interaction overriding
+public:
+	virtual void Start() override;
+	virtual void Finish() override;
+	virtual void Reset() override;
+};

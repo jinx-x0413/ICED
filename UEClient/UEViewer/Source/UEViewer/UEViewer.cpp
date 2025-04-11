@@ -21,6 +21,7 @@ void FUEViewer::ShutdownModule()
 	ShutdownAndUnloadModule(TEXT("HTTP_Connection"));
 	ShutdownAndUnloadModule(TEXT("Command"));
 	ShutdownAndUnloadModule(TEXT("UIComponent"));
+	ShutdownAndUnloadModule(TEXT("Timebar"));
 
 	
 }
@@ -34,6 +35,7 @@ void FUEViewer::InitializeRootModule()
 	RegisterSubModule(TEXT("HTTP_Connection"));
 	RegisterSubModule(TEXT("Command"));
 	RegisterSubModule(TEXT("UIComponent"));
+	RegisterSubModule(TEXT("Timebar"));
 	
 }
 

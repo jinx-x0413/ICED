@@ -17,3 +17,37 @@ UAssetContentController::~UAssetContentController()
 		MarkAsGarbage();
 	}
 }
+
+UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+{
+    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+    {
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
+        //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->Initialize(InInteractionData);
+        NewInteraction->StartTime = InStartTime;
+        NewInteraction->EndTime = InEndTime;
+        NewInteraction->ClipLength = InEndTime - InStartTime;
+        NewInteraction->Name = InInteractionData.Name.ToString();
+        NewInteraction->AddToRoot();
+
+        UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, NewInteraction);
+
+        return NewInteraction;
+    }
+
+    return nullptr;
+}
+
+void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData)
+{
+    if (!IsValid(TemplateBuilder))
+    {
+        TemplateBuilder = NewObject<UTemplateBuilder>();
+        TemplateBuilder->AddToRoot();
+    }
+    TemplateBuilder->SetTargetActor(InActor);
+    TemplateBuilder->SetController(this);
+    TemplateBuilder->Build(InTemplateType, InTableData);
+}
+

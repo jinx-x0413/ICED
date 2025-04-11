@@ -175,6 +175,7 @@ void AGltfAssetActor::SetScale(FVector InScale)
 
 
 //// Hierarchy Data
+<<<<<<< HEAD
 //void AGltfAssetActor::ResetHierarchyData()
 //{
 //	HierarchyData.Empty(0);
@@ -225,6 +226,59 @@ void AGltfAssetActor::SetScale(FVector InScale)
 //		}
 //	}
 //}
+=======
+void AGltfAssetActor::ResetHierarchyData()
+{
+	HierarchyData.Empty(0);
+	GetHierarchyDataRecursive(0); // recursive
+}
+
+void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
+{
+	FActorHierarchyData NewData;
+	NewData.NodeName = GetName(); // 생성한 이름 적용
+	NewData.Depth = IndentLevel;
+	HierarchyData.Add(NewData);
+
+	USceneComponent* InRootComponent = GetRootComponent();
+	if (InRootComponent)
+	{
+		GetComponentHierarchyRecursive(InRootComponent, IndentLevel + 1);
+	}
+}
+
+void AGltfAssetActor::GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel)
+{
+	if (!InComponent || InComponent->GetFName() == FName("RootScene"))
+	{
+		return;
+	}
+
+	FActorHierarchyData NewData;
+	if (Cast<USkeletalMeshComponent>(InComponent))
+	{
+		NewData.NodeName = InComponent->GetName();
+		NewData.DisplayName = NewData.NodeName;
+		NewData.Depth = IndentLevel;
+		NewData.TargetComponent = InComponent;
+		HierarchyData.Add(NewData);
+
+		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
+		for (USceneComponent* InChild : InChildren)
+		{
+			GetComponentHierarchyRecursive(InChild, IndentLevel + 1);
+		}
+	}
+	else
+	{
+		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
+		for (USceneComponent* InChild : InChildren)
+		{
+			GetComponentHierarchyRecursive(InChild, IndentLevel);
+		}
+	}
+}
+>>>>>>> UE_AssetContent
 
 void AGltfAssetActor::SetOutline(bool bIsActivated)
 {

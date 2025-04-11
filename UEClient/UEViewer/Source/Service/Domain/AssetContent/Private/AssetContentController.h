@@ -6,14 +6,18 @@
 #include "UObject/NoExportTypes.h"
 #include "AssetContentController.generated.h"
 
-/**
- * 
- */
+class UInteractionBase;
+struct FInteractionData;
+class UTrack;
+
+class UTemplateBuilder;
+struct FTableData;
+
 UCLASS()
 class UAssetContentController : public UObject
 {
 	GENERATED_BODY()
-	
+		
 	// construct
 public:
 	UAssetContentController();
@@ -23,6 +27,15 @@ public:
 
 	// business logic
 public:
+	virtual UInteractionBase* CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
+	UPROPERTY()
+	UTemplateBuilder* TemplateBuilder;
 
+	UFUNCTION()
+	virtual void BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData);
+
+	//// Assembly property
+	TSubclassOf<UUserWidget> TrackHeaderWidgetClass;
+	TSubclassOf<UUserWidget> TrackWidgetClass;
 };
