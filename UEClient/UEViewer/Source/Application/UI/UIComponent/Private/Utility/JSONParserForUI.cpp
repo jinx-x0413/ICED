@@ -123,7 +123,7 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 	if (JsonObject->HasField(TEXT("Content")))
 	{
 		TArray<TSharedPtr<FJsonValue>> ContentData = JsonObject->GetArrayField(TEXT("Content"));
-		if (InTableName == TEXT("분해"))
+		if (InTableName == TEXT("Assembly"))
 		{
 			TSharedPtr<FJsonObject> TargetContentData = ContentData[0]->AsObject();
 
