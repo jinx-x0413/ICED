@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "CorePawn.h"
@@ -276,7 +276,7 @@ void ACorePawn::SelectActor(AActor* InActor)
 	}
 
 
-	if (InActor == TransformerPawn->CurrentSelectActor) // ÀÌ¹Ì ¼±ÅÃ ÁßÀÎ ¾×ÅÍ
+	if (InActor == TransformerPawn->CurrentSelectActor) // ì´ë¯¸ ì„ íƒ ì¤‘ì¸ ì•¡í„°
 	{
 
 		// 1. set current select actor
@@ -290,11 +290,11 @@ void ACorePawn::SelectActor(AActor* InActor)
 
 		// TODO : delegate callback (AssetActorManager)
 		// 3. set outline
-		//		ÀüÃ¼ ÇØÁ¦
-		//		¼±ÅÃ Àû¿ë
+		//		ì „ì²´ í•´ì œ
+		//		ì„ íƒ ì ìš©
 
 	}
-	else // »õ·Ó°Ô ¼±ÅÃÇÑ ¾×ÅÍ
+	else // ìƒˆë¡­ê²Œ ì„ íƒí•œ ì•¡í„°
 	{
 		// 1. set current select actor
 		TransformerPawn->SetCurrentSelectActor(InActor);
@@ -307,7 +307,7 @@ void ACorePawn::SelectActor(AActor* InActor)
 
 		// TODO : delegate callback (AssetActorManager)
 		// 3. set outline
-		//		¼±ÅÃ Àû¿ë
+		//		ì„ íƒ ì ìš©
 		//SetGltfOutline(InActor, true);
 	}
 
@@ -375,7 +375,63 @@ void ACorePawn::ShowGizmo()
 
 
 
+// Set Camera Focus
+FTransform ACorePawn::SetCameraFocusTransform(AActor* InTargetActor, ECameraFocus InCameraFocus)
+{
+	if (!IsValid(InTargetActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetActor is Invalid at ACorePawn::SetCameraFocusTransform"));
+		return FTransform();
+	}
 
+	// TargetActorì˜ ì¤‘ì•™ì„ ê³„ì‚°
+	//FVector ActorCenter = GetTargetActorCenter();
+	FVector Direction = FVector::ZeroVector;
+
+	// Set Direction
+	// switch : FrontView/TopView/SideView
+	switch (InCameraFocus)
+	{
+	case ECameraFocus::FRONTVIEW:
+		Direction = -InTargetActor->GetActorForwardVector() * CameraFocusDistance;
+		break;
+	case ECameraFocus::SIDEVIEW:
+		Direction = InTargetActor->GetActorRightVector() * CameraFocusDistance;
+		break;
+	case ECameraFocus::TOPVIEW:
+		Direction = InTargetActor->GetActorUpVector() * CameraFocusDistance;
+		break;
+	default:
+		break;
+	}
+
+	// ì¹´ë©”ë¼ì˜ ìœ„ì¹˜ë¥¼ ê³„ì‚° (ë‹¨ìˆœížˆ ì•¡í„° ì¤‘ì‹¬ + ë°©í–¥ ë²¡í„°)
+	FVector CameraPosition = InTargetActor->GetActorLocation() + Direction;
+
+	// ì¹´ë©”ë¼ëŠ” ì•¡í„°ë¥¼ í•­ìƒ ë°”ë¼ë³´ë„ë¡ ì„¤ì •í•©ë‹ˆë‹¤.
+	FRotator CameraRotation = (InTargetActor->GetActorLocation() - CameraPosition).Rotation();
+
+	return FTransform(CameraRotation, CameraPosition, FVector(1.f));
+}
+
+void ACorePawn::SetCameraFocus(AActor* InTargetActor, ECameraFocus InCameraFocus)
+{
+	if (!IsValid(InTargetActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetActor is Invalid at ACorePawn::SetCameraFocus()"));
+		return;
+	}
+
+	FTransform TargetTransform = SetCameraFocusTransform(InTargetActor, InCameraFocus);
+	SetActorTransform(TargetTransform);
+	CamGoal = CameraFocusArmLength;
+	SpringArm->TargetArmLength = CameraFocusArmLength;
+}
+
+
+
+
+// Gizmo Delegate
 void ACorePawn::InitializeGizmoDelegate()
 {
 	if (TransformerPawn)

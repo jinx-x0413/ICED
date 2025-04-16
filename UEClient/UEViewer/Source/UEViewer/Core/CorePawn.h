@@ -9,6 +9,15 @@
 #include "TransformerPawn.h"
 #include "CorePawn.generated.h"
 
+UENUM(BlueprintType)
+enum class ECameraFocus : uint8
+{
+	FRONTVIEW			UMETA(DisplayName = "FrontView"),
+	TOPVIEW				UMETA(DisplayName = "TopView"),
+	SIDEVIEW			UMETA(DisplayName = "SideView")
+};
+
+
 UCLASS()
 class UEVIEWER_API ACorePawn : public APawn
 {
@@ -115,6 +124,20 @@ public:
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
+
+
+
+
+	// Set Camera Focus
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float CameraFocusArmLength = 300.0f;
+	float CameraFocusDistance = 300.0f;
+	UFUNCTION()
+	FTransform SetCameraFocusTransform(AActor* InTargetActor, ECameraFocus InCameraFocus);
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocus(AActor* InTargetActor, ECameraFocus InCameraFocus);
+
 
 
 
