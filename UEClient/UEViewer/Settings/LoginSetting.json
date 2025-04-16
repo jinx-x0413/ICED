@@ -2,7 +2,8 @@
   "URL": "https://randomuser.me/api/",
   "User": [
     {
-      "UserName": "Gemini"
+      "UserName": "Gemini",
+      "Email" :  "Gemini@gamil.com"
     }
   ],
   "Objects": [

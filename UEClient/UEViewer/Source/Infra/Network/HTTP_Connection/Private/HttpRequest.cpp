@@ -134,27 +134,36 @@ FOpenApiTest UHttpRequest::GetURLFromConfig()
 		OpenApi.URL = JsonObject->GetStringField(TEXT("URL"));
 		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *OpenApi.URL);
 
+		//UserName
 		const TArray<TSharedPtr<FJsonValue>>* Users;
 		if (JsonObject->TryGetArrayField("User", Users))
 		{
 			for (auto& UserValue : *Users)
 			{
+				//UserName
 				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
 				OpenApi.UserName = UserObject->GetStringField("UserName");
 				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
+
+				//Email
+				TSharedPtr<FJsonObject> Email = UserValue->AsObject();
+				OpenApi.Email = UserObject->GetStringField("Email");
+				UE_LOG(LogTemp, Warning, TEXT("Email: %s"), *OpenApi.Email);
 			}
 		}
-
+			
 		// Objects ¹è¿­ ÆÄ½Ì
 		const TArray<TSharedPtr<FJsonValue>>* Objects;
 		if (JsonObject->TryGetArrayField("Objects", Objects))
 		{
 			for (auto& ObjectValue : *Objects)
 			{
+				//ObjectName
 				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
 				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
 				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
 
+				//FilePath
 				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
 				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
 				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);

@@ -29,6 +29,9 @@ struct FOpenApiTest
 	FString UserName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString Email;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString ObjectName;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
