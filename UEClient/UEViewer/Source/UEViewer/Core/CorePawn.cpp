@@ -414,7 +414,7 @@ FTransform ACorePawn::SetCameraFocusTransform(AActor* InTargetActor, ECameraFocu
 	return FTransform(CameraRotation, CameraPosition, FVector(1.f));
 }
 
-void ACorePawn::SetCameraFocus(AActor* InTargetActor, ECameraFocus InCameraFocus)
+void ACorePawn::SetCameraFocusToActor(AActor* InTargetActor, ECameraFocus InCameraFocus)
 {
 	if (!IsValid(InTargetActor))
 	{
@@ -427,6 +427,88 @@ void ACorePawn::SetCameraFocus(AActor* InTargetActor, ECameraFocus InCameraFocus
 	CamGoal = CameraFocusArmLength;
 	SpringArm->TargetArmLength = CameraFocusArmLength;
 }
+
+void ACorePawn::SetCameraFocusToComponent(AActor* InTargetActor, USkeletalMeshComponent* InTargetComponent)
+{
+	// TargetActor의 중앙을 계산
+	FVector ActorCenter = GetTargetActorCenter(InTargetActor);
+
+	FVector TargetComponentLocation = InTargetComponent->GetComponentLocation();
+	
+	FVector MeshCenter = InTargetComponent->Bounds.Origin;
+	
+	FVector Direction = MeshCenter - ActorCenter;
+
+	// 카메라의 위치를 계산 (단순히 액터 중심 + 방향 벡터)
+	FVector CameraPosition = InTargetActor->GetActorLocation() + Direction;
+	
+	// 카메라는 액터를 항상 바라보도록 설정합니다.
+	FRotator CameraRotation = (InTargetActor->GetActorLocation() - CameraPosition).Rotation();
+	
+	// 카메라의 위치와 회전값을 설정
+	FTransform TargetTransform = FTransform(CameraRotation, CameraPosition, FVector(1.f));
+	SetActorTransform(TargetTransform);
+	CamGoal = CameraFocusArmLength;
+	SpringArm->TargetArmLength = CameraFocusArmLength;
+	
+}
+
+FVector ACorePawn::GetTargetActorCenter(AActor* InActor)
+{
+	if (!IsValid(InActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetActor is Invalid at UTransformInteraction"));
+		return FVector();
+	}
+
+	// 액터의 모든 컴포넌트를 고려한 최소, 최대 바운드 계산
+	FVector ActorBoundsMin(FLT_MAX, FLT_MAX, FLT_MAX);
+	FVector ActorBoundsMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+	for (UActorComponent* Component : InActor->GetComponents())
+	{
+		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
+		{
+			FVector ComponentBoundsMin, ComponentBoundsMax;
+			//PrimitiveComponent->GetCollisionBounds(true, ComponentBoundsMin, ComponentBoundsMax);
+			// 월드 좌표계로 변환
+			FVector WorldBoundsMin = PrimitiveComponent->GetComponentTransform().TransformPosition(ComponentBoundsMin);
+			FVector WorldBoundsMax = PrimitiveComponent->GetComponentTransform().TransformPosition(ComponentBoundsMax);
+
+			// 최소, 최대 값 갱신
+			ActorBoundsMin = ActorBoundsMin.ComponentMin(WorldBoundsMin);
+			ActorBoundsMax = ActorBoundsMax.ComponentMax(WorldBoundsMax);
+		}
+	}
+
+	// 액터의 메시 바운드를 기준으로 중앙값 계산
+	return (ActorBoundsMin + ActorBoundsMax) / 2.0f;
+}
+
+
+// Test
+void ACorePawn::SetCameraFocusRelative(AActor* InTargetActor, const FVector& RelativeOffset)
+{
+	if (!InTargetActor) return;
+
+	// 기준점: 액터 중심
+	FVector ActorLocation = InTargetActor->GetActorLocation();
+
+	// 카메라 위치 = 액터 위치 + 상대 오프셋 (로컬 → 월드 변환 고려 가능)
+	FVector CameraPosition = ActorLocation + RelativeOffset;
+
+	// 카메라는 대상 바라보기
+	FRotator CameraRotation = (ActorLocation - CameraPosition).Rotation();
+
+	// 카메라 배치
+	FTransform TargetTransform(CameraRotation, CameraPosition);
+	SetActorTransform(TargetTransform);
+
+	// SpringArm 길이 세팅 등 추가 조정
+	CamGoal = CameraFocusArmLength;
+	SpringArm->TargetArmLength = CameraFocusArmLength;
+}
+
 
 
 

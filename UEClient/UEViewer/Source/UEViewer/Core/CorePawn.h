@@ -136,8 +136,15 @@ public:
 	UFUNCTION()
 	FTransform SetCameraFocusTransform(AActor* InTargetActor, ECameraFocus InCameraFocus);
 	UFUNCTION(BlueprintCallable)
-	void SetCameraFocus(AActor* InTargetActor, ECameraFocus InCameraFocus);
+	void SetCameraFocusToActor(AActor* InTargetActor, ECameraFocus InCameraFocus);
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusToComponent(AActor* InTargetActor, USkeletalMeshComponent* InTargetComponent);
 
+	FVector GetTargetActorCenter(AActor* InActor);
+
+	// test
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusRelative(AActor* InTargetActor, const FVector& RelativeOffset);
 
 
 

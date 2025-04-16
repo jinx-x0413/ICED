@@ -21,12 +21,7 @@ void UCameraInteraction::Initialize(FInteractionData InData)
 		FVector ActorCenter = GetTargetActorCenter();
 
 		FVector TargetComponentLocation = TargetData.TargetComponent->GetComponentLocation();
-		FVector Direction = FVector::ZeroVector;
-
-		// x, y, z축 기준으로 컴포넌트 위치가 액터 중심을 기준으로 어떻게 떨어져 있는지 계산
-		Direction.X = TargetComponentLocation.X - ActorCenter.X;
-		Direction.Y = TargetComponentLocation.Y - ActorCenter.Y;
-		Direction.Z = TargetComponentLocation.Z - ActorCenter.Z;
+		FVector Direction = TargetComponentLocation - ActorCenter;
 
 		// 카메라의 위치를 계산 (단순히 액터 중심 + 방향 벡터)
 		FVector CameraPosition = TargetData.TargetActor->GetActorLocation() + Direction;
