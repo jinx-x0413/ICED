@@ -80,7 +80,9 @@ FReply UTimeScaleWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 		/*UTimebarPlayer::GetTimebarPlayer()->CurrentTime = LocalMousePosition.X / (Variables::ConvertedValue* Variables::ScaleMultiplier);
 		UTimebarPlayer::GetTimebarPlayer()->OnCurrentTimeChanged.Broadcast(LocalMousePosition.X/ (Variables::ConvertedValue* Variables::ScaleMultiplier));*/
 		UTimebarPlayer::GetTimebarPlayer()->SetCurrentTime(LocalMousePosition.X / (Variables::ConvertedValue * Variables::ScaleMultiplier));
-
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, FString::Printf(
+			TEXT("CurrentTime : %f"), LocalMousePosition.X / (Variables::ConvertedValue * Variables::ScaleMultiplier)
+		));
 		// drag
 		bIsDragging = true;
 
