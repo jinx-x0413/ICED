@@ -90,9 +90,6 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 			// set field
 			NewField->InitializeTableField(TableData.Rows[i].Fields[j]);
 			TableData.Rows[i].Fields[j].FieldIndex = j;
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(
-				TEXT("FieldIndex : %d"), j
-			));
 			
 			// initialize item
 			NewRow->InitializeTableItem(TableData.Rows[i]);

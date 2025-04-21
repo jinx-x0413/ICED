@@ -27,10 +27,6 @@ void UTableField::InitializeTableField(FTableFieldData InData)
 {
     TargetFieldData = InData;
 
-    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(
-        TEXT("Initialized Field Index : %d"), TargetFieldData.FieldIndex
-    ));
-
     if (ParentTableItem && IsValid(ParentTableItem->TargetTable))
     {
         if (!ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.IsAlreadyBound(this, &UTableField::SetFieldActivated))
