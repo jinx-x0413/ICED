@@ -6,20 +6,38 @@
     min-height: calc(100vh - 80px);
 }
 
-/* 검색 영역 */
+/* 검색 및 컨트롤 영역 */
 .controls-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.left-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.right-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .search-box {
     position: relative;
+    flex: 1;
+    max-width: 400px;
 }
 
 .search-box input {
-    width: 300px;
+    width: 100%;
     padding: 12px 15px 12px 40px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -43,6 +61,84 @@
     color: #555;
 }
 
+.sort-control {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.sort-control label {
+    margin-right: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.sort-control select {
+    padding: 6px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    background-color: white;
+    color: #4b5563;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.sort-control select:focus {
+    outline: none;
+    border-color: #4a6cf7;
+    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.1);
+}
+
+/* 전체 선택 컨트롤 */
+.select-all-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.select-all-control input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* 장바구니 버튼 스타일 */
+.cart-button {
+    background-color: #4a6ee0;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.cart-button:hover {
+    background-color: #3a5bd0;
+}
+
+/* 전체 선택 해제 버튼 스타일 */
+.clear-selection-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.clear-selection-button:hover {
+    background-color: #5a6268;
+}
+
 /* 상태 바 */
 .status-bar {
     display: flex;
@@ -52,7 +148,7 @@
     padding: 10px 0;
 }
 
-/* file-grid 스타일이 있는 CSS 파일에 아래 스타일 추가/수정 */
+/* 파일 그리드 */
 .file-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -71,7 +167,8 @@
     display: flex;
     flex-direction: column;
     border: 1px solid #eaeaea;
-    height: 350px; /* 아이템 높이 고정 - 계산에 사용되는 값과 일치 */
+    height: 350px;
+    position: relative;
 }
 
 .file-item:hover {
@@ -79,10 +176,44 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* 선택된 파일 스타일 */
+.file-item.selected {
+    border: 2px solid #4a6ee0;
+    box-shadow: 0 0 8px rgba(74, 110, 224, 0.3);
+}
+
+/* 파일 체크박스 */
+.file-checkbox {
+    display: none;
+}
+
+.file-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.file-checkbox input[type="checkbox"]:checked {
+    opacity: 1;
+}
+
+.checkbox-label {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+
+/* 파일 썸네일 */
 .file-thumbnail {
     width: 100%;
     height: 180px;
     overflow: hidden;
+    position: relative;
+    cursor: pointer;
 }
 
 .file-thumbnail img {
@@ -94,6 +225,32 @@
 
 .file-item:hover .file-thumbnail img {
     transform: scale(1.05);
+}
+
+/* 선택된 파일 오버레이 */
+.selected-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(74, 110, 224, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-icon {
+    background-color: #4a6ee0;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .file-info {
@@ -139,6 +296,15 @@
 
 .action-button.preview:hover {
     background-color: #3a5cd8;
+}
+
+.action-button.cart {
+    background-color: #4a6ee0;
+    color: white;
+}
+
+.action-button.cart:hover {
+    background-color: #3a5bd0;
 }
 
 /* 로딩 컨테이너 */
@@ -259,108 +425,7 @@
     font-weight: bold;
 }
 
-/* 반응형 조정 */
-@media (max-width: 768px) {
-    .controls-container {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .search-box {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-    
-    .search-box input {
-        width: 100%;
-    }
-}
-
-/* 이미지 로딩 관련 스타일 */
-.image-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.image-loader {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    border-top: 4px solid #3498db;
-    animation: spin 1s linear infinite;
-}
-
-
-.image-error {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ffeeee;
-    color: #e74c3c;
-    text-align: center;
-    padding: 10px;
-}
-
-.thumbnail-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.skeleton {
-    position: relative;
-    overflow: hidden;
-}
-
-.skeleton::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: linear-gradient(90deg, 
-        rgba(255, 255, 255, 0) 0%, 
-        rgba(255, 255, 255, 0.2) 20%, 
-        rgba(255, 255, 255, 0.5) 60%, 
-        rgba(255, 255, 255, 0) 100%);
-    animation: shimmer 2s infinite;
-    transform: translateX(-100%);
-}
-
-@keyframes shimmer {
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-/* skeleton UI 스타일 */
+/* 스켈레톤 UI */
 .skeleton {
     position: relative;
     overflow: hidden;
@@ -414,149 +479,100 @@
     margin: 5px;
 }
 
-/* 검색 및 정렬 컨트롤 개선 */
-.controls-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.search-box {
-    position: relative;
-    flex: 1;
-    max-width: 400px;
-}
-
-.sort-control {
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border-radius: 8px;
-    padding: 8px 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-.sort-control label {
-    margin-right: 8px;
-    font-weight: 500;
-    color: #555;
-}
-
-.sort-control select {
-    padding: 6px 10px;
-    border: 1px solid #e5e7eb;
-    border-radius: 4px;
-    background-color: white;
-    color: #4b5563;
-    font-size: 14px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-}
-
-.sort-control select:focus {
-    outline: none;
-    border-color: #4a6cf7;
-    box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.1);
-}
-
-/* 반응형 조정 */
-@media (max-width: 768px) {
-    .controls-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .search-box {
-        max-width: none;
-        width: 100%;
-    }
-    
-    .sort-control {
-        width: fit-content;
-    }
-}
-
-/* 상세보기 모달 스타일 */
+/* 상세보기 모달 스타일 - mylist에서 가져온 개선된 스타일 */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
     background-color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     width: 90%;
     max-width: 600px;
-    max-height: 90vh;
+    max-height: 80vh;
     overflow-y: auto;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     animation: modalFadeIn 0.3s ease;
 }
 
 .detail-modal {
-    max-width: 800px;
+    min-width: 800px;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 20px 25px;
     border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     color: #333;
+    font-weight: 600;
 }
 
 .close-button {
     background: none;
     border: none;
-    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
     color: #666;
-    transition: color 0.2s;
+    transition: all 0.2s;
 }
 
 .close-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
     color: #000;
 }
 
 .detail-content {
-    padding: 20px;
     display: flex;
     flex-direction: column;
+    max-height: 400px;
+    max-width: 768;
+    overflow: auto;
 }
 
 @media (min-width: 768px) {
     .detail-content {
         flex-direction: row;
-        gap: 30px;
+        height: calc(90vh - 70px);
     }
 }
 
 .detail-image {
     flex: 1;
-    margin-bottom: 20px;
+    background-color: #f0f4f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
 }
 
 @media (min-width: 768px) {
     .detail-image {
-        margin-bottom: 0;
+        width: 50%;
     }
 }
 
@@ -574,7 +590,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f5f5f5;
+    background-color: #f0f0f0;
     color: #6c757d;
     font-size: 1.2rem;
     border-radius: 8px;
@@ -582,6 +598,8 @@
 
 .detail-info {
     flex: 1;
+    padding: 25px;
+    overflow-y: auto;
 }
 
 .detail-info h3 {
@@ -589,38 +607,80 @@
     margin-bottom: 20px;
     font-size: 1.5rem;
     color: #333;
+    line-height: 1.3;
 }
 
+.detail-info {
+    flex: 1;
+  }
+  
+.detail-info h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
 .detail-table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-}
-
+  }
+  
 .detail-table th, 
-.detail-table td {
+ .detail-table td {
     padding: 12px 10px;
     text-align: left;
     border-bottom: 1px solid #eee;
-}
-
+  }
+  
 .detail-table th {
     width: 30%;
     color: #555;
     font-weight: 600;
     vertical-align: top;
-}
+  }
 
 .action-button.large {
-    padding: 10px 20px;
+    padding: 12px 20px;
     font-size: 1rem;
+    border-radius: 6px;
 }
 
 .detail-actions {
-    margin-top: 20px;
+    margin-top: 25px;
+    display: flex;
+    gap: 12px;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 @keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
+    from { opacity: 0; transform: translateY(-30px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: none;
+        width: 100%;
+    }
+    
+    .sort-control {
+        width: fit-content;
+    }
+    
+    .detail-actions {
+        flex-direction: column;
+    }
 }

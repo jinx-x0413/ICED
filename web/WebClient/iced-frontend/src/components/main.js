@@ -1,4 +1,3 @@
-// components/main.js
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './css/main.css';
 
@@ -26,6 +25,32 @@ const DetailModal = ({ isOpen, onClose, file }) => {
         return `${size.toFixed(2)} MB`;
     };
 
+    // 장바구니에 추가하는 함수
+    const addToCart = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            
+            const response = await fetch('http://localhost:8080/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+                },
+                body: JSON.stringify({ fileId: file.id })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '장바구니 추가 실패');
+            }
+            
+            alert('파일이 장바구니에 추가되었습니다.');
+        } catch (error) {
+            console.error('장바구니 추가 오류:', error);
+            alert(`이미 장바구니에 있는 파일입니다`);
+        }
+    };
+
     return (
         <div className="modal-overlay">
             <div className="modal-content detail-modal">
@@ -38,7 +63,9 @@ const DetailModal = ({ isOpen, onClose, file }) => {
                     <div className="detail-image">
                         {file.thumbnailUri ? (
                             <img 
-                                src={file.thumbnailUri} 
+                                src={file.thumbnailUri.startsWith('http')
+                                    ? file.thumbnailUri
+                                    : `http://localhost:8080${file.thumbnailUri}`}
                                 alt={file.description || 'File thumbnail'} 
                             />
                         ) : (
@@ -69,6 +96,12 @@ const DetailModal = ({ isOpen, onClose, file }) => {
                         </table>
                         
                         <div className="detail-actions">
+                            <button 
+                                className="action-button cart large" 
+                                onClick={addToCart}
+                            >
+                                장바구니에 추가
+                            </button>
                             <button 
                                 className="action-button preview large" 
                                 onClick={onClose}
@@ -130,7 +163,6 @@ const Main = () => {
                 }
                 
                 const data = await response.json();
-                console.log('API 응답 데이터:', data);
                 setFiles(data || []);
                 setLoading(false);
                 // setPageLoading(false)는 제거 - pageData가 설정된 후 자동으로 해제됨
@@ -170,16 +202,6 @@ const Main = () => {
             
             // 최종 표시할 아이템 수 계산
             const totalItems = itemsPerRow * rowsPerPage;
-            
-            console.log('계산된 그리드 아이템:', {
-                containerWidth,
-                availableHeight,
-                itemWidth,
-                itemHeight,
-                itemsPerRow,
-                rowsPerPage,
-                totalItems
-            });
             
             // 이전과 다를 때만 업데이트
             if (itemsPerPage !== totalItems) {
@@ -368,34 +390,176 @@ const Main = () => {
         const match = dateString.match(/^(\d{4}-\d{2}-\d{2})/);
         return match ? match[1] : dateString;
     };
+    // 선택된 파일 ID를 관리하는 state
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+    // 파일 선택/해제 토글 함수
+    const toggleFileSelection = (fileId) => {
+        if (selectedFiles.includes(fileId)) {
+            setSelectedFiles(selectedFiles.filter(id => id !== fileId));
+        } else {
+            setSelectedFiles([...selectedFiles, fileId]);
+        }
+    };
+
+    // 현재 페이지 항목만 선택/해제하되 다른 페이지 선택은 유지하는 함수
+    const toggleSelectAll = () => {
+        // 현재 페이지의 모든 파일 ID 배열
+        const currentPageIds = pageData.map(file => file.id);
+        
+        // 현재 페이지 파일들이 모두 선택되었는지 확인
+        const allCurrentSelected = currentPageIds.every(id => 
+            selectedFiles.includes(id)
+        );
+        
+        if (allCurrentSelected) {
+            // 현재 페이지 파일들만 선택 해제 (다른 페이지 선택은 유지)
+            setSelectedFiles(selectedFiles.filter(id => 
+                !currentPageIds.includes(id)
+            ));
+        } else {
+            // 현재 페이지 파일들을 선택에 추가 (중복 방지)
+            const newSelected = [...selectedFiles];
+            
+            currentPageIds.forEach(id => {
+                if (!newSelected.includes(id)) {
+                    newSelected.push(id);
+                }
+            });
+            
+            setSelectedFiles(newSelected);
+        }
+    };
+
+    // 장바구니에 추가하는 함수
+    const addSelectedToCart = async () => {
+        if (selectedFiles.length === 0) {
+            alert('선택된 파일이 없습니다.');
+            return;
+        }
+        
+        try {
+            // 저장된 JWT 토큰 가져오기
+            const token = localStorage.getItem('accessToken'); // 토큰 저장 방식에 맞게 수정
+            
+            // 선택된 각 파일에 대해 API 호출
+            for (const fileId of selectedFiles) {
+                const response = await fetch('http://localhost:8080/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ fileId })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '장바구니 추가 실패');
+                }
+            }
+            
+            // 성공시 선택 초기화
+            setSelectedFiles([]);
+            alert(`${selectedFiles.length}개 파일이 장바구니에 추가되었습니다.`);
+        } catch (error) {
+            console.error('장바구니 추가 오류:', error);
+            alert(`이미 장바구니에 있는 파일이 포함되어 있습니다`);
+        }
+    };
+
+    // 단일 파일을 장바구니에 추가하는 함수
+    const addToCartSingle = async (fileId) => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            
+            const response = await fetch('http://localhost:8080/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token.startsWith('Bearer ') ? token : `Bearer ${token}`
+                },
+                body: JSON.stringify({ fileId })
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || '장바구니 추가 실패');
+            }
+            
+            alert('파일이 장바구니에 추가되었습니다.');
+        } catch (error) {
+            console.error('장바구니 추가 오류:', error);
+            alert(`이미 장바구니에 있는 파일입니다`);
+        }
+    };
+    // 모든 선택을 해제하는 함수
+    const clearAllSelections = () => {
+        setSelectedFiles([]);
+    };
 
     return (
         <div className="main-container" ref={containerRef}>
-        {/* 검색 및 정렬 영역 */}
-        <div className="controls-container">
-            <div className="search-box">
-                <input
-                    type="text"
-                    placeholder="파일 검색..."
-                    value={searchTerm}
-                    onChange={handleSearch}
-                />
-                <span className="search-icon">🔍</span>
+            {/* 검색 및 정렬 영역 */}
+            <div className="controls-container">
+                <div className="left-controls">
+                    <div className="search-box">
+                        <input
+                            type="text"
+                            placeholder="파일 검색..."
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        />
+                        <span className="search-icon">🔍</span>
+                    </div>
+                    
+                    <div className="sort-control">
+                        <label htmlFor="sort-order">정렬: </label>
+                        <select 
+                            id="sort-order" 
+                            value={sortOrder}
+                            onChange={handleSortChange} 
+                        >
+                            <option value="newest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                            <option value="name">이름순</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div className="right-controls">
+                <label className="select-all-control">
+                    <input 
+                        type="checkbox"
+                        // 현재 페이지의 모든 아이템이 선택된 경우에만 체크됨
+                        checked={pageData.length > 0 && pageData.every(file => 
+                            selectedFiles.includes(file.id)
+                        )}
+                        onChange={toggleSelectAll}
+                    />
+                    <span>현재 페이지 전체 선택</span>
+                </label>
+
+                {selectedFiles.length > 0 && (
+                    <>
+                        <button 
+                            className="action-button clear-selection-button"
+                            onClick={clearAllSelections}
+                        >
+                            전체 선택 해제
+                        </button>
+                        
+                        <button 
+                            className="action-button cart-button"
+                            onClick={addSelectedToCart}
+                        >
+                            장바구니에 추가 ({selectedFiles.length})
+                        </button>
+                    </>
+                )}
             </div>
-            
-            <div className="sort-control">
-                <label htmlFor="sort-order">정렬: </label>
-                <select 
-                    id="sort-order" 
-                    value={sortOrder}
-                    onChange={handleSortChange} 
-                >
-                    <option value="newest">최신순</option>
-                    <option value="oldest">오래된순</option>
-                    <option value="name">이름순</option>
-                </select>
             </div>
-        </div>
+
 
             {/* 상태 표시 */}
             <div className="status-bar">
@@ -431,13 +595,35 @@ const Main = () => {
                                 </div>
                             ))
                         ) : (
-                            pageData.map((file, index) => (
-                                <div className="file-item" key={index}>
-                                    <div className="file-thumbnail">
+                            <>                                
+                                {/* 파일 항목들 */}
+                                {pageData.map((file, index) => (
+                                <div 
+                                    className={`file-item ${selectedFiles.includes(file.id) ? 'selected' : ''}`} 
+                                    key={index}
+                                >
+                                    <div className="file-checkbox">
+                                        <input 
+                                            type="checkbox"
+                                            checked={selectedFiles.includes(file.id)}
+                                            onChange={() => toggleFileSelection(file.id)}
+                                            id={`file-checkbox-${file.id}`}
+                                        />
+                                        <label htmlFor={`file-checkbox-${file.id}`} className="checkbox-label"></label>
+                                    </div>
+                                    <div 
+                                        className="file-thumbnail"
+                                        onClick={() => toggleFileSelection(file.id)} // 썸네일 클릭 시 토글
+                                    >
                                         <img 
                                             src={file.thumbnailUri} 
                                             alt={file.description || 'Unknown file'} 
                                         />
+                                        {selectedFiles.includes(file.id) && (
+                                            <div className="selected-overlay">
+                                                <span className="selected-icon">✓</span>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="file-info">
                                         <p className="file-description">{file.description || 'No description'}</p>
@@ -452,12 +638,21 @@ const Main = () => {
                                             >
                                                 상세 보기
                                             </button>
+                                            <button 
+                                                className="action-button cart"
+                                                onClick={() => addToCartSingle(file.id)}
+                                            >
+                                                장바구니
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                            ))
+                            ))}
+
+                            </>
                         )}
                     </div>
+
                     
                     {/* 페이지네이션 UI */}
                     {totalPages > 1 && (

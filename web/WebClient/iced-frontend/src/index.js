@@ -12,6 +12,7 @@ import Main from './components/main';
 import Upload from './components/upload';
 import Install from './components/install';
 import MyList from './components/mylist';
+import Cart from './components/cart';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -27,6 +28,7 @@ root.render(
                     <Route path="/upload" element={<Layout><ProtectedRoute><Upload /></ProtectedRoute></Layout>} />
                     <Route path="/install" element={<Layout><Install /></Layout>} />
                     <Route path="/mylist" element={<Layout><ProtectedRoute><MyList /></ProtectedRoute></Layout>} />
+                    <Route path="/cart" element={<Layout><ProtectedRoute><Cart /></ProtectedRoute></Layout>} />
 
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

@@ -41,10 +41,16 @@ const Layout = ({ children }) => {
 
     const launchClient = () => {
         try {
-            // 프로토콜 호출
-            window.location.href = 'iceduecli://start';
-            
-            // 오류 처리를 위한 타임아웃 설정
+            let token = localStorage.getItem("accessToken");
+    
+            // 'Bearer ' 접두사 제거
+            if (token && token.startsWith("Bearer ")) {
+                token = token.slice(7); // 'Bearer ' 길이가 7
+            }
+    
+            const clientUrl = `iceduecli://start?-AuthToken=${token}`;
+            window.location.href = clientUrl;
+    
             setTimeout(() => {
                 setShowInstallGuide(true);
             }, 1000);
@@ -53,6 +59,7 @@ const Layout = ({ children }) => {
             setShowInstallGuide(true);
         }
     };
+    
     
     // 설치 프로그램 다운로드 버튼 클릭 시 install.js 페이지로 이동
     const downloadInstaller = () => {
@@ -92,6 +99,18 @@ const Layout = ({ children }) => {
                                 업로드 목록 조회
                             </button>
                         </li>
+                        <li className="nav-item">
+                            <button 
+                                className={`nav-button ${isActive('/cart') ? 'active' : ''}`}
+                                onClick={(e) => {
+                                e.preventDefault();
+                                console.log('장바구니 버튼 클릭');
+                                navigate('/cart');
+                                }}
+                            >
+                                장바구니
+                            </button>
+                            </li>
                     </ul>
                 </div>
                 <div className="user-section">
@@ -130,7 +149,7 @@ const Layout = ({ children }) => {
                         <h3>클라이언트 실행이 안되나요?</h3>
                         <p>클라이언트 설치가 필요합니다.</p>
                         <button onClick={downloadInstaller} className="laydownload-button">설치 프로그램 다운로드</button>
-                        <button onClick={() => setShowInstallGuide(false)} className="close-button">닫기</button>
+                        <button onClick={() => setShowInstallGuide(false)} className="cli-close-button">닫기</button>
                     </div>
                 </div>
             )}

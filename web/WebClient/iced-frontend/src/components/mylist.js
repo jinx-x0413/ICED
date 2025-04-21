@@ -138,16 +138,6 @@ const Mylist = () => {
             // 최종 표시할 아이템 수 계산
             const totalItems = itemsPerRow * rowsPerPage;
             
-            console.log('계산된 그리드 아이템:', {
-                containerWidth,
-                availableHeight,
-                itemWidth,
-                itemHeight,
-                itemsPerRow,
-                rowsPerPage,
-                totalItems
-            });
-            
             // 이전과 다를 때만 업데이트
             if (itemsPerPage !== totalItems) {
                 setItemsPerPage(totalItems);
