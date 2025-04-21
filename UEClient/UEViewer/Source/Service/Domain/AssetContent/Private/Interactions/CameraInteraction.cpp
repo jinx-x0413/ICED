@@ -4,6 +4,8 @@
 #include "Interactions/CameraInteraction.h"
 #include "InteractionDependency.h"
 
+
+
 void UCameraInteraction::Initialize(FInteractionData InData)
 {
 	Super::Initialize(InData);
@@ -13,31 +15,7 @@ void UCameraInteraction::Initialize(FInteractionData InData)
 		return;
 	}
 
-	APlayerController* PC = GWorld->GetFirstPlayerController();
-
-	if (APawn* TempPawn = PC->GetPawn())
-	{
-		// TargetActor의 중앙을 계산
-		FVector ActorCenter = GetTargetActorCenter();
-
-		FVector TargetComponentLocation = TargetData.TargetComponent->GetComponentLocation();
-		FVector Direction = TargetComponentLocation - ActorCenter;
-
-		// 카메라의 위치를 계산 (단순히 액터 중심 + 방향 벡터)
-		FVector CameraPosition = TargetData.TargetActor->GetActorLocation() + Direction;
-
-		// 카메라는 액터를 항상 바라보도록 설정합니다.
-		FRotator CameraRotation = (TargetData.TargetActor->GetActorLocation() - CameraPosition).Rotation();
-
-		// 카메라의 위치와 회전값을 설정
-		TargetData.TargetTransform = FTransform(CameraRotation, CameraPosition, FVector(1.f));
-
-		// 카메라의 타겟 거리 설정 (필요에 따라 조정)
-		TargetData.TargetArmLength = 800.0f;
-
-	}
-
-
+	SetCameraFocusComponentTransform();
 
 }
 
@@ -47,7 +25,8 @@ void UCameraInteraction::Start()
 	if (!bIsInteracting)
 	{
 		bIsInteracting = true;
-		SetPawnTransform(TargetData.TargetTransform, TargetData.TargetArmLength);
+		Initialize(TargetData);
+		SetCameraFocusToComponent();
 	}
 
 }
@@ -68,11 +47,53 @@ void UCameraInteraction::Reset()
 
 
 
+void UCameraInteraction::SetCameraFocusComponentTransform()
+{
+	if (!GWorld)
+	{
+		return;
+	}
+
+	APlayerController* PC = GWorld->GetFirstPlayerController();
+	if (!PC)
+	{
+		return;
+	}
+
+	if (APawn* TempPawn = PC->GetPawn())
+	{
+		// TargetActor의 중앙을 계산
+		FVector ActorCenter = GetTargetActorCenter();
+
+		FVector TargetComponentLocation = TargetData.TargetComponent->GetComponentLocation();
+		FVector Direction = FVector::ZeroVector;
+
+		// x, y, z축 기준으로 컴포넌트 위치가 액터 중심을 기준으로 어떻게 떨어져 있는지 계산
+		Direction.X = TargetComponentLocation.X - ActorCenter.X;
+		Direction.Y = TargetComponentLocation.Y - ActorCenter.Y;
+		Direction.Z = TargetComponentLocation.Z - ActorCenter.Z;
+
+		// 카메라의 위치를 계산 (단순히 액터 중심 + 방향 벡터)
+		FVector CameraPosition = TargetData.TargetActor->GetActorLocation() + Direction;
+
+		// 카메라는 액터를 항상 바라보도록 설정합니다.
+		FRotator CameraRotation = (TargetData.TargetActor->GetActorLocation() - CameraPosition).Rotation();
+
+		// 카메라의 위치와 회전값을 설정
+		//TargetData.TargetTransform = FTransform(CameraRotation, CameraPosition, FVector(1.f));
+		TargetData.TargetTransform = FTransform(CameraRotation, ActorCenter, FVector(1.f));
+		;
+		// 카메라의 타겟 거리 설정 (필요에 따라 조정)
+		//TargetData.TargetArmLength =700.0f;
+		TargetData.TargetArmLength = Cast<ACorePawn>(TempPawn)->CameraFocusArmLength;
+	}
+}
+
 // feature
-void UCameraInteraction::SetPawnTransform(FTransform TargetTransform, float InArmLength)
+void UCameraInteraction::SetCameraFocusToComponent()
 {
 	// Scale은 무조건 111로
-	TargetTransform.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+	TargetData.TargetTransform.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
 
 	if (!GWorld)
 	{
@@ -88,14 +109,14 @@ void UCameraInteraction::SetPawnTransform(FTransform TargetTransform, float InAr
 
 	if (APawn* TempPawn = PC->GetPawn())
 	{
-		TempPawn->SetActorTransform(TargetTransform);
+		TempPawn->SetActorTransform(TargetData.TargetTransform);
 
 		ACorePawn* TempCorePawn = Cast<ACorePawn>(TempPawn);
 
 		if (TempCorePawn)
 		{
-			TempCorePawn->CamGoal = InArmLength;
-			TempCorePawn->SpringArm->TargetArmLength = InArmLength;
+			TempCorePawn->CamGoal = TargetData.TargetArmLength;
+			TempCorePawn->SpringArm->TargetArmLength = TargetData.TargetArmLength;
 
 		}
 	}

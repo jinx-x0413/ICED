@@ -83,6 +83,7 @@ struct FTableData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableCreated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableDeleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllFieldsActivated, int32, FieldIndex);
 
 
 UCLASS(BlueprintType)
@@ -119,6 +120,8 @@ public:
 	FOnTableDeleted OnTableDeleted;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTableUpdated OnTableUpdated;
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAllFieldsActivated OnAllFieldsActivated;
 
 
 	UFUNCTION(BlueprintCallable)

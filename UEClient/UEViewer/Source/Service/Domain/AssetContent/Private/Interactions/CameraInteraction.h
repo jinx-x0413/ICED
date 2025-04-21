@@ -25,7 +25,9 @@ public:
 
 	// feature
 public:
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusComponentTransform();
 
 	UFUNCTION(BlueprintCallable)
-	void SetPawnTransform(FTransform TargetTransform, float InArmLength);
+	void SetCameraFocusToComponent();
 };

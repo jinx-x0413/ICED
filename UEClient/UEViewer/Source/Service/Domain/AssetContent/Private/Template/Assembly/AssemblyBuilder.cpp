@@ -107,34 +107,7 @@ void UAssemblyBuilder::Build()
 
 	
 }
-//
-//void UAssemblyBuilder::SetTracks(FActorHierarchyData InHierarchyData, float PrevTrackEndTime)
-//{
-//	if (InHierarchyData.TargetComponent.IsValid())
-//	{
-//		UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, InHierarchyData.DisplayName);
-//		if (IsValid(NewTrack))
-//		{
-//			if (IsValid(InHierarchyData.TargetComponent.Get()))
-//			{
-//				NewTrack->TargetComponent = InHierarchyData.TargetComponent.Get();
-//				SetClips(NewTrack, PrevTrackEndTime);
-//			}
-//			else
-//			{
-//				UE_LOG(LogTemp, Warning, TEXT("InHierarchyData.TargetComponent is Invalid at AssemblyBuilder"));
-//			}
-//
-//			
-//		}
-//		else
-//		{
-//			UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
-//		}
-//		
-//	}
-//
-//}
+
 
 float UAssemblyBuilder::SetClip(
 	UTrack* InTrack
@@ -196,63 +169,3 @@ float UAssemblyBuilder::SetClip(
 
 	return CurrentEndTrackTime;
 }
-//
-//void UAssemblyBuilder::SetClips(UTrack* InTargetTrack, float PrevTrackEndTime)
-//{
-//	
-//	if (IsValid(Controller))
-//	{
-//		USceneComponent* TargetComponent = InTargetTrack->TargetComponent;
-//
-//		FInteractionData CameraInteractionData;
-//		CameraInteractionData.TargetActor = TargetActor;
-//		CameraInteractionData.TargetComponent = TargetComponent;
-//		CameraInteractionData.Name = TEXT("카메라 이동");
-//		UInteractionBase* NewCameraInteraction = Controller->CreateInteraction(
-//			UCameraInteraction::StaticClass()
-//			, CameraInteractionData
-//			, InTargetTrack
-//			, PrevTrackEndTime
-//			, PrevTrackEndTime + ClipInterval);
-//
-//		FInteractionData HighlightInteractionData;
-//		HighlightInteractionData.TargetActor = TargetActor;
-//		HighlightInteractionData.TargetComponent = TargetComponent;
-//		HighlightInteractionData.Name = TEXT("하이라이트 효과");
-//		HighlightInteractionData.bIsHighlighted = true;
-//		UInteractionBase* NewHighlightInteraction = Controller->CreateInteraction(
-//			UHighlightInteraction::StaticClass()
-//			, HighlightInteractionData
-//			, InTargetTrack
-//			, PrevTrackEndTime + ClipInterval
-//			, PrevTrackEndTime + ClipInterval * 2);
-//
-//		FInteractionData TransformInteractionData;
-//		TransformInteractionData.TargetActor = TargetActor;
-//		TransformInteractionData.TargetComponent = TargetComponent;
-//		TransformInteractionData.Name = TEXT("이동");
-//		TransformInteractionData.StartTransform = FTransform(FRotator(), TargetComponent->GetComponentLocation(), FVector());
-//		TransformInteractionData.EndTransform = FTransform(FRotator(), TargetComponent->GetComponentLocation() + FVector(0, 0, 250.0f), FVector());
-//		UInteractionBase* NewTransformInteraction = Controller->CreateInteraction(
-//			UTransformInteraction::StaticClass()
-//			, TransformInteractionData
-//			, InTargetTrack
-//			, PrevTrackEndTime + ClipInterval * 2
-//			, PrevTrackEndTime + ClipInterval * 3);
-//
-//		FInteractionData HiddenInteractionData;
-//		HiddenInteractionData.TargetActor = TargetActor;
-//		HiddenInteractionData.TargetComponent = TargetComponent;
-//		HiddenInteractionData.Name = TEXT("숨기기");
-//		HiddenInteractionData.bIsHidden = true;
-//		UInteractionBase* NewHiddenInteraction = Controller->CreateInteraction(
-//			UHiddenInteraction::StaticClass()
-//			, HiddenInteractionData
-//			, InTargetTrack
-//			, PrevTrackEndTime + ClipInterval * 3
-//			, PrevTrackEndTime + ClipInterval * 4);
-//		
-//	}
-//
-//	
-//}

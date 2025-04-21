@@ -72,15 +72,30 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 
 	for (int i = 0; i < TableData.Rows.Num(); i++)
 	{
-		TWeakObjectPtr<UTableRow> NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
-		NewRow->InitializeTableItem(TableData.Rows[i]);
-		TargetTable->AddRow(NewRow.Get());
+		//TWeakObjectPtr<UTableRow> NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
+		UTableRow* NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
+		
+		//TargetTable->AddRow(NewRow.Get());
+		TargetTable->AddRow(NewRow);
 		for (int j = 0; j < TableData.Rows[i].Fields.Num(); j++)
 		{
-			TWeakObjectPtr<UTableField> NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
+			//TWeakObjectPtr<UTableField> NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
+			UTableField* NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
+			
+			// set row
+			//NewRow->AddField(NewField.Get());
+			NewRow->AddField(NewField);
+			NewRow->TargetTable = TargetTable;
+			
+			// set field
 			NewField->InitializeTableField(TableData.Rows[i].Fields[j]);
 			TableData.Rows[i].Fields[j].FieldIndex = j;
-			NewRow->AddField(NewField.Get());
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(
+				TEXT("FieldIndex : %d"), j
+			));
+			
+			// initialize item
+			NewRow->InitializeTableItem(TableData.Rows[i]);
 		}
 	}
 

@@ -4,10 +4,40 @@
 #include "Table/TableField.h"
 #include "Table/TableDependency.h"
 
+void UTableField::NativeConstruct()
+{
+    Super::NativeConstruct();
+}
+
+void UTableField::NativeDestruct()
+{
+    Super::NativeDestruct();
+
+   /* if (ParentTableItem && IsValid(ParentTableItem->TargetTable))
+    {
+        if (ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.IsAlreadyBound(this, &UTableField::SetFieldActivated))
+        {
+            ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.RemoveDynamic(this, &UTableField::SetFieldActivated);
+        }
+    }*/
+
+}
+
 void UTableField::InitializeTableField(FTableFieldData InData)
 {
     TargetFieldData = InData;
 
+    GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, FString::Printf(
+        TEXT("Initialized Field Index : %d"), TargetFieldData.FieldIndex
+    ));
+
+    if (ParentTableItem && IsValid(ParentTableItem->TargetTable))
+    {
+        if (!ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.IsAlreadyBound(this, &UTableField::SetFieldActivated))
+        {
+            ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.AddDynamic(this, &UTableField::SetFieldActivated);
+        }
+    }
 }
 
 void UTableField::InitializeValue(UTableField* InField)
@@ -28,4 +58,14 @@ FTableFieldData UTableField::GetFieldData()
 void UTableField::SetFieldValue(const FString& Value)
 {
     TargetFieldData.FieldValue = Value;
+}
+
+void UTableField::SetFieldActivated(int32 InFieldIndex)
+{
+    if (InFieldIndex == TargetFieldData.FieldIndex)
+    {
+
+        ExecSetFieldActivated();
+    }
+    
 }

@@ -44,7 +44,7 @@ public:
 	virtual FString GetRowValue(int RowIndex, int ColumnIndex);
 	UFUNCTION(BlueprintCallable)
 	virtual void SetRowValue(int RowIndex, int ColumnIndex, const FString& NewValue);
-	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
+	UFUNCTION(meta = (AllowPrivateAccess = true))
 	virtual void AddRow(UTableRow* InRowWidget);
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
 	virtual void RemoveRow(UTableRow* InRowWidget);
