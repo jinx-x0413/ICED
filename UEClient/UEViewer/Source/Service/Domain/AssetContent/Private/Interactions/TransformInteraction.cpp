@@ -91,7 +91,8 @@ void UTransformInteraction::SetStartEndTransformAuto()
 {
 	// TargetComponent의 위치
 	FVector TargetLocation = TargetData.TargetComponent->GetComponentLocation();
-
+	FVector ComponentCenter = TargetData.TargetComponent->Bounds.Origin;
+	
 	// StartTransform 설정 (현재 위치)
 	TargetData.StartTransform.SetLocation(TargetLocation);
 	TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
@@ -99,7 +100,16 @@ void UTransformInteraction::SetStartEndTransformAuto()
 	// EndTransform 설정 (각 축에 대해 이동 방향 설정)
 	FVector Direction = FVector::ZeroVector;
 	FVector CurrentActorCenter = GetTargetActorCenter();
-	FVector Difference = TargetLocation - CurrentActorCenter;
+	FVector Difference = ComponentCenter - CurrentActorCenter;
+
+	UE_LOG(LogTemp, Warning, TEXT("ComponentCenter : %f, %f, %f / Difference : %f, %f, %f")
+		, ComponentCenter.X
+		, ComponentCenter.Y
+		, ComponentCenter.Z
+		, Difference.X
+		, Difference.Y
+		, Difference.Z
+	)
 
 	// 각 축에 대한 차이의 절댓값을 계산
 	float AbsX = FMath::Abs(Difference.X);
@@ -138,6 +148,7 @@ void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionD
 {
 	// TargetComponent의 위치
 	FVector TargetLocation = TargetData.TargetComponent->GetComponentLocation();
+
 	// StartTransform 설정 (현재 위치)
 	TargetData.StartTransform.SetLocation(TargetLocation);
 	TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정

@@ -131,7 +131,7 @@ public:
 	// Set Camera Focus
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	float CameraFocusArmLength = 300.0f;
+	float CameraFocusArmLength = 700.0f;
 	float CameraFocusDistance = 300.0f;
 	UFUNCTION()
 	FTransform SetCameraFocusTransform(AActor* InTargetActor, ECameraFocus InCameraFocus);
