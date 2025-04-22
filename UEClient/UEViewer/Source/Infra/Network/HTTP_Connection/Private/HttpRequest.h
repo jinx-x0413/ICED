@@ -39,7 +39,51 @@ struct FOpenApiTest
 
 };
 
+USTRUCT(BlueprintType)
+struct FCart
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 id;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 fileId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString fileName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString description;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString thumbnailUri;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString size;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString addedAt;
+};
+
+// 루트 구조체
+USTRUCT(BlueprintType)
+struct FCartResponse
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString userId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FCart> CartArray;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 CartCount;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FOpenApiTest&, ApiTest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCartDataDelivery, const FCartResponse&, CartItem);
 
 
 
@@ -56,6 +100,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "HTTP")
 	FUserDataDelivery UserDataDelivery;
 
+	UPROPERTY(BlueprintAssignable, Category = "HTTP")
+	FCartDataDelivery CartDataDelivery;
+
 	UFUNCTION(BlueprintCallable)
 	virtual void SendUserDataHttpRequest();
 
@@ -63,10 +110,10 @@ private:
 	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
 
-
-
 	// login
 private:
 	FOpenApiTest GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
 	FOpenApiTest OpenApi;
+	FCart Cart;
+	FCartResponse CartResponse;
 };

@@ -1,9 +1,19 @@
 {
-  "URL": "https://randomuser.me/api/",
+  "URL": [
+    {
+      "APIType": "BaseURL",
+      "URL": "https://randomuser.me/api/"
+    },
+    {
+      "APIType": "GetCart",
+      "URL": "https://randomuser.me/api/"
+    }
+
+  ],
   "User": [
     {
       "UserName": "Gemini",
-      "Email" :  "Gemini@gamil.com"
+      "Email": "Gemini@gamil.com"
     }
   ],
   "Objects": [

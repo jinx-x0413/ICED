@@ -3,6 +3,7 @@
 
 #include "HttpRequest.h"
 #include "HttpDependency.h"
+#include <JsonObjectConverter.h>
 
 UHttpRequest::UHttpRequest()
 {
@@ -26,9 +27,10 @@ void UHttpRequest::SendUserDataHttpRequest()
 
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UserHttpRequest = FHttpModule::Get().CreateRequest();
-	UserHttpRequest->SetURL(URL);
+	UserHttpRequest->SetURL(TEXT("https://heron-good-curiously.ngrok-free.app/api/cart"));
 	UserHttpRequest->SetVerb("GET");
-
+	UserHttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1MzEzMTM3LCJleHAiOjE3NDUzMjM5Mzd9.TSm7KlN44LWOitpYs0NDRtN84U20f_I3O3x152g5tsw"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	UserHttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::GetUserDataCallBack);
 
@@ -57,6 +59,44 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
 	
+	////////////////////////////////////////////////////////////////////////////////////// real api parsing
+	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+	{
+		CartResponse.CartArray.Empty();
+
+		UE_LOG(LogTemp, Warning, TEXT("UserId: %s, CartCount: %d"), *CartResponse.userId, CartResponse.CartCount);
+		int cartarraycount = 0;
+		const TArray<TSharedPtr<FJsonValue>>* ItemsArray = nullptr;
+		if (JsonObject->TryGetArrayField("items", ItemsArray))
+		{
+			for (auto& ItemValue : *ItemsArray)
+			{
+				TSharedPtr<FJsonObject> ItemObj = ItemValue.Get()->AsObject();
+				
+				Cart.fileName = ItemObj->GetStringField("fileName");
+				Cart.fileId = ItemObj->GetIntegerField("fileId");
+				Cart.size = ItemObj->GetStringField("size");
+				Cart.description = ItemObj->GetStringField("description");
+				Cart.thumbnailUri = ItemObj->GetStringField("thumbnailUri");
+				Cart.addedAt = ItemObj->GetStringField("addedAt");
+				CartResponse.CartArray.Add(Cart);
+				UE_LOG(LogTemp, Warning, TEXT("fileName: %s, fileId: %d, size: %s, description: %s, thumbnailUri: %s, AddedAt: %s"), *Cart.fileName, Cart.fileId, *Cart.size, *Cart.description, *Cart.thumbnailUri, *Cart.addedAt);
+			}
+			for (auto& CarArrayCount : CartResponse.CartArray)
+			{
+				cartarraycount++;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("CartArrayCount : %d"), cartarraycount);
+			cartarraycount = 0;
+			CartDataDelivery.Broadcast(CartResponse);
+		}
+		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("JSON 파싱 실패. JsonStr: %s"), *ContentString);
+	}
+	//////////////////////////////////////////////////////////////////////////////////////	sample api parsing
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("JSON  Parse Successed: %s"), *ContentString);
@@ -66,51 +106,16 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 		{
 			TSharedPtr<FJsonObject> UserObject = ResultsArray[0]->AsObject();
 			
-
 			OpenApi.Gender = UserObject->GetStringField(TEXT("gender"));
-
-			
 
 			UE_LOG(LogTemp, Warning, TEXT("gender : %s"), *OpenApi.Gender);
 		}
-
-		const TArray<TSharedPtr<FJsonValue>>* Users;
-		if (JsonObject->TryGetArrayField("User", Users))
-		{
-			
-			for (auto& UserValue : *Users)
-			{
-				TSharedPtr<FJsonObject> UserObject = UserValue->AsObject();
-				OpenApi.UserName = UserObject->GetStringField("UserName");
-				UE_LOG(LogTemp, Warning, TEXT("UserName: %s"), *OpenApi.UserName);
-			}
-		}
-
-		// Objects 배열 파싱
-		const TArray<TSharedPtr<FJsonValue>>* Objects;
-		if (JsonObject->TryGetArrayField("Objects", Objects))
-		{
-			for (auto& ObjectValue : *Objects)
-			{
-				TSharedPtr<FJsonObject> ObjectObject = ObjectValue->AsObject();
-				OpenApi.ObjectName = ObjectObject->GetStringField("ObjectName");
-				UE_LOG(LogTemp, Warning, TEXT("ObjectName: %s"), *OpenApi.ObjectName);
-
-				TSharedPtr<FJsonObject> FilePath = ObjectValue->AsObject();
-				OpenApi.FilePath = ObjectObject->GetStringField("FilePath");
-				UE_LOG(LogTemp, Warning, TEXT("FilePath: %s"), *OpenApi.FilePath);
-			}
-		}
-
 		UserDataDelivery.Broadcast(OpenApi);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("JSON Parse Failed: %s"), *ContentString);
 	}
-
-	
-	
 
 }
 
@@ -128,7 +133,6 @@ FOpenApiTest UHttpRequest::GetURLFromConfig()
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(JsonRaw);
 	
-
 	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
 		OpenApi.URL = JsonObject->GetStringField(TEXT("URL"));
