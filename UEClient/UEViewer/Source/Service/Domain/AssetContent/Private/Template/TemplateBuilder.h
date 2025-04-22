@@ -17,7 +17,8 @@ enum class ETemplateType : uint8
 	NONE			UMETA(DisplayName = "None"),
 	FREE			UMETA(DisplayName = "Free"),
 	PARTINFO		UMETA(DisplayName = "PartInfo"),
-	ASSEMBLY		UMETA(DisplayName = "Assembly")
+	ASSEMBLY		UMETA(DisplayName = "Assembly"),
+	COMPONENT		UMETA(DisplayName = "Component")
 };
 
 

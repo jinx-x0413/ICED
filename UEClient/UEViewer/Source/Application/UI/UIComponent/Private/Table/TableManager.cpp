@@ -62,6 +62,7 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 
 	//TargetTable = NewObject<UTableContainer>(this, InContainerClass);
 
+	// 1. Create Container
 	APlayerController* PlayerController = GWorld->GetFirstPlayerController();
 	TargetTable = CreateWidget<UTableContainer>(PlayerController, InContainerClass);
 	TargetTable->InitializeTable(this);
@@ -69,16 +70,17 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 	TargetTable->SetPositionInViewport(UViewportHelper::AdjustedPosition(InPosition), false);
 
 
-
+	// 2. Create Row
 	for (int i = 0; i < TableData.Rows.Num(); i++)
 	{
 		//TWeakObjectPtr<UTableRow> NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
 		UTableRow* NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
-		
-		//TargetTable->AddRow(NewRow.Get());
 		TargetTable->AddRow(NewRow);
+		
+		// 3. Field
 		for (int j = 0; j < TableData.Rows[i].Fields.Num(); j++)
 		{
+			// 3-1. Create Fields
 			//TWeakObjectPtr<UTableField> NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
 			UTableField* NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
 			
@@ -93,7 +95,14 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 			
 			// initialize item
 			NewRow->InitializeTableItem(TableData.Rows[i]);
+
+
+			// 3-2. Create FieldsBackward
+			TableData.Rows[i].FieldsBackward[j].FieldIndex = j;
 		}
+
+		
+		
 	}
 
 	OnTableCreated.Broadcast();
@@ -113,6 +122,15 @@ FTableData UTableManager::GetTableData()
 		FTableRowData CurrentRowData;
 		CurrentRowData = Row->GetCurrentRowData();
 		CurrentTableData.Rows.Add(CurrentRowData);
+	}
+
+	// TODO : get fieldsBakward data from datatable
+	for (int i = 0; i < TableData.Rows.Num(); i++)
+	{
+		for (int j = 0; j < TableData.Rows[i].FieldsBackward.Num(); j++)
+		{
+			CurrentTableData.Rows[i].FieldsBackward = TableData.Rows[i].FieldsBackward;
+		}
 	}
 
 	return CurrentTableData;

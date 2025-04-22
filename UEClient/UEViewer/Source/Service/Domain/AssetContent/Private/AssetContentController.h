@@ -29,6 +29,8 @@ public:
 public:
 	virtual UInteractionBase* CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
+	virtual UInteractionBase* CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+
 	UPROPERTY()
 	UTemplateBuilder* TemplateBuilder;
 
@@ -38,4 +40,9 @@ public:
 	//// Assembly property
 	TSubclassOf<UUserWidget> TrackHeaderWidgetClass;
 	TSubclassOf<UUserWidget> TrackWidgetClass;
+
+
+
+	//// Component property
+	TSubclassOf<UUserWidget> TrackComponentWidgetClass;
 };

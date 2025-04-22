@@ -39,6 +39,27 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
     return nullptr;
 }
 
+UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+{
+    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+    {
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
+        //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->Initialize(InInteractionData);
+        NewInteraction->StartTime = InStartTime;
+        NewInteraction->EndTime = InEndTime;
+        NewInteraction->ClipLength = InEndTime - InStartTime;
+        NewInteraction->Name = InInteractionData.Name.ToString();
+        NewInteraction->AddToRoot();
+
+        UTimebarPlayer::GetTimebarPlayer()->ReverseClipArray.Add(NewInteraction);
+
+        return NewInteraction;
+    }
+
+    return nullptr;
+}
+
 void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData)
 {
     if (!IsValid(TemplateBuilder))

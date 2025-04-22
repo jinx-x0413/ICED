@@ -13,6 +13,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
+#include "Application/UI/UIComponent/Public/SceneCapture/SceneCaptureIcon.h"
 
 #include "PlayerDependency.generated.h"
 

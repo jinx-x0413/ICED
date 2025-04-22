@@ -25,7 +25,9 @@ TScriptInterface<ITemplateInterface> UTemplateBuilder::SetCurrentTemplate(ETempl
 	case ETemplateType::ASSEMBLY:
 		return NewObject<UAssemblyBuilder>();
 		break;
-
+	case ETemplateType::COMPONENT:
+		return NewObject<UComponentBuilder>();
+		break;
 	default:
 		return nullptr;
 		break;

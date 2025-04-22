@@ -179,6 +179,31 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 						}
 					}
 
+					// 4. parse FieldsBackward
+					if (SampleRowData->HasField(TEXT("FieldsBackward")))
+					{
+						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("FieldsBackward"));
+
+						for (int j = 0; j < FieldData.Num(); j++)
+						{
+							FTableFieldData TempFieldData;
+							TSharedPtr<FJsonObject> EachFieldData = FieldData[j]->AsObject();
+							TempFieldData.FieldIndex = j;
+
+							// field class
+							FString TempClassString;
+							FString TempFieldName;
+							FString TempInteractionClassString;
+							EachFieldData->TryGetStringField(TEXT("FieldClass"), TempClassString);
+							TempFieldData.FieldClass = ConvertStringToWBPClass(TempClassString);
+							EachFieldData->TryGetStringField(TEXT("FieldName"), TempFieldData.FieldName);
+							EachFieldData->TryGetStringField(TEXT("FieldValue"), TempFieldData.FieldValue);
+							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
+							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
+
+							TempRowData.FieldsBackward.Add(TempFieldData);
+						}
+					}
 					TempTableData.Rows.Add(TempRowData);
 
 				}

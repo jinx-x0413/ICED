@@ -11,6 +11,8 @@ UTimebarPlayer* UTimebarPlayer::Instance = nullptr;
 
 UTimebarPlayer::UTimebarPlayer()
 	: CurrentTime(0.0f)
+	, SelectedTrack(nullptr)
+	, SelectedClip(nullptr)
 {
 }
 
@@ -110,7 +112,19 @@ void UTimebarPlayer::Shutdown()
 		ClipArray.Empty();
 	}
 
-
+	if (ReverseClipArray.Num() > 0)
+	{
+		for (auto& Clip : ReverseClipArray)
+		{
+			if (IsValid(Clip) && Clip->IsRooted())
+			{
+				Clip->RemoveFromRoot();
+				Clip->MarkAsGarbage();
+				Clip = nullptr;
+			}
+		}
+		ReverseClipArray.Empty();
+	}
 }
 
 
@@ -163,6 +177,25 @@ UTrack* UTimebarPlayer::CreateSideTrack(UTrack* InParentTrack, TSubclassOf<UUser
 	OnTrackSelected.Broadcast(NewTrack);
 
 	return nullptr;
+}
+
+UTrack* UTimebarPlayer::CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent)
+{
+	// Create Object
+	UTrack* NewTrack = NewObject<UTrack>(GWorld);
+	NewTrack->AddToRoot();
+	NewTrack->Name = InName;
+	NewTrack->TargetComponent = InTargetComponent;
+	TrackArray.Add(NewTrack);
+
+	// Create Widget
+	UWorld* TargetWorld = NewTrack->GetWorld();
+	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
+	//NewTrack->ContentWidget->TargetTrack = NewTrack;
+	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
+
+	OnComponentTrackCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
+	return NewTrack;
 }
 
 void UTimebarPlayer::SelectTrack(UTrack* InTrack)
@@ -286,13 +319,25 @@ void UTimebarPlayer::Start()
 		switch (State)
 		{
 		case ETimebarState::Stopped:
-			GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::Run, 0.01f, true);
+			if (bIsPlayingBackward)
+			{
+				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::RunBackward, 0.01f, true);
+			}
+			else
+			{
+				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::Run, 0.01f, true);
+			}
+			
 			State = ETimebarState::Running;
 			break;
 		case ETimebarState::Paused:
 			if (GWorld->GetTimerManager().IsTimerPaused(MainTimer))
 			{
 				GWorld->GetTimerManager().UnPauseTimer(MainTimer);
+			}
+			else if(bIsPlayingBackward)
+			{
+				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::RunBackward, 0.01f, true);
 			}
 			else
 			{
@@ -331,17 +376,36 @@ void UTimebarPlayer::Stop()
 		GWorld->GetTimerManager().ClearTimer(MainTimer);
 		CurrentTime = 0.0f;
 		OnCurrentTimeChanged.Broadcast(CurrentTime);
-		if (!ClipArray.IsEmpty())
+
+		if (bIsPlayingBackward)
 		{
-			for (auto& Clip : ClipArray)
+			if (!ReverseClipArray.IsEmpty())
 			{
-				if (IsValid(Clip))
+				for (auto& Clip : ReverseClipArray)
 				{
-					Clip->Stop();
+					if (IsValid(Clip))
+					{
+						Clip->Stop();
+					}
 				}
+
 			}
-			
 		}
+		else
+		{
+			if (!ClipArray.IsEmpty())
+			{
+				for (auto& Clip : ClipArray)
+				{
+					if (IsValid(Clip))
+					{
+						Clip->Stop();
+					}
+				}
+
+			}
+		}
+		
 		State = ETimebarState::Stopped;
 		OnStateChanged.Broadcast(State);
 	}
@@ -380,18 +444,66 @@ void UTimebarPlayer::SetCurrentTime(float InCurrentTime)
 	CurrentTime = InCurrentTime;
 	OnCurrentTimeChanged.Broadcast(CurrentTime);
 
-	if (!ClipArray.IsEmpty())
+	if (bIsPlayingBackward)
 	{
-		for (auto& Clip : ClipArray)
+		if (!ReverseClipArray.IsEmpty())
 		{
-			if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
+			for (auto& Clip : ReverseClipArray)
 			{
-				Clip->Play(CurrentTime);  // 클립 재생
-			}
-			else if (IsValid(Clip))
-			{
-				Clip->Stop();  // 클립 일시정지
+				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
+				{
+					Clip->Play(CurrentTime);  // 클립 재생
+				}
+				else if (IsValid(Clip))
+				{
+					Clip->Stop();  // 클립 일시정지
+				}
 			}
 		}
+	}
+	else
+	{
+		if (!ClipArray.IsEmpty())
+		{
+			for (auto& Clip : ClipArray)
+			{
+				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
+				{
+					Clip->Play(CurrentTime);  // 클립 재생
+				}
+				else if (IsValid(Clip))
+				{
+					Clip->Stop();  // 클립 일시정지
+				}
+			}
+		}
+	}
+}
+
+void UTimebarPlayer::RunBackward()
+{
+	// 게임의 실제 시간으로 CurrentTime 업데이트
+	if (GWorld)
+	{
+		CurrentTime += GWorld->GetDeltaSeconds(); // DeltaTime을 사용하여 시간 진행
+		OnCurrentTimeChanged.Broadcast(CurrentTime);
+
+		// CurrentTime에 맞춰 클립의 재생 여부를 확인하고 클립 상태 관리
+		if (!ReverseClipArray.IsEmpty())
+		{
+			for (auto& Clip : ReverseClipArray)
+			{
+				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
+				{
+					Clip->Play(CurrentTime);  // 클립 재생
+				}
+				else if (IsValid(Clip))
+				{
+					Clip->Stop();  // 클립 일시정지
+				}
+			}
+		}
+
+
 	}
 }

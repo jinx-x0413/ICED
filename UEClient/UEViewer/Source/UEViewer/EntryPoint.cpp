@@ -103,6 +103,25 @@ void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget>
 	}
 }
 
+void UEntryPoint::BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass)
+{
+	// Get Table Data
+	FTableData CurrentTableData = UTableManager::GetTableManager()->TableData;
+
+	// Build Content
+	UInteractionBase* ReturnInteraction = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetContent")))
+	{
+		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
+		if (Module)
+		{
+			Module->Controller->TrackComponentWidgetClass = InTrackHeaderWidgetClass;
+			Module->Controller->BuildTemplate(ETemplateType::COMPONENT, InActor, CurrentTableData);
+
+		}
+	}
+}
+
 
 
 

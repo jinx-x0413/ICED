@@ -6,7 +6,7 @@ public class Timebar : ModuleRules
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "InputCore", "Engine", "UMG"});
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "InputCore", "Engine", "UMG", "UIComponent"});
  
 		PublicIncludePaths.AddRange(new string[] {"Timebar/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"Timebar/Private"});

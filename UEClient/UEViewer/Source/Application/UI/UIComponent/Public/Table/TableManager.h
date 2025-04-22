@@ -53,11 +53,14 @@ struct FTableRowData
 	FString RowName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
 	TArray<FTableFieldData> Fields;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
+	TArray<FTableFieldData> FieldsBackward;
 
 	FTableRowData()
 		: RowIndex(0)
 		, RowName(TEXT(""))
 		, Fields()
+		, FieldsBackward()
 	{}
 };
 

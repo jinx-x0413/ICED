@@ -9,6 +9,7 @@
 #include "TemplateInterface.h"
 #include "Template/TemplateHandler.h"
 #include "Assembly/AssemblyBuilder.h"
+#include "Component/ComponentBuilder.h"
 #include "Service/Domain/AssetContent/Private/AssetContentController.h"
 #include "Interactions/InteractionDependency.h"
 

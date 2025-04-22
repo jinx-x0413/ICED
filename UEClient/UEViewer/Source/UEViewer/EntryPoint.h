@@ -76,6 +76,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
 
+	UFUNCTION(BlueprintCallable)
+	static void BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass);
 
 	// Timebar
 public:

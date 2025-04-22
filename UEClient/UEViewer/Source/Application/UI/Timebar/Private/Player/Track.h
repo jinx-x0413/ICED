@@ -77,5 +77,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UTrackWidget* ContentWidget;
 
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class USceneCaptureIcon* ComponentWidget;
 };

@@ -16,10 +16,7 @@ UAssemblyBuilder::~UAssemblyBuilder()
 
 void UAssemblyBuilder::Build()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Build Assembly Content"));
-
 	
-
 	// Get AssetActor Hierarchy Data
 	if (IsValid(TargetActor))
 	{
@@ -60,7 +57,6 @@ void UAssemblyBuilder::Build()
 									{
 										continue;
 									}
-
 
 									if(Field.FieldValue == TEXT("false"))
 									{

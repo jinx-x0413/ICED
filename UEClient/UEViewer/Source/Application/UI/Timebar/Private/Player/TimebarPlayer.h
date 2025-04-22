@@ -21,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTrackCreated, UTrack*, InTrack
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSideTrackCreated, UTrack*, InParentTrack, UTrack*, InTrack, UUserWidget*, InHeaderWidget, USideTrackWidget*, InTrackWidget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackDeleted, UTrack*, InTrack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackSelected, UTrack*, InTrack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnComponentTrackCreated, UTrack*, InTrack, USceneCaptureIcon*, InSceneCaptureWidget);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnClipCreated, UTrack*, InTrack, UClip*, InClip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClipDeleted, UClip*, InClip);
@@ -78,11 +79,17 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UTrack* SelectedTrack;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnComponentTrackCreated OnComponentTrackCreated;
+
 	UFUNCTION()
 	UTrack* CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName);
 
 	UFUNCTION()
 	UTrack* CreateSideTrack(UTrack* InParentTrack, TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName);
+
+	UFUNCTION()
+	UTrack* CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
 
 	UFUNCTION(BlueprintCallable)
 	void SelectTrack(UTrack* InTrack);
@@ -95,6 +102,9 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UClip*> ClipArray;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<UClip*> ReverseClipArray;
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnClipCreated OnClipCreated;
@@ -138,6 +148,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ETimebarState State = ETimebarState::Stopped;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsPlayingBackward = false;
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnStateChanged OnStateChanged;
 
@@ -162,4 +175,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentTime(float InCurrentTime);
+
+	
+	UFUNCTION(BlueprintCallable)
+	void RunBackward();
 };
