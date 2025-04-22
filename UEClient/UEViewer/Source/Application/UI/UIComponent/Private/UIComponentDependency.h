@@ -7,6 +7,7 @@
 
 #include "DragDrop/DragDropDependency.h"
 #include "Table/TableDependency.h"
+#include "SceneCapture/SceneCaptureDependency.h"
 
 #include "Kismet/KismetSystemLibrary.h"
 

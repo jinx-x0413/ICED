@@ -43,7 +43,8 @@ void UAssemblyBuilder::Build()
 					
 					if (CurrentData[i + 1].TargetComponent.IsValid())
 					{
-						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, CurrentData[i + 1].DisplayName);
+						//UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, CurrentData[i + 1].DisplayName);
+						UTrack* NewTrack = nullptr;
 						if (IsValid(NewTrack))
 						{
 							if (IsValid(CurrentData[i + 1].TargetComponent.Get()))

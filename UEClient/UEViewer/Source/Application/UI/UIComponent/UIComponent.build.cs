@@ -16,6 +16,7 @@ public class UIComponent : ModuleRules
             , "JsonUtilities"
             , "AssetActor"
             , "AssetContent"
+            ,  "Slate", "SlateCore"
         });
 
         PublicIncludePaths.AddRange(new string[] { "UIComponent/Public" });
