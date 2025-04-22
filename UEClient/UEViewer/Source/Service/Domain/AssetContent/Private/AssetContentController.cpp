@@ -45,6 +45,7 @@ UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractio
     {
         UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
         //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->bIsReversed = true;
         NewInteraction->Initialize(InInteractionData);
         NewInteraction->StartTime = InStartTime;
         NewInteraction->EndTime = InEndTime;

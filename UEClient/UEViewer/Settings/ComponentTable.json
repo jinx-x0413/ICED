@@ -48,7 +48,7 @@
               "FieldIndex": "1",
               "FieldClass": "WBP_TableFieldCheckbox",
               "FieldName": "나타나기",
-              "FieldValue": "false",
+              "FieldValue": "true",
               "InteractionClassName": "UHiddenInteraction"
             },
             {

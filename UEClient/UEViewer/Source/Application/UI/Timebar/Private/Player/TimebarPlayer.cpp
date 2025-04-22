@@ -89,7 +89,21 @@ void UTimebarPlayer::Shutdown()
 			if (IsValid(Track) && Track->IsRooted())
 			{
 				Track->RemoveFromRoot();
-				
+				Track->MarkAsGarbage();
+				Track = nullptr;
+			}
+		}
+
+		TrackArray.Empty();
+	}
+
+	if (ReverseTrackArray.Num() > 0)
+	{
+		for (auto& Track : ReverseTrackArray)
+		{
+			if (IsValid(Track) && Track->IsRooted())
+			{
+				Track->RemoveFromRoot();
 				Track->MarkAsGarbage();
 				Track = nullptr;
 			}
@@ -195,6 +209,23 @@ UTrack* UTimebarPlayer::CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureW
 	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
 
 	OnComponentTrackCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
+	return NewTrack;
+}
+
+UTrack* UTimebarPlayer::CreateComponentBackward(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent)
+{
+	// Create Object
+	UTrack* NewTrack = NewObject<UTrack>(GWorld);
+	NewTrack->AddToRoot();
+	NewTrack->Name = InName;
+	NewTrack->TargetComponent = InTargetComponent;
+	ReverseTrackArray.Add(NewTrack);
+
+	// Create Widget
+	UWorld* TargetWorld = NewTrack->GetWorld();
+	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
+	
+	OnComponentTrackBackwardCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
 	return NewTrack;
 }
 

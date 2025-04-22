@@ -36,6 +36,9 @@ FTableRowData UTableRow::GetCurrentRowData()
 	{
 		FTableFieldData TempFieldData = Field->GetFieldData();
 		TempRowData.Fields.Add(TempFieldData);
+
+		// TODO : Backward Field logic ºÐ¸®
+		TempRowData.FieldsBackward.Add(TempFieldData);
 	}
 
 	return TempRowData;

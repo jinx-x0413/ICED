@@ -147,4 +147,7 @@ protected:
 public:
 	UFUNCTION()
 	FVector GetTargetActorCenter();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsReversed = false;
 };

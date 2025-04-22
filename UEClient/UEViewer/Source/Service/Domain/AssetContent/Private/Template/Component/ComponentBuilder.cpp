@@ -30,12 +30,14 @@ void UComponentBuilder::Build()
 		}
 
 		float LatestClipEndTime = 0.0f;
+		float LatestBackwardClipEndTime = 0.0f;
 		TargetTableData = UTableManager::GetTableManager()->GetTableData(); // 참조로 사용
 
 		for (int i = 0; i < CurrentData.Num() - 1; i++) // Actor 대상으로 클립 생성하지 않도록
 		{
 			for (auto& Row : TargetTableData.Rows)
 			{
+				// forward
 				if (Row.RowName == CurrentData[i + 1].DisplayName)
 				{
 
@@ -49,7 +51,6 @@ void UComponentBuilder::Build()
 							{
 								NewTrack->TargetComponent = CurrentData[i + 1].TargetComponent.Get();
 
-								// forward
 								for (auto& Field : Row.Fields)
 								{
 									// check if data checked
@@ -73,29 +74,6 @@ void UComponentBuilder::Build()
 									}
 								}
 
-								// backward
-								for (auto& Field : Row.FieldsBackward)
-								{
-									// check if data checked
-									//UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName,  *Field.FieldValue);
-									if (Field.FieldValue.IsEmpty())
-									{
-										continue;
-									}
-
-									if (Field.FieldValue == TEXT("false"))
-									{
-										UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName, *Field.FieldValue);
-									}
-									else if (Field.FieldValue == TEXT("true"))
-									{
-										LatestClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime);
-									}
-									else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
-									{
-										LatestClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime, Field.FieldValue);
-									}
-								}
 
 							}
 							else
@@ -114,9 +92,53 @@ void UComponentBuilder::Build()
 
 					break;
 				}
+
+
+				// backward
+				FActorHierarchyData CurrentBackwardData = CurrentData[CurrentData.Num() - i - 1];
+				if (Row.RowName == CurrentBackwardData.DisplayName)
+				{
+					if (CurrentBackwardData.TargetComponent.IsValid())
+					{
+						USkeletalMeshComponent* CurrentSkeletalMeshComponent = Cast<USkeletalMeshComponent>(CurrentBackwardData.TargetComponent);
+						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentBackward(Controller->TrackComponentWidgetClass, CurrentBackwardData.DisplayName, CurrentSkeletalMeshComponent);
+						if (IsValid(NewTrack))
+						{
+							for (auto& Field : Row.FieldsBackward)
+							{
+								// check if data checked
+								if (Field.FieldValue.IsEmpty())
+								{
+									continue;
+								}
+
+								if (Field.FieldValue == TEXT("false"))
+								{
+									UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName, *Field.FieldValue);
+								}
+								else if (Field.FieldValue == TEXT("true"))
+								{
+									LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime);
+								}
+								else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
+								{
+									LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime, Field.FieldValue);
+								}
+							}
+						}
+						
+					}
+
+
+				}
 			}
 
+		
+			
 		}
+
+		
+
 	}
 }
 
@@ -215,7 +237,7 @@ float UComponentBuilder::SetClipBackward(UTrack* InTrack, TSubclassOf<UInteracti
 		}
 		TargetInteractionData.TransformDirection = CurrentDirection;
 
-		TargetInteractionData.bIsHidden = true;
+		TargetInteractionData.bIsHidden = false;
 		// TODO : refactoring ; switch?
 		// TODO : popup Interaction property (TargetWidget, Text)
 

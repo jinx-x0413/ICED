@@ -94,22 +94,22 @@ void UTransformInteraction::SetStartEndTransformAuto()
 	FVector ComponentCenter = TargetData.TargetComponent->Bounds.Origin;
 	
 	// StartTransform 설정 (현재 위치)
-	TargetData.StartTransform.SetLocation(TargetLocation);
-	TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	if (bIsReversed)
+	{
+		TargetData.EndTransform.SetLocation(TargetLocation);
+		TargetData.EndTransform.SetRotation(FQuat::Identity);
+	}
+	else
+	{
+		TargetData.StartTransform.SetLocation(TargetLocation);
+		TargetData.StartTransform.SetRotation(FQuat::Identity);
+	}
+	
 
 	// EndTransform 설정 (각 축에 대해 이동 방향 설정)
 	FVector Direction = FVector::ZeroVector;
 	FVector CurrentActorCenter = GetTargetActorCenter();
 	FVector Difference = ComponentCenter - CurrentActorCenter;
-
-	UE_LOG(LogTemp, Warning, TEXT("ComponentCenter : %f, %f, %f / Difference : %f, %f, %f")
-		, ComponentCenter.X
-		, ComponentCenter.Y
-		, ComponentCenter.Z
-		, Difference.X
-		, Difference.Y
-		, Difference.Z
-	)
 
 	// 각 축에 대한 차이의 절댓값을 계산
 	float AbsX = FMath::Abs(Difference.X);
@@ -140,8 +140,17 @@ void UTransformInteraction::SetStartEndTransformAuto()
 	}
 
 	// EndTransform 위치 계산
-	TargetData.EndTransform.SetLocation(TargetLocation + Direction);
-	TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	if (bIsReversed)
+	{
+		TargetData.StartTransform.SetLocation(TargetLocation + Direction);
+		TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
+	else
+	{
+		TargetData.EndTransform.SetLocation(TargetLocation + Direction);
+		TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
+	
 }
 
 void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionDirection InDirection)
@@ -150,8 +159,16 @@ void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionD
 	FVector TargetLocation = TargetData.TargetComponent->GetComponentLocation();
 
 	// StartTransform 설정 (현재 위치)
-	TargetData.StartTransform.SetLocation(TargetLocation);
-	TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	if (bIsReversed)
+	{
+		TargetData.EndTransform.SetLocation(TargetLocation);
+		TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
+	else
+	{
+		TargetData.StartTransform.SetLocation(TargetLocation);
+		TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
 
 	// EndTransform 설정 (각 축에 대해 이동 방향 설정)
 	FVector Direction = FVector::ZeroVector;
@@ -175,6 +192,15 @@ void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionD
 	}
 
 	// EndTransform 위치 계산
-	TargetData.EndTransform.SetLocation(TargetLocation + Direction);
-	TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	if (bIsReversed)
+	{
+		TargetData.StartTransform.SetLocation(TargetLocation + Direction);
+		TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
+	else
+	{
+		TargetData.EndTransform.SetLocation(TargetLocation + Direction);
+		TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
+	}
+	
 }

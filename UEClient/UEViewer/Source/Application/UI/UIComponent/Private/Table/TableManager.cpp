@@ -125,13 +125,13 @@ FTableData UTableManager::GetTableData()
 	}
 
 	// TODO : get fieldsBakward data from datatable
-	for (int i = 0; i < TableData.Rows.Num(); i++)
+	/*for (int i = 0; i < TableData.Rows.Num(); i++)
 	{
 		for (int j = 0; j < TableData.Rows[i].FieldsBackward.Num(); j++)
 		{
 			CurrentTableData.Rows[i].FieldsBackward = TableData.Rows[i].FieldsBackward;
 		}
-	}
+	}*/
 
 	return CurrentTableData;
 }

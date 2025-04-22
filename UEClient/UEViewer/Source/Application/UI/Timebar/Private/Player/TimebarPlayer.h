@@ -22,6 +22,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSideTrackCreated, UTrack*, InPa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackDeleted, UTrack*, InTrack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackSelected, UTrack*, InTrack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnComponentTrackCreated, UTrack*, InTrack, USceneCaptureIcon*, InSceneCaptureWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnComponentTrackBackwardCreated, UTrack*, InTrack, USceneCaptureIcon*, InSceneCaptureWidget);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnClipCreated, UTrack*, InTrack, UClip*, InClip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClipDeleted, UClip*, InClip);
@@ -64,6 +65,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UTrack*> TrackArray;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<UTrack*> ReverseTrackArray;
+
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnTrackCreated OnTrackCreated;
 
@@ -82,6 +86,9 @@ public:
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnComponentTrackCreated OnComponentTrackCreated;
 
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnComponentTrackBackwardCreated OnComponentTrackBackwardCreated;
+	
 	UFUNCTION()
 	UTrack* CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName);
 
@@ -90,6 +97,9 @@ public:
 
 	UFUNCTION()
 	UTrack* CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
+
+	UFUNCTION()
+	UTrack* CreateComponentBackward(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
 
 	UFUNCTION(BlueprintCallable)
 	void SelectTrack(UTrack* InTrack);
