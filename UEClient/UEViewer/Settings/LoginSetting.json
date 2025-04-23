@@ -1,8 +1,23 @@
 {
-  "URL": "https://randomuser.me/api/",
+  "URL": [
+    {
+      "APIType": "BaseURL",
+      "URL": "https://randomuser.me/api/"
+    },
+    {
+      "APIType": "GetCart",
+      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart"
+    },
+    {
+      "APIType": "DownloadModel",
+      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart/download/4"
+    }
+
+  ],
   "User": [
     {
-      "UserName": "Gemini"
+      "UserName": "Gemini",
+      "Email": "Gemini@gamil.com"
     }
   ],
   "Objects": [
