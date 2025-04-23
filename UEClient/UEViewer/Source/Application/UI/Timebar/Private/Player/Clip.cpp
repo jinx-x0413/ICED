@@ -48,9 +48,15 @@ void UClip::Play(float InCurrentTime)
 		{
 			TargetWidget->ExecPlayClip();
 		}
+
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount++;
+		}
 	}
 	else
 	{
+		
 		return;
 	}
 	//// 재생 시작 로그 출력
@@ -70,6 +76,7 @@ void UClip::Pause()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Clip is paused"));
 		}
+
 	}
 	else
 	{
@@ -93,6 +100,11 @@ void UClip::Stop()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Clip is stopped"));
 		}*/
+
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount--;
+		}
 	}
 	else
 	{

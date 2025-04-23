@@ -33,4 +33,11 @@ public:
 		, USkeletalMeshComponent* InComponent);
 
 	void AdjustSceneCaptureToMesh(USceneCaptureComponent2D* SceneCapture, USkeletalMeshComponent* MeshComp);
+
+
+
+	// feature
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExecSetActivated(bool bIsActivated);
 };

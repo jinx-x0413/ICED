@@ -97,3 +97,26 @@ FVector2D UTrack::GetMinMaxTime()
 
 	return FVector2D();
 }
+
+bool UTrack::IsPlaying()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Track's Active Clip Count : %s / %d"), *Name, ActiveClipCount);
+	return ActiveClipCount > 0;
+}
+
+void UTrack::Play()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Track Playing : %s"), *Name);
+	if (IsValid(ComponentWidget))
+	{
+		ComponentWidget->ExecSetActivated(true);
+	}
+}
+
+void UTrack::Stop()
+{
+	if (IsValid(ComponentWidget))
+	{
+		ComponentWidget->ExecSetActivated(false);
+	}
+}

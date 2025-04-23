@@ -13,6 +13,10 @@ UTimebarPlayer::UTimebarPlayer()
 	: CurrentTime(0.0f)
 	, SelectedTrack(nullptr)
 	, SelectedClip(nullptr)
+	, TrackArray()
+	, ReverseTrackArray()
+	, ClipArray()
+	, ReverseClipArray()
 {
 }
 
@@ -42,6 +46,8 @@ UTimebarPlayer::~UTimebarPlayer()
 
 		Instance->Shutdown();
 		Instance->RemoveFromRoot();
+		Instance->MarkAsGarbage();
+		Instance = nullptr;
 	}
 
 	
@@ -82,9 +88,9 @@ UTimebarPlayer* UTimebarPlayer::GetTimebarPlayer()
 
 void UTimebarPlayer::Shutdown()
 {
-	if (TrackArray.Num() > 0)
+	if (Instance->TrackArray.Num() > 0)
 	{
-		for (auto& Track : TrackArray)
+		for (auto& Track : Instance->TrackArray)
 		{
 			if (IsValid(Track) && Track->IsRooted())
 			{
@@ -94,12 +100,12 @@ void UTimebarPlayer::Shutdown()
 			}
 		}
 
-		TrackArray.Empty();
+		Instance->TrackArray.Empty();
 	}
 
-	if (ReverseTrackArray.Num() > 0)
+	if (Instance->ReverseTrackArray.Num() > 0)
 	{
-		for (auto& Track : ReverseTrackArray)
+		for (auto& Track : Instance->ReverseTrackArray)
 		{
 			if (IsValid(Track) && Track->IsRooted())
 			{
@@ -109,12 +115,12 @@ void UTimebarPlayer::Shutdown()
 			}
 		}
 
-		TrackArray.Empty();
+		Instance->TrackArray.Empty();
 	}
 
-	if (ClipArray.Num() > 0)
+	if (Instance->ClipArray.Num() > 0)
 	{
-		for (auto& Clip : ClipArray)
+		for (auto& Clip : Instance->ClipArray)
 		{
 			if (IsValid(Clip) && Clip->IsRooted())
 			{
@@ -123,12 +129,12 @@ void UTimebarPlayer::Shutdown()
 				Clip = nullptr;
 			}
 		}
-		ClipArray.Empty();
+		Instance->ClipArray.Empty();
 	}
 
-	if (ReverseClipArray.Num() > 0)
+	if (Instance->ReverseClipArray.Num() > 0)
 	{
-		for (auto& Clip : ReverseClipArray)
+		for (auto& Clip : Instance->ReverseClipArray)
 		{
 			if (IsValid(Clip) && Clip->IsRooted())
 			{
@@ -137,7 +143,7 @@ void UTimebarPlayer::Shutdown()
 				Clip = nullptr;
 			}
 		}
-		ReverseClipArray.Empty();
+		Instance->ReverseClipArray.Empty();
 	}
 }
 
@@ -290,6 +296,7 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 UClip* UTimebarPlayer::CreateClip(UTrack* InTrack, float InStartTime, float InEndTime, FString InName)
 {
 	UClip* NewClip = NewObject<UClip>();
+	NewClip->TargetTrack = InTrack;
 	NewClip->StartTime = InStartTime;
 	NewClip->EndTime = InEndTime;
 	NewClip->ClipLength = InEndTime - InStartTime;
@@ -466,6 +473,21 @@ void UTimebarPlayer::Run()
 			}
 		}
 
+		if (!TrackArray.IsEmpty())
+		{
+			for (auto& Track : TrackArray)
+			{
+				if (IsValid(Track) && Track->IsPlaying())
+				{
+					Track->Play();
+				}
+				else if (IsValid(Track))
+				{
+					Track->Stop();
+				}
+			}
+		}
+
 		
 	}
 }
@@ -531,6 +553,21 @@ void UTimebarPlayer::RunBackward()
 				else if (IsValid(Clip))
 				{
 					Clip->Stop();  // 클립 일시정지
+				}
+			}
+		}
+
+		if (!ReverseTrackArray.IsEmpty())
+		{
+			for (auto& Track : ReverseTrackArray)
+			{
+				if (IsValid(Track) && Track->IsPlaying())
+				{
+					Track->Play();
+				}
+				else if (IsValid(Track))
+				{
+					Track->Stop();
 				}
 			}
 		}
