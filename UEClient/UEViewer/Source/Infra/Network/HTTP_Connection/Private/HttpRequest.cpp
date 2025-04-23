@@ -4,6 +4,9 @@
 #include "HttpRequest.h"
 #include "HttpDependency.h"
 #include <JsonObjectConverter.h>
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "HAL/FileManager.h"
 
 UHttpRequest::UHttpRequest()
 {
@@ -13,13 +16,15 @@ UHttpRequest::~UHttpRequest()
 {
 }
 
-void UHttpRequest::SendUserDataHttpRequest()
+void UHttpRequest::SendUserDataHttpRequest()	//파라미터 넣어서 GetURL에 어떤 URL 받을건지 하는 형식으로 해야함
 {
 	UE_LOG(LogTemp, Warning, TEXT("SendUserDataHttpRequest is run"));
-	
+
+	GetURLFromConfig();
 	// get login URL from JSON
-	FString URL = GetURLFromConfig().URL;
-	if (URL.IsEmpty())
+	FString GetCartURL = GetURL("GetCart");
+	FString DownloadModelURL = GetURL("DownloadModel");
+	if (GetCartURL.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("URL is missing in the JSON file"));
 		return;
@@ -27,10 +32,10 @@ void UHttpRequest::SendUserDataHttpRequest()
 
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UserHttpRequest = FHttpModule::Get().CreateRequest();
-	UserHttpRequest->SetURL(TEXT("https://heron-good-curiously.ngrok-free.app/api/cart"));
+	UserHttpRequest->SetURL(DownloadModelURL);
 	UserHttpRequest->SetVerb("GET");
 	UserHttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1MzEzMTM3LCJleHAiOjE3NDUzMjM5Mzd9.TSm7KlN44LWOitpYs0NDRtN84U20f_I3O3x152g5tsw"));
+	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1Mzk3ODU4LCJleHAiOjE3NDU0MDg2NTh9.PE6ZQP0Ub1RUXuI0IrW3PHrKnK1NzTOdAFzu1zIpp8U"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	UserHttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::GetUserDataCallBack);
 
@@ -54,6 +59,32 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	FString ContentString = Response->GetContentAsString();
 
 	UE_LOG(LogTemp, Warning, TEXT("Response Content: %s"), *ContentString);
+
+
+	//////////////////////////////
+	if (bWasSuccessful && Response.IsValid() && Response->GetResponseCode() == 200)
+	{
+		// 저장 경로: Saved/DownloadedModels/
+		FString FilePath = FPaths::ProjectSavedDir() / TEXT("DownloadedModels/MyModel.glb");
+
+		// 디렉토리 없으면 생성
+		IFileManager::Get().MakeDirectory(*FPaths::GetPath(FilePath), true);
+
+		// 저장
+		if (FFileHelper::SaveArrayToFile(Response->GetContent(), *FilePath))
+		{
+			UE_LOG(LogTemp, Log, TEXT("GLTF file saved to: %s"), *FilePath);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to save GLTF file."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("HTTP request failed or invalid response."));
+	}
+	/////////////////////////////
 
 	//Json 데이터를 저장하기 위한 배열
 	TSharedPtr<FJsonObject> JsonObject;
@@ -89,6 +120,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 			UE_LOG(LogTemp, Warning, TEXT("CartArrayCount : %d"), cartarraycount);
 			cartarraycount = 0;
 			CartDataDelivery.Broadcast(CartResponse);
+			CartResponse.CartArray.Empty();
 		}
 		
 	}
@@ -119,6 +151,16 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 
 }
 
+FString UHttpRequest::GetURL(const FString& APIType)
+{
+	if (URLMap.Contains(APIType))
+	{
+		return URLMap[APIType];
+	}
+
+	return TEXT("APIType is InValid");
+}
+
 FOpenApiTest UHttpRequest::GetURLFromConfig()
 {
 	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
@@ -135,8 +177,19 @@ FOpenApiTest UHttpRequest::GetURLFromConfig()
 	
 	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
-		OpenApi.URL = JsonObject->GetStringField(TEXT("URL"));
-		UE_LOG(LogTemp, Warning, TEXT("URL from JSON: %s"), *OpenApi.URL);
+		//API URL
+		const TArray<TSharedPtr<FJsonValue>>* URLs;
+		if (JsonObject->TryGetArrayField("URL", URLs))
+		{
+			for (auto& Entry : *URLs)
+			{
+				TSharedPtr<FJsonObject> Obj = Entry->AsObject();
+				FString APIType = Obj->GetStringField("APIType");
+				FString URL = Obj->GetStringField("URL");
+
+				URLMap.Add(APIType, URL);
+			}
+		}
 
 		//UserName
 		const TArray<TSharedPtr<FJsonValue>>* Users;

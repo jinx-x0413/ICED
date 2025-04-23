@@ -6,7 +6,11 @@
     },
     {
       "APIType": "GetCart",
-      "URL": "https://randomuser.me/api/"
+      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart"
+    },
+    {
+      "APIType": "DownloadModel",
+      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart/download/4"
     }
 
   ],

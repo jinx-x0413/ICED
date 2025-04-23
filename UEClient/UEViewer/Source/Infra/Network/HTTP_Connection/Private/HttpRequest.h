@@ -109,6 +109,8 @@ public:
 private:
 	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
+	FString GetURL(const FString& APIType);
+
 
 	// login
 private:
@@ -116,4 +118,6 @@ private:
 	FOpenApiTest OpenApi;
 	FCart Cart;
 	FCartResponse CartResponse;
+
+	TMap<FString, FString> URLMap;
 };
