@@ -50,4 +50,5 @@ public:
 
 	UFUNCTION()
 	virtual void Undo();
+	void BeginDestroy();
 };

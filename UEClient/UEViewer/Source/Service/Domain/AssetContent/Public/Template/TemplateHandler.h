@@ -46,6 +46,7 @@ public:
 	static UTemplateHandler* GetTemplateHandler();
 	UTemplateHandler();
 	virtual ~UTemplateHandler();
+	void BeginDestroy();
 	virtual void Initialize();
 
 

@@ -20,10 +20,17 @@ UTrack::UTrack()
 
 UTrack::~UTrack()
 {
-	if (UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.IsAlreadyBound(this, &UTrack::AddClipToArray))
+	
+}
+
+void UTrack::BeginDestroy()
+{
+	Super::BeginDestroy();
+
+	/*if (UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.IsAlreadyBound(this, &UTrack::AddClipToArray))
 	{
 		UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.RemoveDynamic(this, &UTrack::AddClipToArray);
-	}
+	}*/
 }
 
 void UTrack::AddClipToArray(UTrack* InTrack, UClip* InClip)

@@ -6,7 +6,6 @@
 #include "UObject/NoExportTypes.h"
 #include "TimebarPlayer.generated.h"
 
-
 UENUM(BlueprintType)
 enum class ETimebarState : uint8
 {
@@ -14,8 +13,6 @@ enum class ETimebarState : uint8
 	Paused		 UMETA(DisplayName = "Paused"),
 	Running		 UMETA(DisplayName = "Running")
 };
-
-
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTrackCreated, UTrack*, InTrack, UUserWidget*, InHeaderWidget, UTrackWidget*, InTrackWidget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSideTrackCreated, UTrack*, InParentTrack, UTrack*, InTrack, UUserWidget*, InHeaderWidget, USideTrackWidget*, InTrackWidget);
@@ -35,33 +32,27 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStateChanged, ETimebarState, InSt
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnScaleChanged, float, InOldScale, float, InNewScale);
 
-
-
-
-
 UCLASS(BlueprintType)
 class TIMEBAR_API UTimebarPlayer : public UObject
 {
 	GENERATED_BODY()
 
-	// singleton
 public:
 	UTimebarPlayer();
+	void BeginDestroy();
 	virtual ~UTimebarPlayer();
+
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
 	static UTimebarPlayer* GetTimebarPlayer();
-	
+
 	UFUNCTION()
 	void Shutdown();
 
 private:
 	static UTimebarPlayer* Instance;
 
-	
-
-
-	// Track
 public:
+	// Track
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UTrack*> TrackArray;
 
@@ -88,7 +79,7 @@ public:
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnComponentTrackBackwardCreated OnComponentTrackBackwardCreated;
-	
+
 	UFUNCTION()
 	UTrack* CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName);
 
@@ -107,9 +98,7 @@ public:
 	UFUNCTION()
 	void DeleteTrack(UTrack* InTrack);
 
-
 	// Clip
-public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UClip*> ClipArray;
 
@@ -140,9 +129,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DeleteClip(UClip* InClip);
 
-
 	// Player
-public:
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnCurrentTimeChanged OnCurrentTimeChanged;
 
@@ -170,7 +157,6 @@ public:
 	UPROPERTY()
 	FTimerHandle MainTimer;
 
-
 	UFUNCTION(BlueprintCallable)
 	void Start();
 
@@ -186,7 +172,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentTime(float InCurrentTime);
 
-	
 	UFUNCTION(BlueprintCallable)
 	void RunBackward();
 };

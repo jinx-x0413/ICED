@@ -20,6 +20,8 @@ public:
 	UTrack();
 	virtual ~UTrack();
 
+	void BeginDestroy();
+
 
 
 

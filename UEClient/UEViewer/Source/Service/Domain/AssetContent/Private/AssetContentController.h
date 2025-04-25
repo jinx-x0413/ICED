@@ -23,6 +23,8 @@ public:
 	UAssetContentController();
 	virtual ~UAssetContentController();
 
+	void BeginDestroy();
+
 
 
 	// business logic

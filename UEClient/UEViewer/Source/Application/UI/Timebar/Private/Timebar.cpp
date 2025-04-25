@@ -7,25 +7,32 @@ DEFINE_LOG_CATEGORY(Timebar);
 void FTimebar::StartupModule()
 {
 	UE_LOG(Timebar, Warning, TEXT("Timebar module has been loaded"));
+
 	Controller = NewObject<UTimebarController>();
-	Controller->AddToRoot();
+	if (IsValid(Controller))
+	{
+		Controller->AddToRoot();
+	}
 }
 
 void FTimebar::ShutdownModule()
 {
 	UE_LOG(Timebar, Warning, TEXT("Timebar module has been unloaded"));
+
+	// Controller GC 처리
 	if (IsValid(Controller) && Controller->IsRooted())
 	{
 		Controller->RemoveFromRoot();
-		Controller->MarkAsGarbage();
+		Controller->ConditionalBeginDestroy();  // BeginDestroy 호출 유도
 		Controller = nullptr;
 	}
 
-	if (IsValid(UTimebarPlayer::GetTimebarPlayer()))
+	// TimebarPlayer GC 처리
+	UTimebarPlayer* PlayerInstance = UTimebarPlayer::GetTimebarPlayer();
+	if (IsValid(PlayerInstance) && PlayerInstance->IsRooted())
 	{
-		UTimebarPlayer::GetTimebarPlayer()->RemoveFromRoot();
-		UTimebarPlayer::GetTimebarPlayer()->MarkAsGarbage();
-		
+		PlayerInstance->RemoveFromRoot();
+		PlayerInstance->ConditionalBeginDestroy();  // BeginDestroy 호출 유도
 	}
 }
 

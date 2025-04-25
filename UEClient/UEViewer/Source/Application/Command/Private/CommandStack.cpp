@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "CommandStack.h"
 #include "CommandDependency.h"
 
@@ -11,29 +10,38 @@ UCommandStack::UCommandStack()
 
 UCommandStack::~UCommandStack()
 {
-	if (IsValid(this) && IsRooted())
-	{
-		if (IsValid(History) && History->IsRooted())
-		{
-			for (auto& Command : History->GetCommands())
-			{
-				if (IsValid(Command) && Command->IsRooted())
-				{
-					Command->RemoveFromRoot();
-					Command->MarkAsGarbage();
-					Command = nullptr;
-				}
-			}
+	// Destructor에서 조건부 파괴 로직을 처리하지 않고, 
+	// BeginDestroy에서 처리하도록 해야 함
+}
 
-			History->RemoveFromRoot();
-			History->MarkAsGarbage();
-			History = nullptr;
+// BeginDestroy에서 GC 관련 로직 처리
+void UCommandStack::BeginDestroy()
+{
+	if (IsPendingKill()) return;  // 이미 파괴 중인 객체는 건너뜀
+
+	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
+
+	// History 파괴 처리
+	if (IsValid(History) && History->IsRooted())
+	{
+		for (auto& Command : History->GetCommands())
+		{
+			if (IsValid(Command) && Command->IsRooted())
+			{
+				Command->RemoveFromRoot();
+				Command->ConditionalBeginDestroy();  // Command 파괴 시작
+				Command = nullptr;
+			}
 		}
 
-		RemoveFromRoot();
-		MarkAsGarbage();
+		History->RemoveFromRoot();
+		History->ConditionalBeginDestroy();  // History 파괴 시작
+		History = nullptr;
 	}
+
+	RemoveFromRoot();  // 스택 루트에서 제거
 }
+
 
 
 
@@ -43,7 +51,7 @@ UCommandHistory* UCommandStack::GetHistory()
 {
 	if(!History)
 	{
-		History = NewObject<UCommandHistory>();
+		History = NewObject<UCommandHistory>(GetTransientPackage());
 		History->AddToRoot();
 	}
 	return History;

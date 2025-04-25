@@ -98,6 +98,7 @@ class UICOMPONENT_API UTableManager : public UObject
 public:
 	UTableManager();
 	virtual ~UTableManager();
+	void BeginDestroy();
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
 	static UTableManager* GetTableManager();
 	UFUNCTION(BlueprintCallable)
