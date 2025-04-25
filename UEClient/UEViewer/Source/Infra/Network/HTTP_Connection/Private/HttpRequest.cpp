@@ -32,7 +32,7 @@ void UHttpRequest::SendUserDataHttpRequest()	//파라미터 넣어서 GetURL에 어떤 URL
 
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> UserHttpRequest = FHttpModule::Get().CreateRequest();
-	UserHttpRequest->SetURL(DownloadModelURL);
+	UserHttpRequest->SetURL(GetCartURL);
 	UserHttpRequest->SetVerb("GET");
 	UserHttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1Mzk3ODU4LCJleHAiOjE3NDU0MDg2NTh9.PE6ZQP0Ub1RUXuI0IrW3PHrKnK1NzTOdAFzu1zIpp8U"));
