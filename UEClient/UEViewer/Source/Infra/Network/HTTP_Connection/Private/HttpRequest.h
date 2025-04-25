@@ -8,7 +8,12 @@
 #include "HttpModule.h"        // HTTP 요청을 보내기 위한 모듈
 #include "Interfaces/IHttpRequest.h"   // HTTP 요청 인터페이스
 #include "Interfaces/IHttpResponse.h"  // HTTP 응답 인터페이스
+#include "HttpInterface/GetCartInterface.h"
+
 #include "HttpRequest.generated.h"
+
+
+class IHttpInterface;
 
 /**
  * 
@@ -16,7 +21,7 @@
 USTRUCT(BlueprintType)
 struct FOpenApiTest
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -39,54 +44,62 @@ struct FOpenApiTest
 
 };
 
-USTRUCT(BlueprintType)
-struct FCart
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 id;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 fileId;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString fileName;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString description;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString thumbnailUri;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString size;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString addedAt;
-};
+//USTRUCT(BlueprintType)
+//struct FCart
+//{
+//	GENERATED_USTRUCT_BODY()
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	int32 id;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	int32 fileId;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString fileName;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString description;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString thumbnailUri;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString size;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString addedAt;
+//};
 
 // 루트 구조체
-USTRUCT(BlueprintType)
-struct FCartResponse
-{
-	GENERATED_USTRUCT_BODY()
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString userId;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<FCart> CartArray;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 CartCount;
-};
+//USTRUCT(BlueprintType)
+//struct FCartResponse
+//{
+//	GENERATED_USTRUCT_BODY()
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	FString userId;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	TArray<FCart> CartArray;
+//
+//	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+//	int32 CartCount;
+//};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FOpenApiTest&, ApiTest);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCartDataDelivery, const FCartResponse&, CartItem);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCartDataDelivery, const FCartResponse&, CartItem);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetCartData, FCartResponse, InCartData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetUserData, FOpenApiTest, InCartData);
 
-
+UENUM(BlueprintType)
+enum class EApiType : uint8	//블루프린트에서 쓰려면 uint8 붙이셈
+{
+	BaseURL,
+	GetCart,       // 장바구니 조회 API
+	DownloadModel  // 모델 다운로드 API
+};
 
 UCLASS()
 class UHttpRequest : public UObject
@@ -100,8 +113,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "HTTP")
 	FUserDataDelivery UserDataDelivery;
 
-	UPROPERTY(BlueprintAssignable, Category = "HTTP")
-	FCartDataDelivery CartDataDelivery;
+	/*UPROPERTY(BlueprintAssignable, Category = "HTTP")
+	FCartDataDelivery CartDataDelivery;*/
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SendUserDataHttpRequest();
@@ -116,8 +129,31 @@ private:
 private:
 	FOpenApiTest GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
 	FOpenApiTest OpenApi;
-	FCart Cart;
-	FCartResponse CartResponse;
-
 	TMap<FString, FString> URLMap;
+
+public:
+	void StartHttp(); // sub (strategy)
+	TScriptInterface<IHttpInterface> CurrentInterface;
+
+	void CreateInterface(EApiType InApiType = EApiType::BaseURL); // sub (factory)
+
+	// business logic
+	UFUNCTION(BlueprintCallable)
+	void SendHttp(EApiType InApiType = EApiType::BaseURL);
+
+	//구조체 받는 함수를 하나를 만들어 델리게이트를 2개 만들고 데이터를 그 구조체로 줘
+
+
+
+	// get data
+public:
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "HTTP")
+	FOnGetCartData OnGetCartData;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "HTTP")
+	FOnGetUserData OnGetUserData;
+
+
+	UFUNCTION(BlueprintCallable)
+	void GetData();
 };

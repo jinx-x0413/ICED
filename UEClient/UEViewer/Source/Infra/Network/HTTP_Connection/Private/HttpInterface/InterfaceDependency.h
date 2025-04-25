@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "HttpInterface/InterfaceDependency.h"
-#include "HttpDependency.generated.h"
+
+#include "GetCartInterface.h"
+#include "DownloadInterface.h"
+#include "HttpInterface.h"
+
+#include "InterfaceDependency.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UHttpDependency : public UObject
+class UInterfaceDependency : public UObject
 {
 	GENERATED_BODY()
 	

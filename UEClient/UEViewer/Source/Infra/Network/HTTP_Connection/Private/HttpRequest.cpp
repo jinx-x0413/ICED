@@ -7,6 +7,7 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "HAL/FileManager.h"
+#include "HttpInterface/InterfaceDependency.h"
 
 UHttpRequest::UHttpRequest()
 {
@@ -91,7 +92,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
 	
 	////////////////////////////////////////////////////////////////////////////////////// real api parsing
-	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+	/*if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
 		CartResponse.CartArray.Empty();
 
@@ -127,7 +128,7 @@ void UHttpRequest::GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("JSON ÆÄ½Ì ½ÇÆÐ. JsonStr: %s"), *ContentString);
-	}
+	}*/
 	//////////////////////////////////////////////////////////////////////////////////////	sample api parsing
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
@@ -235,4 +236,62 @@ FOpenApiTest UHttpRequest::GetURLFromConfig()
 		return OpenApi;
 	}
 
+}
+
+void UHttpRequest::StartHttp()
+{
+	CurrentInterface->Start();
+}
+
+void UHttpRequest::CreateInterface(EApiType InApiType)
+{
+	if (IsValid(CurrentInterface.GetObject()) && CurrentInterface.GetObject()->IsRooted())
+	{
+		CurrentInterface.GetObject()->RemoveFromRoot();
+		CurrentInterface.GetObject()->MarkAsGarbage();
+		//CurrentInterface.GetObject() = nullptr;
+	}
+
+	switch (InApiType)
+	{
+	case EApiType::BaseURL:
+		break;
+
+	case EApiType::GetCart:
+		CurrentInterface = NewObject<UGetCartInterface>();
+		break;
+
+	case EApiType::DownloadModel:
+		CurrentInterface = NewObject<UDownloadInterface>();
+		break;
+
+	default:
+		break;
+	}
+
+	CurrentInterface.GetObject()->AddToRoot();
+}
+
+void UHttpRequest::SendHttp(EApiType InApiType)
+{
+	CreateInterface(InApiType);
+	StartHttp();
+}
+
+void UHttpRequest::GetData()
+{
+	if (UGetCartInterface* CurrentCartInterface = Cast<UGetCartInterface>(CurrentInterface.GetObject()))
+	{
+		OnGetCartData.Broadcast(CurrentCartInterface->CartResponse);
+	}
+	else if (Cast<UDownloadInterface>(CurrentInterface.GetObject()))
+	{
+		
+	}
+	//else if (Cast<UUserInterface>(CurrentInterface.GetObject()))
+	//{
+	//	// parse data
+	//	OnGetUserData.Broadcast();
+	//}
+	
 }
