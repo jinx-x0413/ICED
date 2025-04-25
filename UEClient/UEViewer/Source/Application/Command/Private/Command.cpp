@@ -19,7 +19,7 @@ void FCommand::ShutdownModule()
 {
     UE_LOG(Command, Warning, TEXT("Command module has been unloaded"));
 
-    if (IsValid(Stack))
+    if (IsValid(Stack) && Stack->IsRooted())
     {
         Stack->RemoveFromRoot();  // 루트에서 제거
         Stack->ConditionalBeginDestroy();  // 객체 파괴 시작

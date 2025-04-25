@@ -40,4 +40,7 @@ public:
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExecSetActivated(bool bIsActivated);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	class UTrack* TargetTrack;
 };

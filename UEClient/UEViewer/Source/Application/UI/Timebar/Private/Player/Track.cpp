@@ -107,7 +107,7 @@ FVector2D UTrack::GetMinMaxTime()
 
 bool UTrack::IsPlaying()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Track's Active Clip Count : %s / %d"), *Name, ActiveClipCount);
+	//UE_LOG(LogTemp, Warning, TEXT("Track's Active Clip Count : %s / %d"), *Name, ActiveClipCount);
 	return ActiveClipCount > 0;
 }
 
@@ -117,6 +117,16 @@ void UTrack::Play()
 	if (IsValid(ComponentWidget))
 	{
 		ComponentWidget->ExecSetActivated(true);
+
+		if (UTimebarPlayer::GetTimebarPlayer()->bIsLooping)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Looping"));
+			FVector2D MinMaxTime = GetMinMaxTime();
+			if (MinMaxTime.Y - UTimebarPlayer::GetTimebarPlayer()->CurrentTime <= 0.1f)
+			{
+				UTimebarPlayer::GetTimebarPlayer()->SetCurrentTime(MinMaxTime.X);
+			}
+		}
 	}
 }
 

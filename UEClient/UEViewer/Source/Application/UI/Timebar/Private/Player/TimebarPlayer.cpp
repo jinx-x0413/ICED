@@ -227,7 +227,7 @@ UTrack* UTimebarPlayer::CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureW
 	//UWorld* TargetWorld = NewTrack->GetWorld();
 	UWorld* TargetWorld = GWorld;
 	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
-	//NewTrack->ContentWidget->TargetTrack = NewTrack;
+	NewTrack->ComponentWidget->TargetTrack = NewTrack;
 	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
 
 	OnComponentTrackCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
@@ -247,7 +247,8 @@ UTrack* UTimebarPlayer::CreateComponentBackward(TSubclassOf<UUserWidget> InScene
 	//UWorld* TargetWorld = NewTrack->GetWorld();
 	UWorld* TargetWorld = GWorld;
 	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
-	
+	NewTrack->ComponentWidget->TargetTrack = NewTrack;
+
 	OnComponentTrackBackwardCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
 	return NewTrack;
 }

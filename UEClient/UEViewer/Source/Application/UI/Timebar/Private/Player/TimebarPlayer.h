@@ -154,6 +154,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	float CurrentTime;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsLooping = false;
+
 	UPROPERTY()
 	FTimerHandle MainTimer;
 

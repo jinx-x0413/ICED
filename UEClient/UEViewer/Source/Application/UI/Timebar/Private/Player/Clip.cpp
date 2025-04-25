@@ -40,6 +40,11 @@ void UClip::Play(float InCurrentTime)
 	if (!bIsPlaying)
 	{
 		bIsPlaying = true;
+
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount++;
+		}
 	}
 
 	if (bIsPlaying)
@@ -49,10 +54,7 @@ void UClip::Play(float InCurrentTime)
 			TargetWidget->ExecPlayClip();
 		}
 
-		if (TargetTrack)
-		{
-			TargetTrack->ActiveClipCount++;
-		}
+		
 	}
 	else
 	{
@@ -90,6 +92,11 @@ void UClip::Stop()
 	{
 		bIsPlaying = false;
 
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount--;
+		}
+
 		if (TargetWidget)
 		{
 			TargetWidget->ExecStopClip();
@@ -101,10 +108,7 @@ void UClip::Stop()
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Clip is stopped"));
 		}*/
 
-		if (TargetTrack)
-		{
-			TargetTrack->ActiveClipCount--;
-		}
+		
 	}
 	else
 	{
