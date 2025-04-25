@@ -19,6 +19,7 @@ UComponentBuilder::~UComponentBuilder()
 // feature
 void UComponentBuilder::Build()
 {
+	
 	if (IsValid(TargetActor))
 	{
 		TArray<FActorHierarchyData> CurrentData;
@@ -45,6 +46,7 @@ void UComponentBuilder::Build()
 					{
 						USkeletalMeshComponent* CurrentSkeletalMeshComponent = Cast<USkeletalMeshComponent>(CurrentData[i + 1].TargetComponent);
 						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponent(Controller->TrackComponentWidgetClass, CurrentData[i + 1].DisplayName, CurrentSkeletalMeshComponent);
+						//UTrack* NewTrack = nullptr;
 						if (IsValid(NewTrack))
 						{
 							if (IsValid(CurrentData[i + 1].TargetComponent.Get()))
@@ -94,43 +96,43 @@ void UComponentBuilder::Build()
 				}
 
 
-				// backward
-				FActorHierarchyData CurrentBackwardData = CurrentData[CurrentData.Num() - i - 1];
-				if (Row.RowName == CurrentBackwardData.DisplayName)
-				{
-					if (CurrentBackwardData.TargetComponent.IsValid())
-					{
-						USkeletalMeshComponent* CurrentSkeletalMeshComponent = Cast<USkeletalMeshComponent>(CurrentBackwardData.TargetComponent);
-						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentBackward(Controller->TrackComponentWidgetClass, CurrentBackwardData.DisplayName, CurrentSkeletalMeshComponent);
-						if (IsValid(NewTrack))
-						{
-							for (auto& Field : Row.FieldsBackward)
-							{
-								// check if data checked
-								if (Field.FieldValue.IsEmpty())
-								{
-									continue;
-								}
+				//// backward
+				//FActorHierarchyData CurrentBackwardData = CurrentData[CurrentData.Num() - i - 1];
+				//if (Row.RowName == CurrentBackwardData.DisplayName)
+				//{
+				//	if (CurrentBackwardData.TargetComponent.IsValid())
+				//	{
+				//		USkeletalMeshComponent* CurrentSkeletalMeshComponent = Cast<USkeletalMeshComponent>(CurrentBackwardData.TargetComponent);
+				//		UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentBackward(Controller->TrackComponentWidgetClass, CurrentBackwardData.DisplayName, CurrentSkeletalMeshComponent);
+				//		if (IsValid(NewTrack))
+				//		{
+				//			for (auto& Field : Row.FieldsBackward)
+				//			{
+				//				// check if data checked
+				//				if (Field.FieldValue.IsEmpty())
+				//				{
+				//					continue;
+				//				}
 
-								if (Field.FieldValue == TEXT("false"))
-								{
-									UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName, *Field.FieldValue);
-								}
-								else if (Field.FieldValue == TEXT("true"))
-								{
-									LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime);
-								}
-								else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
-								{
-									LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime, Field.FieldValue);
-								}
-							}
-						}
-						
-					}
+				//				if (Field.FieldValue == TEXT("false"))
+				//				{
+				//					UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName, *Field.FieldValue);
+				//				}
+				//				else if (Field.FieldValue == TEXT("true"))
+				//				{
+				//					LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime);
+				//				}
+				//				else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
+				//				{
+				//					LatestBackwardClipEndTime = SetClipBackward(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestBackwardClipEndTime, Field.FieldValue);
+				//				}
+				//			}
+				//		}
+				//		
+				//	}
 
 
-				}
+				//}
 			}
 
 		

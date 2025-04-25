@@ -36,6 +36,7 @@ namespace Variables
 	extern float MaxZoomScale;
 	extern float MinZoomScale;
 	extern float CursorInterval;
+	extern float VerticalScrollInterval;
 }
 
 UCLASS()

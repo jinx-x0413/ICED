@@ -11,19 +11,27 @@ UAssetContentController::UAssetContentController()
 
 UAssetContentController::~UAssetContentController()
 {
-	if (IsValid(this) && IsRooted())
-	{
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
+	
+}
+
+void UAssetContentController::BeginDestroy()
+{
+    Super::BeginDestroy();
+
+    if (IsValid(this) && IsRooted())
+    {
+        RemoveFromRoot();
+        ConditionalBeginDestroy();
+    }
 }
 
 UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
 {
     if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
     {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
         //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->TargetTrack = InTrack;
         NewInteraction->Initialize(InInteractionData);
         NewInteraction->StartTime = InStartTime;
         NewInteraction->EndTime = InEndTime;
@@ -43,8 +51,9 @@ UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractio
 {
     if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
     {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionData.TargetClass);
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
         //InInteractionData.TargetClass = InInteractionData.TargetClass;
+        NewInteraction->TargetTrack = InTrack;
         NewInteraction->bIsReversed = true;
         NewInteraction->Initialize(InInteractionData);
         NewInteraction->StartTime = InStartTime;
@@ -65,7 +74,7 @@ void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor
 {
     if (!IsValid(TemplateBuilder))
     {
-        TemplateBuilder = NewObject<UTemplateBuilder>();
+        TemplateBuilder = NewObject<UTemplateBuilder>(GetTransientPackage());
         TemplateBuilder->AddToRoot();
     }
     TemplateBuilder->SetTargetActor(InActor);

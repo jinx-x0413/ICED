@@ -40,4 +40,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetScrollOffset(UScrollBox* InScrollBox, float InCurrentTime);
+
+	UFUNCTION(BlueprintCallable)
+	void SetVerticalScrollOffset(UScrollBox* InScrollBox, float InCurrentTime);
 };

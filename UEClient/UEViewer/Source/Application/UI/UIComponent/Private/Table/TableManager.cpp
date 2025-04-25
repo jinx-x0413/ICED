@@ -13,11 +13,17 @@ UTableManager::UTableManager()
 
 UTableManager::~UTableManager()
 {
+}
+
+void UTableManager::BeginDestroy()
+{
+	Super::BeginDestroy();
+
 	if (IsValid(Instance) && Instance->IsRooted())
 	{
 		Instance->Shutdown();
 		Instance->RemoveFromRoot();
-		Instance->MarkAsGarbage();
+		Instance->ConditionalBeginDestroy();
 		Instance = nullptr;
 	}
 }
@@ -26,7 +32,7 @@ UTableManager* UTableManager::GetTableManager()
 {
 	if (!Instance)
 	{
-		Instance = NewObject<UTableManager>();
+		Instance = NewObject<UTableManager>(GetTransientPackage());
 		Instance->AddToRoot();
 	}
 

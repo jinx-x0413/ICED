@@ -17,6 +17,7 @@ public class UIComponent : ModuleRules
             , "AssetActor"
             , "AssetContent"
             ,  "Slate", "SlateCore"
+            , "Timebar"
         });
 
         PublicIncludePaths.AddRange(new string[] { "UIComponent/Public" });

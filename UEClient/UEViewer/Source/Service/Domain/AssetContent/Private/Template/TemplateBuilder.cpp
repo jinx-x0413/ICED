@@ -23,10 +23,10 @@ TScriptInterface<ITemplateInterface> UTemplateBuilder::SetCurrentTemplate(ETempl
 		break;
 		return nullptr;
 	case ETemplateType::ASSEMBLY:
-		return NewObject<UAssemblyBuilder>();
+		return NewObject<UAssemblyBuilder>(GetTransientPackage());
 		break;
 	case ETemplateType::COMPONENT:
-		return NewObject<UComponentBuilder>();
+		return NewObject<UComponentBuilder>(GetTransientPackage());
 		break;
 	default:
 		return nullptr;

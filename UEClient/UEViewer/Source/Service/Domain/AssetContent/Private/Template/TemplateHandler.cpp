@@ -11,7 +11,7 @@ UTemplateHandler* UTemplateHandler::GetTemplateHandler()
 {
 	if (!Instance)
 	{
-		Instance = NewObject<UTemplateHandler>();
+		Instance = NewObject<UTemplateHandler>(GetTransientPackage());
 		Instance->AddToRoot();
 	}
 	return Instance;
@@ -26,10 +26,17 @@ UTemplateHandler::UTemplateHandler()
 
 UTemplateHandler::~UTemplateHandler()
 {
+	
+}
+
+void UTemplateHandler::BeginDestroy()
+{
+	Super::BeginDestroy();
+
 	if (IsValid(Instance) && Instance->IsRooted())
 	{
 		Instance->RemoveFromRoot();
-		Instance->MarkAsGarbage();
+		Instance->ConditionalBeginDestroy();
 		Instance = nullptr;
 	}
 }

@@ -40,6 +40,11 @@ void UClip::Play(float InCurrentTime)
 	if (!bIsPlaying)
 	{
 		bIsPlaying = true;
+
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount++;
+		}
 	}
 
 	if (bIsPlaying)
@@ -48,9 +53,12 @@ void UClip::Play(float InCurrentTime)
 		{
 			TargetWidget->ExecPlayClip();
 		}
+
+		
 	}
 	else
 	{
+		
 		return;
 	}
 	//// 재생 시작 로그 출력
@@ -70,6 +78,7 @@ void UClip::Pause()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Clip is paused"));
 		}
+
 	}
 	else
 	{
@@ -83,6 +92,11 @@ void UClip::Stop()
 	{
 		bIsPlaying = false;
 
+		if (TargetTrack)
+		{
+			TargetTrack->ActiveClipCount--;
+		}
+
 		if (TargetWidget)
 		{
 			TargetWidget->ExecStopClip();
@@ -93,6 +107,8 @@ void UClip::Stop()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Clip is stopped"));
 		}*/
+
+		
 	}
 	else
 	{

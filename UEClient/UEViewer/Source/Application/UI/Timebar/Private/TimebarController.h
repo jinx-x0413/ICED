@@ -18,6 +18,7 @@ class UTimebarController : public UObject
 	// construct
 public:
 	UTimebarController();
+	void BeginDestroy();
 	virtual ~UTimebarController();
 
 

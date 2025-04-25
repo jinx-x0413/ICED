@@ -25,6 +25,8 @@ public:
 	
 	virtual ~UCommandStack();
 
+	void BeginDestroy();
+
 
 
 	// feature
