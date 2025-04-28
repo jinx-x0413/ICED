@@ -15,7 +15,7 @@ void UGetCartInterface::Start()
 		return;
 	}
 	// 인터페이스의 헬퍼 함수 호출
-	GetHttpRequest(GetCartURL, [](FHttpResponsePtr Response, bool bSuccess)
+	GetHttpRequest(GetCartURL, [this](FHttpResponsePtr Response, bool bSuccess)
 	{
 		if (bSuccess && Response.IsValid())
 		{
@@ -32,12 +32,10 @@ void UGetCartInterface::Start()
 		TSharedPtr<FJsonObject> JsonObject;
 		TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<TCHAR>::Create(ContentString);
 
-		FCart Cart;
-		FCartResponse CartResponse;
 
 		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 		{
-			CartResponse.CartArray.Empty();
+			this->CartResponse.CartArray.Empty();
 
 			UE_LOG(LogTemp, Warning, TEXT("UserId: %s, CartCount: %d"), *CartResponse.userId, CartResponse.CartCount);
 			int cartarraycount = 0;
@@ -48,16 +46,16 @@ void UGetCartInterface::Start()
 				{
 					TSharedPtr<FJsonObject> ItemObj = ItemValue.Get()->AsObject();
 
-					Cart.fileName = ItemObj->GetStringField("fileName");
-					Cart.fileId = ItemObj->GetIntegerField("fileId");
-					Cart.size = ItemObj->GetStringField("size");
-					Cart.description = ItemObj->GetStringField("description");
-					Cart.thumbnailUri = ItemObj->GetStringField("thumbnailUri");
-					Cart.addedAt = ItemObj->GetStringField("addedAt");
-					CartResponse.CartArray.Add(Cart);
+					this->Cart.fileName = ItemObj->GetStringField("fileName");
+					this->Cart.fileId = ItemObj->GetIntegerField("fileId");
+					this->Cart.size = ItemObj->GetStringField("size");
+					this->Cart.description = ItemObj->GetStringField("description");
+					this->Cart.thumbnailUri = ItemObj->GetStringField("thumbnailUri");
+					this->Cart.addedAt = ItemObj->GetStringField("addedAt");
+					this->CartResponse.CartArray.Add(Cart);
 					UE_LOG(LogTemp, Warning, TEXT("fileName: %s, fileId: %d, size: %s, description: %s, thumbnailUri: %s, AddedAt: %s"), *Cart.fileName, Cart.fileId, *Cart.size, *Cart.description, *Cart.thumbnailUri, *Cart.addedAt);
 				}
-				//CartDataDelivery.Broadcast(CartResponse);
+				
 			}
 
 		}

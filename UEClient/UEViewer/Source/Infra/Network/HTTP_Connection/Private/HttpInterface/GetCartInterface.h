@@ -65,7 +65,7 @@ public:
 	virtual void Start() override;
 
 	FCartResponse GetCartStruct();
-
+	
 	FCart Cart;
 
 	UPROPERTY(BluePrintReadWrite, EditAnywhere)

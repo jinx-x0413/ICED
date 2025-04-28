@@ -43,15 +43,19 @@ void IHttpInterface::GetHttpRequest(const FString& URL, TFunction<void(FHttpResp
 	Request->SetURL(URL);
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1NTg1ODczLCJleHAiOjE3NDU1OTY2NzN9.PeZXPEEyudgt94SYbmNQ4zW9dkP_Dm5HhwXHIp5g8vI"));
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1Njc5MDE3LCJleHAiOjE3NDU2ODk4MTd9.2TkMI8XVqRwV1HuQSqDIhnFdb3uYAUbmex0WJjCDN58"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
-	// 바인드 대신 람다 사용
-	Request->OnProcessRequestComplete().BindLambda([OnComplete](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	// OnComplete를 안전하게 이동
+	TFunction<void(FHttpResponsePtr, bool)> LocalOnComplete = MoveTemp(OnComplete);
+	
+	// ProcessRequest 전에 안전하게 람다 바인딩
+	Request->OnProcessRequestComplete().BindLambda([LocalOnComplete = MoveTemp(LocalOnComplete)](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful) mutable
 	{
-		OnComplete(Response, bWasSuccessful);
+		if (LocalOnComplete)
+		{
+			LocalOnComplete(Response, bWasSuccessful);
+		}
 	});
-
-	Request->ProcessRequest();
 
 	// 요청 실행
 	if (!Request->ProcessRequest())
