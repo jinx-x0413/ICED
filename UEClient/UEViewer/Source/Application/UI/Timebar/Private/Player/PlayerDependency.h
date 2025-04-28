@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
+#include "TimebarManager.h"
 #include "TimebarPlayer.h"
 #include "Track.h"
 #include "Clip.h"

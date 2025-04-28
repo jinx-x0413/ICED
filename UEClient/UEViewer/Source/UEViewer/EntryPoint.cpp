@@ -277,3 +277,18 @@ void UEntryPoint::SetTimebarCurrentTime(float InCurrentTime)
 		}
 	}
 }
+
+UTimebarManager* UEntryPoint::GetTimebarManager(FName InManagerName)
+{
+	UTimebarManager* CurrentManager = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			CurrentManager = Module->Controller->GetManager(InManagerName);
+		}
+	}
+
+	return CurrentManager;
+}

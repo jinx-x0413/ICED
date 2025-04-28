@@ -22,7 +22,8 @@ UTimebarPlayer::UTimebarPlayer()
 
 void UTimebarPlayer::BeginDestroy()
 {
-	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
+	// Track, Clip 등 각종 데이터를 정리
+	Shutdown();
 
 	// 객체가 루트에 추가되었는지 체크
 	if (IsValid(Instance) && Instance->IsRooted())
@@ -51,12 +52,13 @@ void UTimebarPlayer::BeginDestroy()
 		// 객체 종료
 		Instance->Shutdown();
 		Instance->RemoveFromRoot();  // 루트에서 제거
-		Instance->ConditionalBeginDestroy();  // 가비지 컬렉션 준비
+		Instance->MarkAsGarbage();
 		Instance = nullptr;
 	}
 
-	// Track, Clip 등 각종 데이터를 정리
-	Shutdown();
+	
+
+	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
 }
 
 UTimebarPlayer::~UTimebarPlayer()
@@ -77,7 +79,7 @@ void UTimebarPlayer::Shutdown()
 			if (IsValid(Track) && Track->IsRooted())
 			{
 				Track->RemoveFromRoot();
-				Track->ConditionalBeginDestroy();
+				Track->MarkAsGarbage();
 				Track = nullptr;
 			}
 		}
@@ -91,7 +93,7 @@ void UTimebarPlayer::Shutdown()
 			if (IsValid(Track) && Track->IsRooted())
 			{
 				Track->RemoveFromRoot();
-				Track->ConditionalBeginDestroy();
+				Track->MarkAsGarbage();
 				Track = nullptr;
 			}
 		}
@@ -105,7 +107,7 @@ void UTimebarPlayer::Shutdown()
 			if (IsValid(Clip) && Clip->IsRooted())
 			{
 				Clip->RemoveFromRoot();
-				Clip->ConditionalBeginDestroy();
+				Clip->MarkAsGarbage();
 				Clip = nullptr;
 			}
 		}
@@ -119,7 +121,7 @@ void UTimebarPlayer::Shutdown()
 			if (IsValid(Clip) && Clip->IsRooted())
 			{
 				Clip->RemoveFromRoot();
-				Clip->ConditionalBeginDestroy();
+				Clip->MarkAsGarbage();
 				Clip = nullptr;
 			}
 		}
@@ -301,7 +303,7 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 		// Clear Track
 		TrackArray.Remove(InTrack);
 		InTrack->RemoveFromRoot();
-		InTrack->ConditionalBeginDestroy();
+		InTrack->MarkAsGarbage();
 		InTrack = nullptr;
 	}
 }

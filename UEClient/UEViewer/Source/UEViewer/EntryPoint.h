@@ -105,4 +105,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetTimebarCurrentTime(float InCurrentTime);
+
+	UFUNCTION(BlueprintCallable)
+	static UTimebarManager* GetTimebarManager(FName InManagerName);
 };

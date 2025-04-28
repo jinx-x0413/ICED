@@ -8,14 +8,24 @@ UTimebarController::UTimebarController()
 
 void UTimebarController::BeginDestroy()
 {
-	Super::BeginDestroy();
+	Shutdown();
 
-	// 필요 시 여기에 정리 로직 삽입 (예: 이벤트 바인딩 해제 등)
-	// 현재는 Controller가 생성한 객체를 직접 관리하지 않으므로 비워둠
+	RemoveFromRoot();
+	MarkAsGarbage();
+
+	Super::BeginDestroy();
 }
 
 UTimebarController::~UTimebarController()
 {
+}
+
+void UTimebarController::Shutdown()
+{
+	if (!ManagerMap.IsEmpty())
+	{
+		ManagerMap.Empty();
+	}
 }
 
 
@@ -102,4 +112,27 @@ void UTimebarController::SetCurrentTime(float InCurrentTime)
 		Player->CurrentTime = InCurrentTime;
 		Player->OnCurrentTimeChanged.Broadcast(InCurrentTime);
 	}
+}
+
+UTimebarManager* UTimebarController::GetManager(FName InManagerName)
+{
+	UTimebarManager* CurrentManager = nullptr;
+
+
+	if (ManagerMap.Contains(InManagerName)) // get
+	{
+		//uint32 Hash = GetTypeHash(InManagerName);
+		CurrentManager = ManagerMap[InManagerName].Manager;
+	}
+	else // create
+	{
+		CurrentManager = NewObject<UTimebarManager>(GetTransientPackage());
+		CurrentManager->AddToRoot();
+		FTimebarManagerWrapper NewStruct;
+		NewStruct.Manager = CurrentManager;
+		ManagerMap.Add(InManagerName, NewStruct);
+	}
+
+
+	return CurrentManager;
 }

@@ -23,7 +23,7 @@ void FTimebar::ShutdownModule()
 	if (IsValid(Controller) && Controller->IsRooted())
 	{
 		Controller->RemoveFromRoot();
-		Controller->ConditionalBeginDestroy();  // BeginDestroy 호출 유도
+		Controller->MarkAsGarbage();  // BeginDestroy 호출 유도
 		Controller = nullptr;
 	}
 
@@ -32,7 +32,7 @@ void FTimebar::ShutdownModule()
 	if (IsValid(PlayerInstance) && PlayerInstance->IsRooted())
 	{
 		PlayerInstance->RemoveFromRoot();
-		PlayerInstance->ConditionalBeginDestroy();  // BeginDestroy 호출 유도
+		PlayerInstance->MarkAsGarbage();  // BeginDestroy 호출 유도
 	}
 }
 
