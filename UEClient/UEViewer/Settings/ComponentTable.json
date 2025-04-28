@@ -35,8 +35,20 @@
               "FieldValue": "true",
               "InteractionClassName": "UHiddenInteraction"
             }
-          ],
-          "FieldsBackward": [
+          ]
+        }
+      ]
+
+    },
+
+
+    {
+      "TableName": "Disassembly",
+      "Rows": [
+        {
+          "RowIndex": "0",
+          "RowName": "RowName",
+          "Fields": [
             {
               "FieldIndex": "0",
               "FieldClass": "WBP_TableFieldCheckbox",
@@ -47,7 +59,7 @@
             {
               "FieldIndex": "1",
               "FieldClass": "WBP_TableFieldCheckbox",
-              "FieldName": "나타나기",
+              "FieldName": "나타내기",
               "FieldValue": "true",
               "InteractionClassName": "UHiddenInteraction"
             },

@@ -170,19 +170,44 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
 							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
 							
-							//if (TempFieldData.FieldIndex == 0) // Step Index
-							//{
-							//	TempFieldData.FieldValue = FString::FromInt(i);
-							//}
 
 							TempRowData.Fields.Add(TempFieldData);
 						}
 					}
 
-					// 4. parse FieldsBackward
-					if (SampleRowData->HasField(TEXT("FieldsBackward")))
+					TempTableData.Rows.Add(TempRowData);
+
+				}
+			}
+		}
+		else if (InTableName == TEXT("Disassembly"))
+		{
+			TSharedPtr<FJsonObject> TargetContentData = ContentData[1]->AsObject();
+
+			if (!TargetContentData.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("TargetContentData is not valid at JSONParserForUI"));
+			}
+
+			if (TargetContentData->HasField(TEXT("Rows")))
+			{
+				// 2. parse Row
+				TArray<TSharedPtr<FJsonValue>> RowData = TargetContentData->GetArrayField(TEXT("Rows"));
+				TSharedPtr<FJsonObject> SampleRowData = RowData[0]->AsObject();
+				for (int i = 0; i < InActorHierarchyData.Num(); i++)
+				{
+					FTableRowData TempRowData;
+					if (!InActorHierarchyData[i].TargetComponent.IsValid())
 					{
-						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("FieldsBackward"));
+						continue;
+					}
+					TempRowData.RowIndex = i;
+					TempRowData.RowName = InActorHierarchyData[i].DisplayName;
+
+					// 3. parse Field
+					if (SampleRowData->HasField(TEXT("Fields")))
+					{
+						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("Fields"));
 
 						for (int j = 0; j < FieldData.Num(); j++)
 						{
@@ -201,13 +226,9 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
 							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
 
-							TempRowData.FieldsBackward.Add(TempFieldData);
+							TempRowData.Fields.Add(TempFieldData);
 						}
 					}
-					TempTableData.Rows.Add(TempRowData);
-
-				}
-			}
 		}
 	}
 
