@@ -86,7 +86,16 @@ UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInt
 void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
 {
 	// Get Table Data
-	FTableData CurrentTableData = UTableManager::GetTableManager()->TableData;
+	FTableData CurrentTableData;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("UIComponent")))
+	{
+		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
+		if (Module)
+		{
+			UTableManager* TargetManager = Module->TableController->GetTableManager(TEXT("Assembly"));
+			CurrentTableData = TargetManager->TableData;
+		}
+	}
 
 	// Build Content
 	UInteractionBase* ReturnInteraction = nullptr;
@@ -106,7 +115,18 @@ void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget>
 void UEntryPoint::BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass)
 {
 	// Get Table Data
-	FTableData CurrentTableData = UTableManager::GetTableManager()->TableData;
+	FTableData CurrentTableData;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("UIComponent")))
+	{
+		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
+		if (Module)
+		{
+			UTableManager* TargetManager = Module->TableController->GetTableManager(TEXT("Disassembly"));
+			CurrentTableData = TargetManager->TableData;
+		}
+	}
+
+	//= UTableManager::GetTableManager()->TableData;
 
 	// Build Content
 	UInteractionBase* ReturnInteraction = nullptr;
@@ -287,6 +307,24 @@ UTimebarManager* UEntryPoint::GetTimebarManager(FName InManagerName)
 		if (Module)
 		{
 			CurrentManager = Module->Controller->GetManager(InManagerName);
+		}
+	}
+
+	return CurrentManager;
+}
+
+
+
+// UIComponent
+UTableManager* UEntryPoint::GetTableManager(FName InManagerName)
+{
+	UTableManager* CurrentManager = nullptr;
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("UIComponent")))
+	{
+		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
+		if (Module)
+		{
+			CurrentManager = Module->TableController->GetTableManager(InManagerName);
 		}
 	}
 

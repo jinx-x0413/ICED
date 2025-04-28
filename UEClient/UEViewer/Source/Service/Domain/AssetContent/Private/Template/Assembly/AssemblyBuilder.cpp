@@ -29,7 +29,7 @@ void UAssemblyBuilder::Build()
 		}
 
 		float LatestClipEndTime = 0.0f;
-		TargetTableData = UTableManager::GetTableManager()->GetTableData(); // 참조로 사용
+		//TargetTableData = UTableManager::GetTableManager()->GetTableData(); // 참조로 사용
 
 		for (int i = 0; i < CurrentData.Num() - 1; i++) // Actor 대상으로 클립 생성하지 않도록
 		{

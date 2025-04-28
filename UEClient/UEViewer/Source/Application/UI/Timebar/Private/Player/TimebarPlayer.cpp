@@ -26,7 +26,7 @@ void UTimebarPlayer::BeginDestroy()
 	Shutdown();
 
 	// 객체가 루트에 추가되었는지 체크
-	if (IsValid(Instance) && Instance->IsRooted())
+	if (this == Instance)
 	{
 		// 이벤트 바인딩 해제
 		if (Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
@@ -48,13 +48,12 @@ void UTimebarPlayer::BeginDestroy()
 		{
 			Instance->OnFinished.RemoveDynamic(Instance, &UTimebarPlayer::Stop);
 		}
-
-		// 객체 종료
-		Instance->Shutdown();
-		Instance->RemoveFromRoot();  // 루트에서 제거
-		Instance->MarkAsGarbage();
-		Instance = nullptr;
 	}
+
+	// 객체 종료
+	Shutdown();
+	RemoveFromRoot();  // 루트에서 제거
+	MarkAsGarbage();
 
 	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
 }
@@ -70,9 +69,13 @@ void UTimebarPlayer::Shutdown()
 		return;
 	}
 
-	CurrentManager->RemoveFromRoot();
-	CurrentManager->MarkAsGarbage();
-	CurrentManager = nullptr;
+	if (IsValid(CurrentManager) && CurrentManager->IsRooted())
+	{
+		CurrentManager->RemoveFromRoot();
+		CurrentManager->MarkAsGarbage();
+		CurrentManager = nullptr;
+	}
+	
 
 
 		// Track과 Clip 관련 배열들을 안전하게 처리

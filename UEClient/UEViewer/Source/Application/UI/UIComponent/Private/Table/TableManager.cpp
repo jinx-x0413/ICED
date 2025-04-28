@@ -6,7 +6,7 @@
 
 
 // singleton
-UTableManager* UTableManager::Instance = nullptr;
+//UTableManager* UTableManager::Instance = nullptr;
 UTableManager::UTableManager()
 {
 }
@@ -17,27 +17,35 @@ UTableManager::~UTableManager()
 
 void UTableManager::BeginDestroy()
 {
-	Super::BeginDestroy();
-
-	if (IsValid(Instance) && Instance->IsRooted())
+	/*if (IsValid(Instance) && Instance->IsRooted())
 	{
 		Instance->Shutdown();
 		Instance->RemoveFromRoot();
-		Instance->ConditionalBeginDestroy();
+		Instance->MarkAsGarbage();
 		Instance = nullptr;
-	}
-}
+	}*/
 
-UTableManager* UTableManager::GetTableManager()
-{
-	if (!Instance)
+	Shutdown();
+
+	if (IsValid(this) && IsRooted())
 	{
-		Instance = NewObject<UTableManager>(GetTransientPackage());
-		Instance->AddToRoot();
+		RemoveFromRoot();
+		MarkAsGarbage();
 	}
 
-	return Instance;
+	Super::BeginDestroy();
 }
+//
+//UTableManager* UTableManager::GetTableManager()
+//{
+//	if (!Instance)
+//	{
+//		Instance = NewObject<UTableManager>(GetTransientPackage());
+//		Instance->AddToRoot();
+//	}
+//
+//	return Instance;
+//}
 
 
 

@@ -19,7 +19,7 @@
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 #include "Service/Domain/AssetContent/Public/AssetContent.h"
-#include "Application/UI/UIComponent/Public/Table/TableManager.h"
+#include "Application/UI/UIComponent/Public/UIComponent.h"
 
 
 #include "EntryPoint.generated.h"
@@ -108,4 +108,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static UTimebarManager* GetTimebarManager(FName InManagerName);
+
+
+	// UIComponent
+public:
+	UFUNCTION(BlueprintCallable)
+	static UTableManager* GetTableManager(FName InManagerName);
 };

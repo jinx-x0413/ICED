@@ -22,11 +22,11 @@ FString GetFilePath(const FString& InFileName) {
 // WBP 클래스를 C++ 코드에서 구조체 변수로 추가하여 저장
 UClass* ConvertStringToWBPClass(const FString& InClassString)
 {
-	
+
 	FString AssetPath = FString::Printf(TEXT("/Game/%s/Table/"), *UIComponentVars::TableAssetPath);
 	if (InClassString == "WBP_TableFieldText")
 	{
-	
+
 		AssetPath = FString::Printf(TEXT("%sWBP_TableFieldText.WBP_TableFieldText_C"), *AssetPath);
 		UClass* WBPClass_TableField_Text = LoadClass<UUserWidget>(nullptr, *AssetPath);
 		if (WBPClass_TableField_Text)
@@ -169,7 +169,6 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							EachFieldData->TryGetStringField(TEXT("FieldValue"), TempFieldData.FieldValue);
 							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
 							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
-							
 
 							TempRowData.Fields.Add(TempFieldData);
 						}
@@ -229,12 +228,12 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							TempRowData.Fields.Add(TempFieldData);
 						}
 					}
+				}
+			}
+
 		}
+
 	}
-
-
-
-
 	OutTableData = TempTableData;
 	return;
 }

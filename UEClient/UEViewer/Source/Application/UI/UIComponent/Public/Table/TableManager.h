@@ -31,6 +31,8 @@ struct FTableFieldData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
 	TSubclassOf<UInteractionBase> InteractionClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
+	UTableManager* TargetManager;
 
 	FTableFieldData()
 		: FieldIndex(0)
@@ -38,6 +40,7 @@ struct FTableFieldData
 		, FieldName(TEXT(""))
 		, FieldValue(TEXT(""))
 		, InteractionClass()
+		, TargetManager(nullptr)
 	{}
 };
 
@@ -55,12 +58,15 @@ struct FTableRowData
 	TArray<FTableFieldData> Fields;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
 	TArray<FTableFieldData> FieldsBackward;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
+	UTableManager* TargetManager;
 
 	FTableRowData()
 		: RowIndex(0)
 		, RowName(TEXT(""))
 		, Fields()
 		, FieldsBackward()
+		, TargetManager(nullptr)
 	{}
 };
 
@@ -99,15 +105,16 @@ public:
 	UTableManager();
 	virtual ~UTableManager();
 	void BeginDestroy();
-	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
-	static UTableManager* GetTableManager();
+	/*UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
+	static UTableManager* GetTableManager();*/
+
 	UFUNCTION(BlueprintCallable)
 	void Initialize(FTableData InData);
 	UFUNCTION()
 	void Shutdown();
-
-private:
-	static UTableManager* Instance;
+//
+//private:
+//	static UTableManager* Instance;
 
 
 
