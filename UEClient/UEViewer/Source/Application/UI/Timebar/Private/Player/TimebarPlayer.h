@@ -14,6 +14,8 @@ enum class ETimebarState : uint8
 	Running		 UMETA(DisplayName = "Running")
 };
 
+class UTimebarManager;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnTrackCreated, UTrack*, InTrack, UUserWidget*, InHeaderWidget, UTrackWidget*, InTrackWidget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSideTrackCreated, UTrack*, InParentTrack, UTrack*, InTrack, UUserWidget*, InHeaderWidget, USideTrackWidget*, InTrackWidget);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackDeleted, UTrack*, InTrack);
@@ -32,6 +34,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStateChanged, ETimebarState, InSt
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnScaleChanged, float, InOldScale, float, InNewScale);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimebarManagerSiwtched, UTimebarManager*, InManager);
+
 UCLASS(BlueprintType)
 class TIMEBAR_API UTimebarPlayer : public UObject
 {
@@ -39,8 +43,9 @@ class TIMEBAR_API UTimebarPlayer : public UObject
 
 public:
 	UTimebarPlayer();
-	void BeginDestroy();
+	virtual void BeginDestroy() override;
 	virtual ~UTimebarPlayer();
+	
 
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
 	static UTimebarPlayer* GetTimebarPlayer();
@@ -53,11 +58,11 @@ private:
 
 public:
 	// Track
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UTrack*> TrackArray;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<UTrack*> ReverseTrackArray;
+	TArray<UTrack*> ReverseTrackArray;*/
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnTrackCreated OnTrackCreated;
@@ -89,8 +94,9 @@ public:
 	UFUNCTION()
 	UTrack* CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
 
-	UFUNCTION()
-	UTrack* CreateComponentBackward(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
+	
+	//UFUNCTION()
+	//UTrack* CreateComponentBackward(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent);
 
 	UFUNCTION(BlueprintCallable)
 	void SelectTrack(UTrack* InTrack);
@@ -99,11 +105,11 @@ public:
 	void DeleteTrack(UTrack* InTrack);
 
 	// Clip
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	/*UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UClip*> ClipArray;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<UClip*> ReverseClipArray;
+	TArray<UClip*> ReverseClipArray;*/
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnClipCreated OnClipCreated;
@@ -145,8 +151,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ETimebarState State = ETimebarState::Stopped;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsPlayingBackward = false;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	//bool bIsPlayingBackward = false;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnStateChanged OnStateChanged;
@@ -175,6 +181,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentTime(float InCurrentTime);
 
-	UFUNCTION(BlueprintCallable)
-	void RunBackward();
+	//UFUNCTION(BlueprintCallable)
+	//void RunBackward();
+
+
+
+	// Manager
+public:
+	UTimebarManager* CurrentManager;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnTimebarManagerSiwtched OnTimebarManagerSiwtched;
+
+
+	UFUNCTION()
+	void SetCurrentManager(UTimebarManager* InManager);
 };

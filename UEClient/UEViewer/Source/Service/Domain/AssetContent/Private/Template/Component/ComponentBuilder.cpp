@@ -244,11 +244,11 @@ float UComponentBuilder::SetClipBackward(UTrack* InTrack, TSubclassOf<UInteracti
 		// TODO : popup Interaction property (TargetWidget, Text)
 
 
-		UInteractionBase* NewCameraInteraction = Controller->CreateInteractionBackward(
+		/*UInteractionBase* NewCameraInteraction = Controller->CreateInteractionBackward(
 			TargetInteractionData
 			, InTrack
 			, PrevTrackEndTime
-			, PrevTrackEndTime + ClipInterval);
+			, PrevTrackEndTime + ClipInterval);*/
 
 		CurrentEndTrackTime = PrevTrackEndTime + ClipInterval;
 	}

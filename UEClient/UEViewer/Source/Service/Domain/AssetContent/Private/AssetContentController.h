@@ -31,7 +31,7 @@ public:
 public:
 	virtual UInteractionBase* CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
-	virtual UInteractionBase* CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+	//virtual UInteractionBase* CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	UPROPERTY()
 	UTemplateBuilder* TemplateBuilder;

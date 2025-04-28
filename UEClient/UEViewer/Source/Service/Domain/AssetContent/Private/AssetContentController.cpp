@@ -16,13 +16,14 @@ UAssetContentController::~UAssetContentController()
 
 void UAssetContentController::BeginDestroy()
 {
-    Super::BeginDestroy();
-
     if (IsValid(this) && IsRooted())
     {
         RemoveFromRoot();
-        ConditionalBeginDestroy();
+        MarkAsGarbage();
     }
+
+    Super::BeginDestroy();
+
 }
 
 UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
@@ -47,28 +48,29 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
     return nullptr;
 }
 
-UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
-{
-    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
-    {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
-        //InInteractionData.TargetClass = InInteractionData.TargetClass;
-        NewInteraction->TargetTrack = InTrack;
-        NewInteraction->bIsReversed = true;
-        NewInteraction->Initialize(InInteractionData);
-        NewInteraction->StartTime = InStartTime;
-        NewInteraction->EndTime = InEndTime;
-        NewInteraction->ClipLength = InEndTime - InStartTime;
-        NewInteraction->Name = InInteractionData.Name.ToString();
-        NewInteraction->AddToRoot();
-
-        UTimebarPlayer::GetTimebarPlayer()->ReverseClipArray.Add(NewInteraction);
-
-        return NewInteraction;
-    }
-
-    return nullptr;
-}
+//UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+//{
+//    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+//    {
+//        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
+//        //InInteractionData.TargetClass = InInteractionData.TargetClass;
+//        NewInteraction->TargetTrack = InTrack;
+//        NewInteraction->bIsReversed = true;
+//        NewInteraction->Initialize(InInteractionData);
+//        NewInteraction->StartTime = InStartTime;
+//        NewInteraction->EndTime = InEndTime;
+//        NewInteraction->ClipLength = InEndTime - InStartTime;
+//        NewInteraction->Name = InInteractionData.Name.ToString();
+//        NewInteraction->AddToRoot();
+//
+//       
+//        //UTimebarPlayer::GetTimebarPlayer()->ReverseClipArray.Add(NewInteraction);
+//
+//        return NewInteraction;
+//    }
+//
+//    return nullptr;
+//}
 
 void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData)
 {
