@@ -94,7 +94,7 @@ void UTransformInteraction::SetStartEndTransformAuto()
 	FVector ComponentCenter = TargetData.TargetComponent->Bounds.Origin;
 	
 	// StartTransform 설정 (현재 위치)
-	if (bIsReversed)
+	if (TargetData.bIsReversed)
 	{
 		TargetData.EndTransform.SetLocation(TargetLocation);
 		TargetData.EndTransform.SetRotation(FQuat::Identity);
@@ -140,7 +140,7 @@ void UTransformInteraction::SetStartEndTransformAuto()
 	}
 
 	// EndTransform 위치 계산
-	if (bIsReversed)
+	if (TargetData.bIsReversed)
 	{
 		TargetData.StartTransform.SetLocation(TargetLocation + Direction);
 		TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
@@ -159,7 +159,7 @@ void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionD
 	FVector TargetLocation = TargetData.TargetComponent->GetComponentLocation();
 
 	// StartTransform 설정 (현재 위치)
-	if (bIsReversed)
+	if (TargetData.bIsReversed)
 	{
 		TargetData.EndTransform.SetLocation(TargetLocation);
 		TargetData.EndTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정
@@ -192,7 +192,7 @@ void UTransformInteraction::SetStartEndTransformDirection(ETransformInteractionD
 	}
 
 	// EndTransform 위치 계산
-	if (bIsReversed)
+	if (TargetData.bIsReversed)
 	{
 		TargetData.StartTransform.SetLocation(TargetLocation + Direction);
 		TargetData.StartTransform.SetRotation(FQuat::Identity); // 회전 값은 필요에 따라 설정

@@ -26,13 +26,12 @@ void UAssetContentController::BeginDestroy()
 
 }
 
-UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
 {
-    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+    if (InInteractionClass->IsChildOf(UInteractionBase::StaticClass()))
     {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
-        //InInteractionData.TargetClass = InInteractionData.TargetClass;
-        NewInteraction->TargetTrack = InTrack;
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionClass);
+        InInteractionData.TargetClass = InInteractionClass;
         NewInteraction->Initialize(InInteractionData);
         NewInteraction->StartTime = InStartTime;
         NewInteraction->EndTime = InEndTime;
@@ -41,13 +40,12 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
         NewInteraction->AddToRoot();
 
         UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, NewInteraction);
-
+        //UTimebarPlayer::GetTimebarPlayer()->OnTrackSelected.Broadcast(InTrack);
         return NewInteraction;
     }
 
     return nullptr;
 }
-
 //UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
 //{
 //    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))

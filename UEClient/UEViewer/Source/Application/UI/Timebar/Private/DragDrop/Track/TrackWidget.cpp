@@ -34,7 +34,7 @@ void UTrackWidget::NativeDestruct()
 	if (IsValid(TargetTrack) && TargetTrack->IsRooted())
 	{
 		TargetTrack->RemoveFromRoot();
-		TargetTrack->ConditionalBeginDestroy();
+		TargetTrack->MarkAsGarbage();
 		TargetTrack = nullptr;
 	}
 

@@ -10,11 +10,11 @@
 #include "Track.h"
 #include "Clip.h"
 #include "TimebarWidget.h"
+#include "Application/UI/Timebar/Private/DragDrop/Track/TrackWidget.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ScrollBox.h"
-#include "Application/UI/UIComponent/Public/SceneCapture/SceneCaptureIcon.h"
 
 #include "PlayerDependency.generated.h"
 

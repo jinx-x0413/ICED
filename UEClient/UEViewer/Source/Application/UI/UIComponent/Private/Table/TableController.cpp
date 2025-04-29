@@ -14,12 +14,18 @@ UTableController::~UTableController()
 
 void UTableController::BeginDestroy()
 {
-	Shutdown();
-	RemoveFromRoot();
-	MarkAsGarbage();
+	if (IsValid(this) && IsRooted())
+	{
+		Shutdown();
+		RemoveFromRoot();
+		MarkAsGarbage();
+	}
 
 	Super::BeginDestroy();
 }
+
+
+
 
 void UTableController::Shutdown()
 {
@@ -29,27 +35,29 @@ void UTableController::Shutdown()
 	}
 }
 
-
-
-
-// Manager
 UTableManager* UTableController::GetTableManager(FName InManagerName)
 {
 	UTableManager* CurrentManager = nullptr;
 
-
-	if (ManagerMap.Contains(InManagerName)) // get
+	if (!ManagerMap.Contains(InManagerName)) // create
 	{
-		//uint32 Hash = GetTypeHash(InManagerName);
-		CurrentManager = ManagerMap[InManagerName].Manager;
-	}
-	else // create
-	{
-		CurrentManager = NewObject<UTableManager>(GetTransientPackage());
+		//UE_LOG(LogTemp, Warning, TEXT("No Manager Name in Map at UDragDropController::GetDragDropManager"));
+		CurrentManager = NewObject<UTableManager>();
+		
+		CurrentManager->TableData.TableName = InManagerName.ToString();
 		CurrentManager->AddToRoot();
-		FTableManagerWrapper NewStruct;
-		NewStruct.Manager = CurrentManager;
-		ManagerMap.Add(InManagerName, NewStruct);
+		ManagerMap.Add(InManagerName);
+		ManagerMap[InManagerName].Manager = CurrentManager;
+	}
+	else // get
+	{
+		uint32 KeyHash = GetTypeHash(InManagerName);
+		CurrentManager = ManagerMap.FindByHash(KeyHash, InManagerName)->Manager;
+		if (!IsValid(CurrentManager))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Manager in Map at UTableController::GetTableManager"));
+			return nullptr;
+		}
 	}
 
 	return CurrentManager;

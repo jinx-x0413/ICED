@@ -26,6 +26,7 @@
 namespace UIComponentVars
 {
 	extern FString TableAssetPath;
+	extern FString PopupWidgetAssetPath;
 }
 
 UCLASS()

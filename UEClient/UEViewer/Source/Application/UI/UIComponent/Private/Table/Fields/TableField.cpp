@@ -4,36 +4,23 @@
 #include "Table/TableField.h"
 #include "Table/TableDependency.h"
 
-void UTableField::NativeConstruct()
-{
-    Super::NativeConstruct();
-}
-
-void UTableField::NativeDestruct()
-{
-    Super::NativeDestruct();
-
-   /* if (ParentTableItem && IsValid(ParentTableItem->TargetTable))
-    {
-        if (ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.IsAlreadyBound(this, &UTableField::SetFieldActivated))
-        {
-            ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.RemoveDynamic(this, &UTableField::SetFieldActivated);
-        }
-    }*/
-
-}
-
 void UTableField::InitializeTableField(FTableFieldData InData)
 {
     TargetFieldData = InData;
 
-    if (ParentTableItem && IsValid(ParentTableItem->TargetTable))
+    if (IsValid(TargetFieldData.TargetTableManager))
     {
-        if (!ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.IsAlreadyBound(this, &UTableField::SetFieldActivated))
+        if (!TargetFieldData.TargetTableManager->OnAllFieldsChecked.IsAlreadyBound(this, &UTableField::SetFieldChecked))
         {
-            ParentTableItem->TargetTable->TargetManager->OnAllFieldsActivated.AddDynamic(this, &UTableField::SetFieldActivated);
+            TargetFieldData.TargetTableManager->OnAllFieldsChecked.AddDynamic(this, &UTableField::SetFieldChecked);
+        }
+    
+        if (!TargetFieldData.TargetTableManager->OnAllFieldsSelected.IsAlreadyBound(this, &UTableField::SetFieldSelected))
+        {
+            TargetFieldData.TargetTableManager->OnAllFieldsSelected.AddDynamic(this, &UTableField::SetFieldSelected);
         }
     }
+
 }
 
 void UTableField::InitializeValue(UTableField* InField)
@@ -56,12 +43,20 @@ void UTableField::SetFieldValue(const FString& Value)
     TargetFieldData.FieldValue = Value;
 }
 
-void UTableField::SetFieldActivated(int32 InFieldIndex)
+void UTableField::SetFieldChecked(int32 InFieldIndex, bool bIsChecked)
 {
-    if (InFieldIndex == TargetFieldData.FieldIndex)
+    if (TargetFieldData.FieldIndex == InFieldIndex)
     {
-
-        ExecSetFieldActivated();
+        ExecSetFieldChecked(bIsChecked);
     }
-    
 }
+
+
+void UTableField::SetFieldSelected(int32 InFieldIndex, int32 InSelectedIndex)
+{
+    if (TargetFieldData.FieldIndex == InFieldIndex)
+    {
+        ExecSetFieldSelected(InSelectedIndex);
+    }
+}
+

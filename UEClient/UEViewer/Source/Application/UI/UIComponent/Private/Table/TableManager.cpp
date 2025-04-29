@@ -13,22 +13,13 @@ UTableManager::UTableManager()
 
 UTableManager::~UTableManager()
 {
-}
 
+}
 void UTableManager::BeginDestroy()
 {
-	/*if (IsValid(Instance) && Instance->IsRooted())
-	{
-		Instance->Shutdown();
-		Instance->RemoveFromRoot();
-		Instance->MarkAsGarbage();
-		Instance = nullptr;
-	}*/
-
-	Shutdown();
-
 	if (IsValid(this) && IsRooted())
 	{
+		Shutdown();
 		RemoveFromRoot();
 		MarkAsGarbage();
 	}
@@ -40,7 +31,7 @@ void UTableManager::BeginDestroy()
 //{
 //	if (!Instance)
 //	{
-//		Instance = NewObject<UTableManager>(GetTransientPackage());
+//		Instance = NewObject<UTableManager>();
 //		Instance->AddToRoot();
 //	}
 //
@@ -52,15 +43,26 @@ void UTableManager::BeginDestroy()
 // construct
 void UTableManager::Initialize(FTableData InData)
 {
+	FString CurrentTableName = InData.TableName;
 	TableData = InData;
+	TableData.TableName = CurrentTableName;
 }
 
 void UTableManager::Shutdown()
 {
+	/*if (IsValid(Instance) && Instance->IsRooted())
+	{
+		if (IsValid(Instance->TargetTable))
+		{
+			Instance->TargetTable->RemoveFromParent();
+		}
+
+	}*/
 	if (IsValid(TargetTable))
 	{
 		TargetTable->RemoveFromParent();
 	}
+
 }
 
 
@@ -74,9 +76,7 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 		return;
 	}
 
-	//TargetTable = NewObject<UTableContainer>(this, InContainerClass);
-
-	// 1. Create Container
+	
 	APlayerController* PlayerController = GWorld->GetFirstPlayerController();
 	TargetTable = CreateWidget<UTableContainer>(PlayerController, InContainerClass);
 	TargetTable->InitializeTable(this);
@@ -84,39 +84,21 @@ void UTableManager::CreateTable(TSubclassOf<UTableContainer> InContainerClass, T
 	TargetTable->SetPositionInViewport(UViewportHelper::AdjustedPosition(InPosition), false);
 
 
-	// 2. Create Row
+
 	for (int i = 0; i < TableData.Rows.Num(); i++)
 	{
-		//TWeakObjectPtr<UTableRow> NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
-		UTableRow* NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
-		TargetTable->AddRow(NewRow);
-		
-		// 3. Field
+		TWeakObjectPtr<UTableRow> NewRow = CreateWidget<UTableRow>(PlayerController, InRowClass);
+		TableData.Rows[i].TargetTableManager = this;
+		NewRow->InitializeTableItem(TableData.Rows[i]);
+		TargetTable->AddRow(NewRow.Get());
 		for (int j = 0; j < TableData.Rows[i].Fields.Num(); j++)
 		{
-			// 3-1. Create Fields
-			//TWeakObjectPtr<UTableField> NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
-			UTableField* NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
-			
-			// set row
-			//NewRow->AddField(NewField.Get());
-			NewRow->AddField(NewField);
-			NewRow->TargetTable = TargetTable;
-			
-			// set field
-			NewField->InitializeTableField(TableData.Rows[i].Fields[j]);
+			TWeakObjectPtr<UTableField> NewField = CreateWidget<UTableField>(PlayerController, TableData.Rows[i].Fields[j].FieldClass);
 			TableData.Rows[i].Fields[j].FieldIndex = j;
-			
-			// initialize item
-			NewRow->InitializeTableItem(TableData.Rows[i]);
-
-
-			// 3-2. Create FieldsBackward
-			TableData.Rows[i].FieldsBackward[j].FieldIndex = j;
+			TableData.Rows[i].Fields[j].TargetTableManager = this;
+			NewField->InitializeTableField(TableData.Rows[i].Fields[j]);
+			NewRow->AddField(NewField.Get());
 		}
-
-		
-		
 	}
 
 	OnTableCreated.Broadcast();
@@ -138,21 +120,22 @@ FTableData UTableManager::GetTableData()
 		CurrentTableData.Rows.Add(CurrentRowData);
 	}
 
-	// TODO : get fieldsBakward data from datatable
-	/*for (int i = 0; i < TableData.Rows.Num(); i++)
-	{
-		for (int j = 0; j < TableData.Rows[i].FieldsBackward.Num(); j++)
-		{
-			CurrentTableData.Rows[i].FieldsBackward = TableData.Rows[i].FieldsBackward;
-		}
-	}*/
-
 	return CurrentTableData;
 }
 
 void UTableManager::UpdateTable()
 {
 	TableData = GetTableData();
+}
+
+void UTableManager::CheckAllFields(int32 InFieldIndex, bool bIsChecked)
+{
+	OnAllFieldsChecked.Broadcast(InFieldIndex, bIsChecked);
+}
+
+void UTableManager::SelectAllFields(int32 InFieldIndex, int32 InSelectedOption)
+{
+	OnAllFieldsSelected.Broadcast(InFieldIndex, InSelectedOption);
 }
 
 

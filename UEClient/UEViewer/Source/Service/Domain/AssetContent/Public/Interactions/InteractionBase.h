@@ -3,13 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
-
 #include "Application/UI/Timebar/Private/Player/Clip.h"
-
 #include "InteractionBase.generated.h"
-
-class UClip;
 
 
 UENUM(BlueprintType)
@@ -28,7 +23,8 @@ enum class EInteractionType : uint8
 	HIDDEN			UMETA(DisplayName = "Hidden"),
 	HIGHLIGHT		UMETA(DisplayName = "Highlight"),
 	TRANSFORM		UMETA(DisplayName = "Transform"),
-	POPUP			UMETA(DisplayName = "Popup")
+	POPUP			UMETA(DisplayName = "Popup"),
+	COLOR			UMETA(DisplayName = "Color")
 };
 
 UENUM(BlueprintType)
@@ -38,7 +34,6 @@ enum class ETransformInteractionType : uint8
 	ROTATION,
 	SCALE
 };
-
 UENUM(BlueprintType)
 enum class ETransformInteractionDirection : uint8
 {
@@ -69,6 +64,8 @@ struct FInteractionData
 	FTransform TargetTransform;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float TargetArmLength;
+	UPROPERTY(BLueprintReadWrite, EditAnywhere)
+	bool bUseCustomCameraTransform;
 
 	// Hidden Interaction
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
@@ -87,10 +84,20 @@ struct FInteractionData
 	FTransform EndTransform;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	ETransformInteractionDirection TransformDirection;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bUseCustomEndTransform;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsReversed;
 
 	// PopupInteraction
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UUserWidget* TargetPopupWidget;
+
+	// ColorInteraction
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UMaterialInterface* BaseMaterial;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FLinearColor MaterialBaseColor;
 
 	FInteractionData()
 		: Index(0)
@@ -100,6 +107,7 @@ struct FInteractionData
 
 		, TargetTransform()
 		, TargetArmLength()
+		, bUseCustomCameraTransform(false)
 
 		, bIsHidden(false)
 
@@ -109,16 +117,22 @@ struct FInteractionData
 		, StartTransform()
 		, EndTransform()
 		, TransformDirection(ETransformInteractionDirection::AUTO)
+		, bUseCustomEndTransform(false)
+		, bIsReversed(false)
 
 		, TargetPopupWidget(nullptr)
+
+		, BaseMaterial(nullptr)
+		, MaterialBaseColor(FLinearColor(1, 1, 1, 1))
 	{
 	}
 };
 
-UCLASS()
+UCLASS(BlueprintType)
 class ASSETCONTENT_API UInteractionBase : public UClip
 {
 	GENERATED_BODY()
+
 
 	// Clip overriding
 public:
@@ -135,19 +149,11 @@ public:
 	virtual void Reset() {}
 
 
-protected:
+public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FInteractionData TargetData;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsInteracting = false;
 
-
-
-	// common feature
-public:
-	UFUNCTION()
 	FVector GetTargetActorCenter();
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsReversed = false;
 };

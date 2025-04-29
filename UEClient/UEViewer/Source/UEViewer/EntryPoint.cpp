@@ -62,7 +62,7 @@ AGltfAssetActor* UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> 
 	return nullptr;
 }
 
-UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+UInteractionBase* UEntryPoint::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
 {
 	// AssetContent :: Interaction
 	UInteractionBase* ReturnInteraction = nullptr;
@@ -71,7 +71,7 @@ UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInt
 		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
 		if (Module)
 		{
-			ReturnInteraction = Module->Controller->CreateInteraction(InInteractionData, InTrack, InStartTime, InEndTime);
+			ReturnInteraction = Module->Controller->CreateInteraction(InInteractionClass, InInteractionData, InTrack, InStartTime, InEndTime);
 		}
 	}
 
@@ -83,6 +83,7 @@ UInteractionBase* UEntryPoint::CreateInteractionToTimebar(FInteractionData InInt
 	return ReturnInteraction;
 }
 
+
 void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
 {
 	// Get Table Data
@@ -92,8 +93,17 @@ void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget>
 		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
 		if (Module)
 		{
-			UTableManager* TargetManager = Module->TableController->GetTableManager(TEXT("Assembly"));
-			CurrentTableData = TargetManager->TableData;
+			CurrentTableData = Module->TableController->GetTableManager(TEXT("Assembly"))->TableData;
+		}
+	}
+
+	// Set Timebar
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->SetTimebarManager(TEXT("Assembly"));
 		}
 	}
 
@@ -107,12 +117,11 @@ void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget>
 			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
 			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
 			Module->Controller->BuildTemplate(ETemplateType::ASSEMBLY, InActor, CurrentTableData);
-
 		}
 	}
 }
 
-void UEntryPoint::BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass)
+void UEntryPoint::BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
 {
 	// Get Table Data
 	FTableData CurrentTableData;
@@ -121,12 +130,19 @@ void UEntryPoint::BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget
 		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
 		if (Module)
 		{
-			UTableManager* TargetManager = Module->TableController->GetTableManager(TEXT("Disassembly"));
-			CurrentTableData = TargetManager->TableData;
+			CurrentTableData = Module->TableController->GetTableManager(TEXT("Disassembly"))->TableData;
 		}
 	}
 
-	//= UTableManager::GetTableManager()->TableData;
+	// Set Timebar
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->SetTimebarManager(TEXT("Disassembly"));
+		}
+	}
 
 	// Build Content
 	UInteractionBase* ReturnInteraction = nullptr;
@@ -135,9 +151,10 @@ void UEntryPoint::BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget
 		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
 		if (Module)
 		{
-			Module->Controller->TrackComponentWidgetClass = InTrackHeaderWidgetClass;
-			Module->Controller->BuildTemplate(ETemplateType::COMPONENT, InActor, CurrentTableData);
-
+			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
+			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			Module->Controller->BuildTemplate(ETemplateType::DISASSEMBLY, InActor, CurrentTableData);
+			UTimebarPlayer::GetTimebarPlayer()->OnTimebarManagerSwitched.Broadcast(UTimebarPlayer::GetTimebarPlayer()->CurrentManager);
 		}
 	}
 }
@@ -306,7 +323,7 @@ UTimebarManager* UEntryPoint::GetTimebarManager(FName InManagerName)
 		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
 		if (Module)
 		{
-			CurrentManager = Module->Controller->GetManager(InManagerName);
+			CurrentManager = Module->Controller->GetTimebarManager(InManagerName);
 		}
 	}
 

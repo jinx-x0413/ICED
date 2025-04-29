@@ -6,12 +6,12 @@
 #include "UObject/NoExportTypes.h"
 #include "TableController.generated.h"
 
-
 USTRUCT()
-struct FTableManagerWrapper 
+struct FTableManagerWrapper
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	UTableManager* Manager;
 
 	FTableManagerWrapper()
@@ -19,11 +19,12 @@ struct FTableManagerWrapper
 	{}
 };
 
+
 UCLASS()
 class UICOMPONENT_API UTableController : public UObject
 {
 	GENERATED_BODY()
-	
+
 	// construct
 public:
 	UTableController();
@@ -34,9 +35,8 @@ public:
 
 	// Manager
 public:
-	TMap<FName, FTableManagerWrapper> ManagerMap;
-
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	UTableManager* GetTableManager(FName InManagerName);
 
+	TMap<FName, FTableManagerWrapper> ManagerMap;
 };

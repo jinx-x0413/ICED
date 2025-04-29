@@ -48,7 +48,7 @@ void UClipWidget::NativeDestruct()
 	if (IsValid(TargetClip) && TargetClip->IsRooted())
 	{
 		TargetClip->RemoveFromRoot();
-		TargetClip->ConditionalBeginDestroy();
+		TargetClip->MarkAsGarbage();
 		TargetClip = nullptr;
 	}
 }

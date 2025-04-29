@@ -15,8 +15,12 @@ UTimebarManager::~UTimebarManager()
 void UTimebarManager::BeginDestroy()
 {
 	Shutdown();
-	RemoveFromRoot();
-	MarkAsGarbage();
+
+	if (IsValid(this) && IsRooted())
+	{
+		RemoveFromRoot();
+		MarkAsGarbage();
+	}
 
 	Super::BeginDestroy();
 }
@@ -49,5 +53,29 @@ void UTimebarManager::Shutdown()
 			}
 		}
 		ClipArray.Empty();
+	}
+}
+
+void UTimebarManager::SetTracksVisibility(bool bIsVisible)
+{
+	if (!TrackArray.IsEmpty())
+	{
+		for (auto& Track : TrackArray)
+		{
+			if (IsValid(Track) && Track->HeaderWidget && Track->ContentWidget)
+			{
+				if (bIsVisible)
+				{
+					Track->HeaderWidget->SetVisibility(ESlateVisibility::Visible);
+					Track->ContentWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+				else
+				{
+					Track->HeaderWidget->SetVisibility(ESlateVisibility::Collapsed);
+					Track->ContentWidget->SetVisibility(ESlateVisibility::Collapsed);
+				}
+				
+			}
+		}
 	}
 }

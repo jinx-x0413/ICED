@@ -22,8 +22,6 @@ class UICOMPONENT_API UTableField : public UUserWidget
 	// construct
 public:
 	virtual ~UTableField() {}
-	virtual void NativeConstruct() override;
-	virtual void NativeDestruct() override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FTableFieldData TargetFieldData;
@@ -51,8 +49,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void SetFieldValue(const FString& Value);
 
+
+
+	// all fields activated
+public:
 	UFUNCTION()
-	void SetFieldActivated(int32 InFieldIndex);
+	void SetFieldChecked(int32 InFieldIndex, bool bIsChecked);
+
 	UFUNCTION(BlueprintImplementableEvent)
-	void ExecSetFieldActivated();
+	void ExecSetFieldChecked(bool bIsChecked);
+
+	UFUNCTION()
+	void SetFieldSelected(int32 InFieldIndex, int32 InSelectedIndex);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExecSetFieldSelected(int32 InSelectedIndex);
 };

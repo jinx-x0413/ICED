@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS(BlueprintType)
+UCLASS()
 class UTimebarManager : public UObject
 {
 	GENERATED_BODY()
@@ -19,14 +19,20 @@ public:
 	UTimebarManager();
 	virtual ~UTimebarManager();
 	virtual void BeginDestroy() override;
+	
+	UFUNCTION()
 	void Shutdown();
+
 
 
 	// feature
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray<class UTrack*> TrackArray;
-
+	TArray <class UTrack* > TrackArray;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	TArray <class UClip* > ClipArray;
+	TArray<class UClip*> ClipArray;
+
+	UFUNCTION()
+	void SetTracksVisibility(bool bIsVisible);
+
 };

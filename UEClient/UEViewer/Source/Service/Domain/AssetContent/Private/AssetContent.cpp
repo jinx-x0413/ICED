@@ -22,7 +22,7 @@ void FAssetContent::ShutdownModule()
 	if (IsValid(Controller) && Controller->IsRooted())
 	{
 		Controller->RemoveFromRoot();
-		Controller->ConditionalBeginDestroy();
+		Controller->MarkAsGarbage();
 		Controller = nullptr;
 	}
 }

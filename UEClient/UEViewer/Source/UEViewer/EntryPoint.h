@@ -71,14 +71,15 @@ public:
 	// AssetContent
 public:
 	UFUNCTION(BlueprintCallable)
-	static UInteractionBase* CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+	static UInteractionBase* CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	UFUNCTION(BlueprintCallable)
 	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
 
 	UFUNCTION(BlueprintCallable)
-	static void BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass);
+	static void BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
 
+	
 	// Timebar
 public:
 	UFUNCTION(BlueprintCallable)

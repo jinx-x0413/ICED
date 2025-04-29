@@ -28,8 +28,6 @@ public:
 	UFUNCTION()
 	void InitializeTableItem(FTableRowData InData);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	UTableContainer* TargetTable;
 
 
 

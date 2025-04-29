@@ -9,8 +9,6 @@
 /**
  * 
  */
-
-class UTrack;
 class UClipWidget;
 
 UCLASS()
@@ -69,10 +67,4 @@ public:
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     UClipWidget* TargetWidget;
 
-
-
-    // track
-public:
-    UPROPERTY(BlueprintReadWrite, EditAnywhere)
-    UTrack* TargetTrack;
 };

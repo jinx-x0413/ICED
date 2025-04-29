@@ -15,5 +15,4 @@ namespace Variables
 	float MaxZoomScale = 2.0f;
 	float MinZoomScale = 0.4f;
 	float CursorInterval = 300.0f; // 커서가 인터벌 간격 도달시 스크롤 자동 조정
-	float VerticalScrollInterval = 100.0f;
 }

@@ -1,3 +1,6 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
 #include "TimebarController.h"
 #include "TimebarDependency.h"
 
@@ -6,18 +9,21 @@ UTimebarController::UTimebarController()
 {
 }
 
+UTimebarController::~UTimebarController()
+{
+}
+
 void UTimebarController::BeginDestroy()
 {
 	Shutdown();
 
-	RemoveFromRoot();
-	MarkAsGarbage();
+	if (IsValid(this) && IsRooted())
+	{
+		RemoveFromRoot();
+		MarkAsGarbage();
+	}
 
 	Super::BeginDestroy();
-}
-
-UTimebarController::~UTimebarController()
-{
 }
 
 void UTimebarController::Shutdown()
@@ -34,105 +40,92 @@ void UTimebarController::Shutdown()
 // Business Logic
 void UTimebarController::CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName)
 {
-	UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer();
-	if (!IsValid(Player)) return;
-
 	bool bIsSideTrack = InContentWidget->IsChildOf(USideTrackWidget::StaticClass());
-	if (bIsSideTrack && Player->SelectedTrack)
+	if (bIsSideTrack && UTimebarPlayer::GetTimebarPlayer()->SelectedTrack)
 	{
-		Player->CreateSideTrack(Player->SelectedTrack, InHeaderWidget, InContentWidget, InName);
+		// create side track
+		UTimebarPlayer::GetTimebarPlayer()->CreateSideTrack(UTimebarPlayer::GetTimebarPlayer()->SelectedTrack, InHeaderWidget, InContentWidget, InName);
 	}
 	else
 	{
-		Player->CreateTrack(InHeaderWidget, InContentWidget, InName);
+		UTimebarPlayer::GetTimebarPlayer()->CreateTrack(InHeaderWidget, InContentWidget, InName);
 	}
 }
 
 void UTimebarController::DeleteTrack(UUserWidget* InTrackWidget)
 {
-	UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer();
-	if (!IsValid(Player)) return;
-
-	if (UTrackWidget* TrackWidget = Cast<UTrackWidget>(InTrackWidget))
-	{
-		Player->DeleteTrack(TrackWidget->TargetTrack);
-	}
+	UTimebarPlayer::GetTimebarPlayer()->DeleteTrack(Cast<UTrackWidget>(InTrackWidget)->TargetTrack);
 }
 
 void UTimebarController::CreateClip(UUserWidget* InTrackWidget, float InStartTime, float InEndTime, FString InName)
 {
-	UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer();
-	if (!IsValid(Player)) return;
-
-	if (UTrackWidget* TrackWidget = Cast<UTrackWidget>(InTrackWidget))
-	{
-		Player->CreateClip(TrackWidget->TargetTrack, InStartTime, InEndTime, InName);
-	}
+	UTimebarPlayer::GetTimebarPlayer()->CreateClip(Cast<UTrackWidget>(InTrackWidget)->TargetTrack, InStartTime, InEndTime, InName);
+	
 }
 
 void UTimebarController::DeleteClip(UUserWidget* InClipWidget)
 {
-	UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer();
-	if (!IsValid(Player)) return;
-
-	if (UClipWidget* ClipWidget = Cast<UClipWidget>(InClipWidget))
-	{
-		Player->DeleteClip(ClipWidget->TargetClip);
-	}
+	
+	UTimebarPlayer::GetTimebarPlayer()->DeleteClip(Cast<UClipWidget>(InClipWidget)->TargetClip);
 }
 
 void UTimebarController::Start()
 {
-	if (UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer())
-	{
-		Player->Start();
-	}
+	UTimebarPlayer::GetTimebarPlayer()->Start();
 }
 
 void UTimebarController::Pause()
 {
-	if (UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer())
-	{
-		Player->Pause();
-	}
+	UTimebarPlayer::GetTimebarPlayer()->Pause();
 }
 
 void UTimebarController::Stop()
 {
-	if (UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer())
-	{
-		Player->Stop();
-	}
+	UTimebarPlayer::GetTimebarPlayer()->Stop();
 }
 
 void UTimebarController::SetCurrentTime(float InCurrentTime)
 {
-	if (UTimebarPlayer* Player = UTimebarPlayer::GetTimebarPlayer())
-	{
-		Player->CurrentTime = InCurrentTime;
-		Player->OnCurrentTimeChanged.Broadcast(InCurrentTime);
-	}
+	UTimebarPlayer::GetTimebarPlayer()->CurrentTime = InCurrentTime;
+	UTimebarPlayer::GetTimebarPlayer()->OnCurrentTimeChanged.Broadcast(InCurrentTime);
 }
 
-UTimebarManager* UTimebarController::GetManager(FName InManagerName)
+
+
+
+//// Manager
+UTimebarManager* UTimebarController::GetTimebarManager(FName InManagerName)
 {
 	UTimebarManager* CurrentManager = nullptr;
 
-
-	if (ManagerMap.Contains(InManagerName)) // get
+	if (!ManagerMap.Contains(InManagerName)) // create
 	{
-		//uint32 Hash = GetTypeHash(InManagerName);
-		CurrentManager = ManagerMap[InManagerName].Manager;
-	}
-	else // create
-	{
-		CurrentManager = NewObject<UTimebarManager>(GetTransientPackage());
+		CurrentManager = NewObject<UTimebarManager>();
 		CurrentManager->AddToRoot();
-		FTimebarManagerWrapper NewStruct;
-		NewStruct.Manager = CurrentManager;
-		ManagerMap.Add(InManagerName, NewStruct);
+		ManagerMap.Add(InManagerName);
+		ManagerMap[InManagerName].Manager = CurrentManager;
 	}
-
+	else // get
+	{
+		uint32 KeyHash = GetTypeHash(InManagerName);
+		CurrentManager = ManagerMap.FindByHash(KeyHash, InManagerName)->Manager;
+		if (!IsValid(CurrentManager))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No Manager in Map at UDragDropController::GetDragDropManager"));
+			return nullptr;
+		}
+	}
 
 	return CurrentManager;
+}
+
+void UTimebarController::SetTimebarManager(FName InManagerName)
+{
+	if (IsValid(UTimebarPlayer::GetTimebarPlayer()->CurrentManager))
+	{
+		UTimebarPlayer::GetTimebarPlayer()->CurrentManager->SetTracksVisibility(false);
+	}
+
+	UTimebarPlayer::GetTimebarPlayer()->CurrentManager = GetTimebarManager(InManagerName);
+	UTimebarPlayer::GetTimebarPlayer()->CurrentManager->SetTracksVisibility(true);
 }
