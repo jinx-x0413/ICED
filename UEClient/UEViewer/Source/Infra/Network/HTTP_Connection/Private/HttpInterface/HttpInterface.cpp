@@ -43,7 +43,7 @@ void IHttpInterface::GetHttpRequest(const FString& URL, TFunction<void(FHttpResp
 	Request->SetURL(URL);
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1Njc5MDE3LCJleHAiOjE3NDU2ODk4MTd9.2TkMI8XVqRwV1HuQSqDIhnFdb3uYAUbmex0WJjCDN58"));
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1ODQ5NjkzLCJleHAiOjE3NDU4NjA0OTN9.AKmV1vvodJYWsTHImngHbBMDYnFI3ydwH9ZJX86uGfo"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	// OnComplete를 안전하게 이동
 	TFunction<void(FHttpResponsePtr, bool)> LocalOnComplete = MoveTemp(OnComplete);
