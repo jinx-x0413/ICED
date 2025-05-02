@@ -4,15 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "HttpInterface/InterfaceDependency.h"
-#include "HttpDependency.generated.h"
+#include "HttpInterface.h"
+
+#include "DownloadInterface.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UHttpDependency : public UObject
+class UDownloadInterface : public UObject, public IHttpInterface
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void Start() override;
 };
