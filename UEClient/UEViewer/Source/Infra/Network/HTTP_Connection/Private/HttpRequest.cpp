@@ -35,7 +35,7 @@ void UHttpRequest::SendUserDataHttpRequest()	//파라미터 넣어서 GetURL에 어떤 URL
 	UserHttpRequest->SetURL(GetCartURL);
 	UserHttpRequest->SetVerb("GET");
 	UserHttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ1Mzk3ODU4LCJleHAiOjE3NDU0MDg2NTh9.PE6ZQP0Ub1RUXuI0IrW3PHrKnK1NzTOdAFzu1zIpp8U"));
+	UserHttpRequest->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ2MTY5NzAxLCJleHAiOjE3NDYxODA1MDF9.viyvQQA22aun4irejbFJQ7zL7bGaCot48gRdAWbXiv4"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	UserHttpRequest->OnProcessRequestComplete().BindUObject(this, &UHttpRequest::GetUserDataCallBack);
 
