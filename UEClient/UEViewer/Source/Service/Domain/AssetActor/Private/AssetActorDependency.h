@@ -8,8 +8,10 @@
 #include "AssetActorController.h"
 #include "glTFRuntimeAssetActor.h"
 #include "Service/Domain/AssetActor/Public/Models/GltfAssetActor.h"
+#include "UEViewer/Core/CorePawn.h"
 
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "AssetActorDependency.generated.h"
 
