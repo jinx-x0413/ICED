@@ -330,6 +330,21 @@ UTimebarManager* UEntryPoint::GetTimebarManager(FName InManagerName)
 	return CurrentManager;
 }
 
+void UEntryPoint::SwitchTimebarContent(FName InManagerName)
+{
+	UTimebarPlayer::GetTimebarPlayer()->Stop();
+
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->SetTimebarManager(InManagerName);
+			UTimebarPlayer::GetTimebarPlayer()->OnTimebarManagerSwitched.Broadcast(UTimebarPlayer::GetTimebarPlayer()->CurrentManager);
+		}
+	}
+}
+
 
 
 // UIComponent

@@ -110,6 +110,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static UTimebarManager* GetTimebarManager(FName InManagerName);
 
+	UFUNCTION(BlueprintCallable)
+	static void SwitchTimebarContent(FName InManagerName);
 
 	// UIComponent
 public:
