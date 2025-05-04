@@ -79,12 +79,13 @@ void UTimebarPlayer::DestroyTimebarPlayer()
 
 		Instance->Shutdown();
 
-		if (Instance->IsRooted()) 
+		/*if (Instance->IsRooted()) 
 		{
 			Instance->RemoveFromRoot();
 			Instance->MarkAsGarbage();
-		}
-
+		}*/
+		Instance->RemoveFromRoot();
+		Instance->MarkAsGarbage();
 		Instance = nullptr;
 	}
 }
@@ -95,52 +96,10 @@ void UTimebarPlayer::DestroyTimebarPlayer()
 
 void UTimebarPlayer::Shutdown()
 {
-	if (IsValid(CurrentManager) && CurrentManager->IsRooted())
+	if (CurrentManager)
 	{
-		// shutdown current Manager
-		CurrentManager->RemoveFromRoot();
-		CurrentManager->MarkAsGarbage();
 		CurrentManager = nullptr;
-
-
-
-
-
-		/*if (Instance->TrackArray.Num() > 0)
-		{
-			for (auto& Track : Instance->TrackArray)
-			{
-				if (IsValid(Track) && Track->IsRooted())
-				{
-					Track->RemoveFromRoot();
-
-					Track->MarkAsGarbage();
-					Track = nullptr;
-				}
-			}
-
-			Instance->TrackArray.Empty();
-		}
-
-		if (Instance->ClipArray.Num() > 0)
-		{
-			for (auto& Clip : Instance->ClipArray)
-			{
-				if (IsValid(Clip) && Clip->IsRooted())
-				{
-					Clip->RemoveFromRoot();
-					Clip->MarkAsGarbage();
-					Clip = nullptr;
-				}
-			}
-			Instance->ClipArray.Empty();
-		}*/
-
-
 	}
-
-
-
 }
 
 
@@ -155,13 +114,17 @@ UTrack* UTimebarPlayer::CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSu
 	}
 
 	// Create Object
-	UTrack* NewTrack = NewObject<UTrack>(GWorld);
+	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
 	NewTrack->AddToRoot();
 	NewTrack->Name = InName;
 	CurrentManager->TrackArray.Add(NewTrack);
 
 	// Create Widget
 	UWorld* TargetWorld = NewTrack->GetWorld();
+	if (!TargetWorld)
+	{
+		TargetWorld = GWorld;
+	}
 	NewTrack->HeaderWidget = CreateWidget<UUserWidget>(TargetWorld, InHeaderWidget);
 	NewTrack->ContentWidget = CreateWidget<UTrackWidget>(TargetWorld, InContentWidget);
 	NewTrack->ContentWidget->TargetTrack = NewTrack;
@@ -181,7 +144,7 @@ UTrack* UTimebarPlayer::CreateSideTrack(UTrack* InParentTrack, TSubclassOf<UUser
 		return nullptr;
 	}
 	// Create Object
-	UTrack* NewTrack = NewObject<UTrack>(GWorld);
+	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
 	NewTrack->AddToRoot();
 	NewTrack->Name = InName;
 	CurrentManager->TrackArray.Add(NewTrack);
@@ -272,7 +235,7 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 // Clip
 UClip* UTimebarPlayer::CreateClip(UTrack* InTrack, float InStartTime, float InEndTime, FString InName)
 {
-	UClip* NewClip = NewObject<UClip>();
+	UClip* NewClip = NewObject<UClip>(GetTransientPackage());
 	NewClip->StartTime = InStartTime;
 	NewClip->EndTime = InEndTime;
 	NewClip->ClipLength = InEndTime - InStartTime;

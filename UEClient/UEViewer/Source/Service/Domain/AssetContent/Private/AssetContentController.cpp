@@ -40,7 +40,7 @@ UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UIntera
 {
     if (InInteractionClass->IsChildOf(UInteractionBase::StaticClass()))
     {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(this, InInteractionClass);
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionClass);
         InInteractionData.TargetClass = InInteractionClass;
         NewInteraction->Initialize(InInteractionData);
         NewInteraction->StartTime = InStartTime;
@@ -50,35 +50,11 @@ UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UIntera
         NewInteraction->AddToRoot();
 
         UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, NewInteraction);
-        //UTimebarPlayer::GetTimebarPlayer()->OnTrackSelected.Broadcast(InTrack);
         return NewInteraction;
     }
 
     return nullptr;
 }
-//UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
-//{
-//    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
-//    {
-//        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
-//        //InInteractionData.TargetClass = InInteractionData.TargetClass;
-//        NewInteraction->TargetTrack = InTrack;
-//        NewInteraction->bIsReversed = true;
-//        NewInteraction->Initialize(InInteractionData);
-//        NewInteraction->StartTime = InStartTime;
-//        NewInteraction->EndTime = InEndTime;
-//        NewInteraction->ClipLength = InEndTime - InStartTime;
-//        NewInteraction->Name = InInteractionData.Name.ToString();
-//        NewInteraction->AddToRoot();
-//
-//       
-//        //UTimebarPlayer::GetTimebarPlayer()->ReverseClipArray.Add(NewInteraction);
-//
-//        return NewInteraction;
-//    }
-//
-//    return nullptr;
-//}
 
 void UAssetContentController::BuildTemplate(ETemplateType InTemplateType, AActor* InActor, FTableData InTableData)
 {

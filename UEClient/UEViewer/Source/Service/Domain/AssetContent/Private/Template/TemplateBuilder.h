@@ -47,6 +47,7 @@ public:
 	AGltfAssetActor* TargetActor;
 	void SetTargetActor(AActor* InActor);
 
+	UPROPERTY()
 	TScriptInterface<ITemplateInterface> CurrentTemplate;
 	TScriptInterface<ITemplateInterface> SetCurrentTemplate(ETemplateType InTemplateType);
 
