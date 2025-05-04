@@ -26,7 +26,7 @@ TScriptInterface<ITemplateInterface> UTemplateBuilder::SetCurrentTemplate(ETempl
 		return NewObject<UAssemblyBuilder>(GetTransientPackage());
 		break;
 	case ETemplateType::DISASSEMBLY:
-		//return NewObject<UDisassemblyBuilder>(GetTransientPackage());
+		return NewObject<UDisassemblyBuilder>(GetTransientPackage());
 		break;
 	default:
 		return nullptr;
