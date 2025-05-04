@@ -22,8 +22,8 @@ void FCommand::ShutdownModule()
     if (IsValid(Stack) && Stack->IsRooted())
     {
         Stack->RemoveFromRoot();  // 루트에서 제거
-        Stack->ConditionalBeginDestroy();  // 객체 파괴 시작
-        Stack = nullptr;  // 더 이상 참조하지 않도록 nullptr로 설정
+        Stack->MarkAsGarbage();
+        //Stack = nullptr;  // 더 이상 참조하지 않도록 nullptr로 설정
     }
 }
 

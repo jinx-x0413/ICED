@@ -15,7 +15,11 @@ class UCommandHistory : public UObject
 	GENERATED_BODY()
 	
 	// construct
-
+public:
+	UCommandHistory();
+	virtual ~UCommandHistory();
+	virtual void BeginDestroy() override;
+	void Shutdown();
 
 
 
