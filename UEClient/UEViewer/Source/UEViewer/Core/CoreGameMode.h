@@ -17,4 +17,6 @@ class UEVIEWER_API ACoreGameMode : public AGameModeBase
 	// construct
 public:
 	ACoreGameMode();
+	virtual ~ACoreGameMode();
+	virtual void BeginDestroy() override;
 };
