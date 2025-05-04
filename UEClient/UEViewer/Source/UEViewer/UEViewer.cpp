@@ -64,14 +64,14 @@ void FUEViewer::ShutdownAndUnloadModule(FString ModuleName)
 	if (FModuleManager::Get().IsModuleLoaded(ModuleFName))
 	{
 		// 로드된 모듈을 찾습니다.
-		/*IModuleInterface* Module = FModuleManager::Get().GetModulePtr<IModuleInterface>(ModuleFName);
+		IModuleInterface* Module = FModuleManager::Get().GetModulePtr<IModuleInterface>(ModuleFName);
 
 		if (Module)
 		{
 			Module->ShutdownModule();
 		}
 
-		FModuleManager::Get().UnloadModule(ModuleFName, true);*/
+		FModuleManager::Get().UnloadModule(ModuleFName, true);
 	}
 	else
 	{
