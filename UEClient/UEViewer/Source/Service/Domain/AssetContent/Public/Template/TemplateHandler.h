@@ -49,6 +49,7 @@ public:
 	UTemplateHandler();
 	virtual ~UTemplateHandler();
 	void BeginDestroy();
+	static void DestroyTemplateHandler();
 	virtual void Initialize();
 
 

@@ -4,6 +4,39 @@
 #include "Template/TemplateBuilder.h"
 #include "TemplateBuildDependency.h"
 
+// construct
+UTemplateBuilder::UTemplateBuilder()
+{
+}
+
+UTemplateBuilder::~UTemplateBuilder()
+{
+}
+
+void UTemplateBuilder::BeginDestroy()
+{
+	Shutdown();
+	Super::BeginDestroy();
+}
+
+void UTemplateBuilder::Shutdown()
+{
+	if (TargetActor)
+	{
+		TargetActor = nullptr;
+	}
+
+	if (IsValid(CurrentTemplate.GetObject()) && CurrentTemplate.GetObject()->IsRooted())
+	{
+		CurrentTemplate.GetObject()->RemoveFromRoot();
+		CurrentTemplate.GetObject()->MarkAsGarbage();
+	}
+}
+
+
+
+
+
 void UTemplateBuilder::SetController(UAssetContentController* InAssetActorController)
 {
 	Controller = InAssetActorController;

@@ -16,14 +16,24 @@ UAssetContentController::~UAssetContentController()
 
 void UAssetContentController::BeginDestroy()
 {
-    if (IsValid(this) && IsRooted())
-    {
-        RemoveFromRoot();
-        MarkAsGarbage();
-    }
+    Shutdown();
 
     Super::BeginDestroy();
 
+}
+
+void UAssetContentController::Shutdown()
+{
+    if (IsValid(TemplateBuilder) && TemplateBuilder->IsRooted())
+    {
+        TemplateBuilder->RemoveFromRoot();
+        TemplateBuilder->MarkAsGarbage();
+        TemplateBuilder = nullptr;
+    }
+
+    TrackHeaderWidgetClass = nullptr;
+    TrackWidgetClass = nullptr;
+    TrackComponentWidgetClass = nullptr;
 }
 
 UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)

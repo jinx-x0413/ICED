@@ -25,6 +25,8 @@ void FAssetContent::ShutdownModule()
 		Controller->MarkAsGarbage();
 		Controller = nullptr;
 	}
+
+	UTemplateHandler::DestroyTemplateHandler();
 }
 
 #undef LOCTEXT_NAMESPACE

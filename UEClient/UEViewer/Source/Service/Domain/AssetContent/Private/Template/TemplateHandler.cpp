@@ -31,14 +31,22 @@ UTemplateHandler::~UTemplateHandler()
 
 void UTemplateHandler::BeginDestroy()
 {
+	
+	Super::BeginDestroy();
+}
 
-	if (IsValid(Instance) && Instance->IsRooted())
+void UTemplateHandler::DestroyTemplateHandler()
+{
+	if (Instance)
 	{
-		Instance->RemoveFromRoot();
-		Instance->MarkAsGarbage();
+		if (Instance->IsRooted())
+		{
+			Instance->RemoveFromRoot();
+			Instance->MarkAsGarbage();
+		}
+		
 		Instance = nullptr;
 	}
-	Super::BeginDestroy();
 }
 
 void UTemplateHandler::Initialize()

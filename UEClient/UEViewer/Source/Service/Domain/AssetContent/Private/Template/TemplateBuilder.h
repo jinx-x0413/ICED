@@ -29,7 +29,10 @@ class UTemplateBuilder : public UObject
 	
 	// construct
 public:
-
+	UTemplateBuilder();
+	virtual ~UTemplateBuilder();
+	virtual void BeginDestroy() override;
+	void Shutdown();
 
 
 

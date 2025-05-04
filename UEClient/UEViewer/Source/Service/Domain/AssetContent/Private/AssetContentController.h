@@ -24,6 +24,7 @@ public:
 	virtual ~UAssetContentController();
 
 	void BeginDestroy();
+	void Shutdown();
 
 
 
