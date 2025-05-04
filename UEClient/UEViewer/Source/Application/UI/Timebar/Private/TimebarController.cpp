@@ -17,12 +17,6 @@ void UTimebarController::BeginDestroy()
 {
 	Shutdown();
 
-	if (IsValid(this) && IsRooted())
-	{
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
-
 	Super::BeginDestroy();
 }
 
@@ -30,7 +24,21 @@ void UTimebarController::Shutdown()
 {
 	if (!ManagerMap.IsEmpty())
 	{
-		ManagerMap.Empty();
+		for (auto& Wrapper : ManagerMap)
+		{
+			if (UTimebarManager* Manager = Wrapper.Value.Manager)
+			{
+				if (IsValid(Manager) && Manager->IsRooted())
+				{
+					Manager->RemoveFromRoot();
+					Manager->MarkAsGarbage();
+				}
+
+				Wrapper.Value.Manager = nullptr;
+			}
+		}
+
+		ManagerMap.Empty();  // 포인터 null 처리 후 map 클리어
 	}
 }
 

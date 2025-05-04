@@ -21,12 +21,8 @@ void FTimebar::ShutdownModule()
 		Controller = nullptr;
 	}
 
-	//if (IsValid(UTimebarPlayer::GetTimebarPlayer()))
-	//{
-	//	UTimebarPlayer::GetTimebarPlayer()->RemoveFromRoot();
-	//	UTimebarPlayer::GetTimebarPlayer()->MarkAsGarbage();
-	//	
-	//}
+	UTimebarPlayer::DestroyTimebarPlayer();
+
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -54,6 +54,7 @@ public:
 	virtual void BeginDestroy() override;
 	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
 	static UTimebarPlayer* GetTimebarPlayer();
+	static void DestroyTimebarPlayer();
 
 	UFUNCTION()
 	void Shutdown();

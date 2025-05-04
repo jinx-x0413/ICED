@@ -21,36 +21,6 @@ UTimebarPlayer::~UTimebarPlayer()
 
 void UTimebarPlayer::BeginDestroy()
 {
-	if (this == Instance)
-	{
-		if (Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
-		{
-			Instance->OnClipCreated.RemoveDynamic(Instance, &UTimebarPlayer::AddClipToArray);
-		}
-
-		if (Instance->OnTrackSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectTrack))
-		{
-			Instance->OnTrackSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectTrack);
-		}
-
-		if (Instance->OnClipSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectClip))
-		{
-			Instance->OnClipSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectClip);
-		}
-
-		if (Instance->OnFinished.IsAlreadyBound(Instance, &UTimebarPlayer::Stop))
-		{
-			Instance->OnFinished.RemoveDynamic(Instance, &UTimebarPlayer::Stop);
-		}
-
-		Shutdown();
-
-
-		RemoveFromRoot();
-		MarkAsGarbage();
-		Instance = nullptr;
-	}
-
 	Super::BeginDestroy();
 }
 
@@ -81,6 +51,42 @@ UTimebarPlayer* UTimebarPlayer::GetTimebarPlayer()
 		}
 	}
 	return Instance;
+}
+
+void UTimebarPlayer::DestroyTimebarPlayer()
+{
+	if (Instance)
+	{
+		if (Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
+		{
+			Instance->OnClipCreated.RemoveDynamic(Instance, &UTimebarPlayer::AddClipToArray);
+		}
+
+		if (Instance->OnTrackSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectTrack))
+		{
+			Instance->OnTrackSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectTrack);
+		}
+
+		if (Instance->OnClipSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectClip))
+		{
+			Instance->OnClipSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectClip);
+		}
+
+		if (Instance->OnFinished.IsAlreadyBound(Instance, &UTimebarPlayer::Stop))
+		{
+			Instance->OnFinished.RemoveDynamic(Instance, &UTimebarPlayer::Stop);
+		}
+
+		Instance->Shutdown();
+
+		if (Instance->IsRooted()) 
+		{
+			Instance->RemoveFromRoot();
+			Instance->MarkAsGarbage();
+		}
+
+		Instance = nullptr;
+	}
 }
 
 

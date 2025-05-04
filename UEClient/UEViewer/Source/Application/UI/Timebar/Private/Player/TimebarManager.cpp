@@ -16,12 +16,6 @@ void UTimebarManager::BeginDestroy()
 {
 	Shutdown();
 
-	if (IsValid(this) && IsRooted())
-	{
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
-
 	Super::BeginDestroy();
 }
 
