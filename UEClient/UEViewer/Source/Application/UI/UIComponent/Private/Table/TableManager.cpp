@@ -17,26 +17,10 @@ UTableManager::~UTableManager()
 }
 void UTableManager::BeginDestroy()
 {
-	if (IsValid(this) && IsRooted())
-	{
-		Shutdown();
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
+	Shutdown();
 
 	Super::BeginDestroy();
 }
-//
-//UTableManager* UTableManager::GetTableManager()
-//{
-//	if (!Instance)
-//	{
-//		Instance = NewObject<UTableManager>();
-//		Instance->AddToRoot();
-//	}
-//
-//	return Instance;
-//}
 
 
 
@@ -50,14 +34,7 @@ void UTableManager::Initialize(FTableData InData)
 
 void UTableManager::Shutdown()
 {
-	/*if (IsValid(Instance) && Instance->IsRooted())
-	{
-		if (IsValid(Instance->TargetTable))
-		{
-			Instance->TargetTable->RemoveFromParent();
-		}
-
-	}*/
+	
 	if (IsValid(TargetTable))
 	{
 		TargetTable->RemoveFromParent();

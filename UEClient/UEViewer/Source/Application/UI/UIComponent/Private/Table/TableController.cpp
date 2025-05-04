@@ -14,12 +14,7 @@ UTableController::~UTableController()
 
 void UTableController::BeginDestroy()
 {
-	if (IsValid(this) && IsRooted())
-	{
-		Shutdown();
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
+	Shutdown();
 
 	Super::BeginDestroy();
 }
@@ -31,6 +26,20 @@ void UTableController::Shutdown()
 {
 	if (!ManagerMap.IsEmpty())
 	{
+		for (auto& Wrapper : ManagerMap)
+		{
+			if (UTableManager* Manager = Wrapper.Value.Manager)
+			{
+				if (IsValid(Manager) && Manager->IsRooted())
+				{
+					Manager->RemoveFromRoot();
+					Manager->MarkAsGarbage();
+				}
+			}
+
+			Wrapper.Value.Manager = nullptr;
+		}
+
 		ManagerMap.Empty();
 	}
 }
@@ -43,7 +52,7 @@ UTableManager* UTableController::GetTableManager(FName InManagerName)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("No Manager Name in Map at UDragDropController::GetDragDropManager"));
 		CurrentManager = NewObject<UTableManager>();
-		
+
 		CurrentManager->TableData.TableName = InManagerName.ToString();
 		CurrentManager->AddToRoot();
 		ManagerMap.Add(InManagerName);
