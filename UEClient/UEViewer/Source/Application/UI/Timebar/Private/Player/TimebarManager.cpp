@@ -56,17 +56,38 @@ void UTimebarManager::SetTracksVisibility(bool bIsVisible)
 	{
 		for (auto& Track : TrackArray)
 		{
-			if (IsValid(Track) && Track->HeaderWidget && Track->ContentWidget)
+			if (IsValid(Track))
 			{
 				if (bIsVisible)
 				{
-					Track->HeaderWidget->SetVisibility(ESlateVisibility::Visible);
-					Track->ContentWidget->SetVisibility(ESlateVisibility::Visible);
+					if (Track->HeaderWidget)
+					{
+						Track->HeaderWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+					if (Track->ContentWidget)
+					{
+						Track->ContentWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+					if (Track->SceneCaptureWidget)
+					{
+						Track->SceneCaptureWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+					
 				}
 				else
 				{
-					Track->HeaderWidget->SetVisibility(ESlateVisibility::Collapsed);
-					Track->ContentWidget->SetVisibility(ESlateVisibility::Collapsed);
+					if (Track->HeaderWidget)
+					{
+						Track->HeaderWidget->SetVisibility(ESlateVisibility::Collapsed);
+					}
+					if (Track->ContentWidget)
+					{
+						Track->ContentWidget->SetVisibility(ESlateVisibility::Collapsed);
+					}
+					if (Track->SceneCaptureWidget)
+					{
+						Track->SceneCaptureWidget->SetVisibility(ESlateVisibility::Collapsed);
+					}
 				}
 				
 			}
