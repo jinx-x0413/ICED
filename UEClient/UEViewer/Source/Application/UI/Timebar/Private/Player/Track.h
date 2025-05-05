@@ -63,7 +63,18 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FVector2D GetMinMaxTime();
 
-	
+	//// Play
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 ActiveClipCount = 0;
+
+	UFUNCTION()
+	bool IsPlaying();
+
+	UFUNCTION()
+	void Play();
+
+	UFUNCTION()
+	void Stop();
 
 
 	// Timebar Widgets

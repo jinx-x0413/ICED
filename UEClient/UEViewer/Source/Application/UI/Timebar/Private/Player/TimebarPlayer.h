@@ -185,9 +185,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentTime(float InCurrentTime);
 
+	//// Loop
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsLooping = false;
 
+	UFUNCTION(BlueprintCallable)
+	void ToggleLooping();
 
-
+	UFUNCTION()
+	void SetLooping(bool InbIsLooping);
 
 	// 영상촬영용
 public:

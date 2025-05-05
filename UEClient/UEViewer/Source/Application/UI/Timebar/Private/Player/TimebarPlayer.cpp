@@ -11,6 +11,7 @@ UTimebarPlayer* UTimebarPlayer::Instance = nullptr;
 
 UTimebarPlayer::UTimebarPlayer()
 	: CurrentTime(0.0f)
+	, bIsLooping(false)
 {
 }
 
@@ -265,6 +266,7 @@ UTrack* UTimebarPlayer::CreateComponentListItem(TSubclassOf<UUserWidget> InScene
 UClip* UTimebarPlayer::CreateClip(UTrack* InTrack, float InStartTime, float InEndTime, FString InName)
 {
 	UClip* NewClip = NewObject<UClip>(GetTransientPackage());
+	NewClip->TargetTrack = InTrack;
 	NewClip->StartTime = InStartTime;
 	NewClip->EndTime = InEndTime;
 	NewClip->ClipLength = InEndTime - InStartTime;
@@ -436,6 +438,20 @@ void UTimebarPlayer::Run()
 			}
 		}
 
+		if (!CurrentManager->TrackArray.IsEmpty())
+		{
+			for (auto& Track : CurrentManager->TrackArray)
+			{
+				if (IsValid(Track) && Track->IsPlaying())
+				{
+					Track->Play();
+				}
+				else if (IsValid(Track))
+				{
+					Track->Stop();
+				}
+			}
+		}
 
 	}
 }
@@ -465,4 +481,17 @@ void UTimebarPlayer::SetCurrentTime(float InCurrentTime)
 			}
 		}
 	}
+}
+
+
+
+//// Loop
+void UTimebarPlayer::ToggleLooping()
+{
+	SetLooping(!bIsLooping);
+}
+
+void UTimebarPlayer::SetLooping(bool InbIsLooping)
+{
+	bIsLooping = InbIsLooping;
 }

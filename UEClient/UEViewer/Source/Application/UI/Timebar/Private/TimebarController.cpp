@@ -136,4 +136,6 @@ void UTimebarController::SetTimebarManager(FName InManagerName)
 
 	UTimebarPlayer::GetTimebarPlayer()->CurrentManager = GetTimebarManager(InManagerName);
 	UTimebarPlayer::GetTimebarPlayer()->CurrentManager->SetTracksVisibility(true);
+
+	UTimebarPlayer::GetTimebarPlayer()->SetLooping(false);
 }

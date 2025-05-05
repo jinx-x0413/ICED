@@ -97,3 +97,37 @@ FVector2D UTrack::GetMinMaxTime()
 
 	return FVector2D();
 }
+
+
+bool UTrack::IsPlaying()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Track's Active Clip Count : %s / %d"), *Name, ActiveClipCount);
+	return ActiveClipCount > 0;
+}
+
+void UTrack::Play()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Track Playing : %s"), *Name);
+	if (IsValid(SceneCaptureWidget))
+	{
+		SceneCaptureWidget->ExecSetActivated(true);
+
+		if (UTimebarPlayer::GetTimebarPlayer()->bIsLooping)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Looping"));
+			FVector2D MinMaxTime = GetMinMaxTime();
+			if (MinMaxTime.Y - UTimebarPlayer::GetTimebarPlayer()->CurrentTime <= 0.1f)
+			{
+				UTimebarPlayer::GetTimebarPlayer()->SetCurrentTime(MinMaxTime.X);
+			}
+		}
+	}
+}
+
+void UTrack::Stop()
+{
+	if (IsValid(SceneCaptureWidget))
+	{
+		SceneCaptureWidget->ExecSetActivated(false);
+	}
+}

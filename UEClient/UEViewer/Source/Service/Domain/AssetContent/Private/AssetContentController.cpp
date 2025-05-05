@@ -43,6 +43,7 @@ UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UIntera
         UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionClass);
         InInteractionData.TargetClass = InInteractionClass;
         NewInteraction->Initialize(InInteractionData);
+        NewInteraction->TargetTrack = InTrack;
         NewInteraction->StartTime = InStartTime;
         NewInteraction->EndTime = InEndTime;
         NewInteraction->ClipLength = InEndTime - InStartTime;
