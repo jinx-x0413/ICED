@@ -6,6 +6,7 @@
 
 
 UDisassemblyBuilder::UDisassemblyBuilder()
+	: ClipInterval(1.0f)
 {
 }
 
@@ -46,7 +47,10 @@ void UDisassemblyBuilder::Build()
 
 					if (CurrentData[i + 1].TargetComponent.IsValid())
 					{
-						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, CurrentData[i + 1].DisplayName);
+						//UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, CurrentData[i + 1].DisplayName);
+						UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentListItem(
+							Controller->TrackSceneCaptureWidgetClass
+							, CurrentData[i + 1].DisplayName);
 						if (IsValid(NewTrack))
 						{
 							if (IsValid(CurrentData[i + 1].TargetComponent.Get()))
@@ -95,8 +99,9 @@ void UDisassemblyBuilder::Build()
 						{
 							UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
 						}
-					}
 
+						UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
+					}
 
 					break;
 				}

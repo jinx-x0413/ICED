@@ -84,7 +84,7 @@ UInteractionBase* UEntryPoint::CreateInteraction(TSubclassOf<UInteractionBase> I
 }
 
 
-void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
+void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass)
 {
 	// Get Table Data
 	FTableData CurrentTableData;
@@ -114,14 +114,15 @@ void UEntryPoint::BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget>
 		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
 		if (Module)
 		{
-			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
-			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			//Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
+			//Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			Module->Controller->TrackSceneCaptureWidgetClass = InSceneCaptureWidgetClass;
 			Module->Controller->BuildTemplate(ETemplateType::ASSEMBLY, InActor, CurrentTableData);
 		}
 	}
 }
 
-void UEntryPoint::BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass)
+void UEntryPoint::BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass)
 {
 	// Get Table Data
 	FTableData CurrentTableData;
@@ -151,8 +152,9 @@ void UEntryPoint::BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidg
 		FAssetContent* Module = FModuleManager::Get().GetModulePtr<FAssetContent>("AssetContent");
 		if (Module)
 		{
-			Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
-			Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			//Module->Controller->TrackHeaderWidgetClass = InTrackHeaderWidgetClass;
+			//Module->Controller->TrackWidgetClass = InTrackWidgetClass;
+			Module->Controller->TrackSceneCaptureWidgetClass = InSceneCaptureWidgetClass;
 			Module->Controller->BuildTemplate(ETemplateType::DISASSEMBLY, InActor, CurrentTableData);
 			UTimebarPlayer::GetTimebarPlayer()->OnTimebarManagerSwitched.Broadcast(UTimebarPlayer::GetTimebarPlayer()->CurrentManager);
 		}

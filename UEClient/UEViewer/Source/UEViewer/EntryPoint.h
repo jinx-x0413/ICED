@@ -74,10 +74,10 @@ public:
 	static UInteractionBase* CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	UFUNCTION(BlueprintCallable)
-	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
+	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass);
 
 	UFUNCTION(BlueprintCallable)
-	static void BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass, TSubclassOf<UUserWidget> InTrackWidgetClass);
+	static void BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass);
 
 	
 	// Timebar

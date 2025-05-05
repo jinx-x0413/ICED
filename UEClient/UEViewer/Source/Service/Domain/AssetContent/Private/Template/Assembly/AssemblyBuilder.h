@@ -25,7 +25,7 @@ class UAssemblyBuilder : public UObject, public ITemplateInterface
 public:
 	UAssemblyBuilder();
 	virtual ~UAssemblyBuilder();
-
+	virtual void BeginDestroy() override;
 
 
 	// interface
@@ -38,8 +38,8 @@ public:
 
 	// feature
 public:
-	float ClipInterval = 2.0f;
-	float TrackInterval = 8.0f;
+	float ClipInterval = 1.0f;
+	//float TrackInterval = 8.0f;
 
 	float SetClip(
 		UTrack* InTrack

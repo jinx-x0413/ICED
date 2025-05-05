@@ -33,7 +33,7 @@ void UAssetContentController::Shutdown()
 
     TrackHeaderWidgetClass = nullptr;
     TrackWidgetClass = nullptr;
-    TrackComponentWidgetClass = nullptr;
+    TrackSceneCaptureWidgetClass = nullptr;
 }
 
 UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)

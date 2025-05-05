@@ -127,6 +127,7 @@ UTrack* UTimebarPlayer::CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSu
 	}
 	NewTrack->HeaderWidget = CreateWidget<UUserWidget>(TargetWorld, InHeaderWidget);
 	NewTrack->ContentWidget = CreateWidget<UTrackWidget>(TargetWorld, InContentWidget);
+	//NewTrack->SceneCapturetWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
 	NewTrack->ContentWidget->TargetTrack = NewTrack;
 	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
 
@@ -226,6 +227,34 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 		InTrack->MarkAsGarbage();
 		InTrack = nullptr;
 	}
+}
+
+UTrack* UTimebarPlayer::CreateComponentListItem(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName)
+{
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::CreateComponentListItem"));
+		return nullptr;
+	}
+
+	// Create Object
+	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
+	NewTrack->AddToRoot();
+	NewTrack->Name = InName;
+	CurrentManager->TrackArray.Add(NewTrack);
+
+	// Create Widget
+	UWorld* TargetWorld = NewTrack->GetWorld();
+	if (!TargetWorld)
+	{
+		TargetWorld = GWorld;
+	}
+	NewTrack->SceneCaptureWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
+	NewTrack->SceneCaptureWidget->TargetTrack = NewTrack;
+
+	//OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
+
+	return NewTrack;
 }
 
 

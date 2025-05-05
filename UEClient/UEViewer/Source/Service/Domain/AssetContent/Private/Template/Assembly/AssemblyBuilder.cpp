@@ -4,15 +4,25 @@
 #include "Template/Assembly/AssemblyBuilder.h"
 #include "../TemplateBuildDependency.h"
 
+// construct
 UAssemblyBuilder::UAssemblyBuilder()
-	: ClipInterval(2.0f)
-	, TrackInterval(4 * ClipInterval)
+	: ClipInterval(1.0f)
+	
 {
 }
 
 UAssemblyBuilder::~UAssemblyBuilder()
 {
 }
+
+void UAssemblyBuilder::BeginDestroy()
+{
+	Super::BeginDestroy();
+}
+
+
+
+
 
 void UAssemblyBuilder::Build()
 {
@@ -39,7 +49,10 @@ void UAssemblyBuilder::Build()
 			{
 				if (TargetRowData.RowName == CurrentData[j + 1].DisplayName)
 				{
-					UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, TargetRowData.RowName);
+					//UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, TargetRowData.RowName);
+					UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentListItem(
+						Controller->TrackSceneCaptureWidgetClass
+						, CurrentData[i + 1].DisplayName);
 					if (IsValid(NewTrack))
 					{
 						if (IsValid(CurrentData[j + 1].TargetComponent.Get()))
@@ -83,6 +96,8 @@ void UAssemblyBuilder::Build()
 					{
 						UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
 					}
+
+					UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
 				}
 			}
 

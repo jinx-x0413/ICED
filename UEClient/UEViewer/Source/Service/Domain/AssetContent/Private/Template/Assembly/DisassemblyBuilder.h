@@ -37,7 +37,7 @@ public:
 
 	// feature
 public:
-	float ClipInterval = 2.0f;
+	float ClipInterval = 1.0f;
 
 	float SetClip(
 		UTrack* InTrack

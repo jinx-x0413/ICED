@@ -47,5 +47,5 @@ public:
 
 
 	//// Component property
-	TSubclassOf<UUserWidget> TrackComponentWidgetClass;
+	TSubclassOf<UUserWidget> TrackSceneCaptureWidgetClass;
 };
