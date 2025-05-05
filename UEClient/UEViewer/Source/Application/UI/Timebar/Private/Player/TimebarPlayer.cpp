@@ -486,12 +486,12 @@ void UTimebarPlayer::SetCurrentTime(float InCurrentTime)
 
 
 //// Loop
-void UTimebarPlayer::ToggleLooping()
+bool UTimebarPlayer::ToggleLooping()
 {
-	SetLooping(!bIsLooping);
+	return SetLooping(!bIsLooping);
 }
 
-void UTimebarPlayer::SetLooping(bool InbIsLooping)
+bool UTimebarPlayer::SetLooping(bool InbIsLooping)
 {
-	bIsLooping = InbIsLooping;
+	return bIsLooping = InbIsLooping;
 }

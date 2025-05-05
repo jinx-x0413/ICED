@@ -190,10 +190,10 @@ public:
 	bool bIsLooping = false;
 
 	UFUNCTION(BlueprintCallable)
-	void ToggleLooping();
+	bool ToggleLooping();
 
 	UFUNCTION()
-	void SetLooping(bool InbIsLooping);
+	bool SetLooping(bool InbIsLooping);
 
 	// 영상촬영용
 public:
