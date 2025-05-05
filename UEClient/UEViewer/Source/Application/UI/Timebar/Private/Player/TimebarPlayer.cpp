@@ -11,128 +11,25 @@ UTimebarPlayer* UTimebarPlayer::Instance = nullptr;
 
 UTimebarPlayer::UTimebarPlayer()
 	: CurrentTime(0.0f)
-	, SelectedTrack(nullptr)
-	, SelectedClip(nullptr)
-	, TrackArray()
-	, ReverseTrackArray()
-	, ClipArray()
-	, ReverseClipArray()
+	, bIsLooping(false)
 {
-}
-
-void UTimebarPlayer::BeginDestroy()
-{
-	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
-
-	// 객체가 루트에 추가되었는지 체크
-	if (IsValid(Instance) && Instance->IsRooted())
-	{
-		// 이벤트 바인딩 해제
-		if (Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
-		{
-			Instance->OnClipCreated.RemoveDynamic(Instance, &UTimebarPlayer::AddClipToArray);
-		}
-
-		if (Instance->OnTrackSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectTrack))
-		{
-			Instance->OnTrackSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectTrack);
-		}
-
-		if (Instance->OnClipSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectClip))
-		{
-			Instance->OnClipSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectClip);
-		}
-
-		if (Instance->OnFinished.IsAlreadyBound(Instance, &UTimebarPlayer::Stop))
-		{
-			Instance->OnFinished.RemoveDynamic(Instance, &UTimebarPlayer::Stop);
-		}
-
-		// 객체 종료
-		Instance->Shutdown();
-		Instance->RemoveFromRoot();  // 루트에서 제거
-		Instance->ConditionalBeginDestroy();  // 가비지 컬렉션 준비
-		Instance = nullptr;
-	}
-
-	// Track, Clip 등 각종 데이터를 정리
-	Shutdown();
 }
 
 UTimebarPlayer::~UTimebarPlayer()
 {
+
 }
 
-void UTimebarPlayer::Shutdown()
+void UTimebarPlayer::BeginDestroy()
 {
-	if (!Instance)
-	{
-		return;
-	}
-	// Track과 Clip 관련 배열들을 안전하게 처리
-	if (Instance->TrackArray.Num() > 0)
-	{
-		for (auto& Track : Instance->TrackArray)
-		{
-			if (IsValid(Track) && Track->IsRooted())
-			{
-				Track->RemoveFromRoot();
-				Track->ConditionalBeginDestroy();
-				Track = nullptr;
-			}
-		}
-		Instance->TrackArray.Empty();
-	}
-
-	if (Instance->ReverseTrackArray.Num() > 0)
-	{
-		for (auto& Track : Instance->ReverseTrackArray)
-		{
-			if (IsValid(Track) && Track->IsRooted())
-			{
-				Track->RemoveFromRoot();
-				Track->ConditionalBeginDestroy();
-				Track = nullptr;
-			}
-		}
-		Instance->ReverseTrackArray.Empty();
-	}
-
-	if (Instance->ClipArray.Num() > 0)
-	{
-		for (auto& Clip : Instance->ClipArray)
-		{
-			if (IsValid(Clip) && Clip->IsRooted())
-			{
-				Clip->RemoveFromRoot();
-				Clip->ConditionalBeginDestroy();
-				Clip = nullptr;
-			}
-		}
-		Instance->ClipArray.Empty();
-	}
-
-	if (Instance->ReverseClipArray.Num() > 0)
-	{
-		for (auto& Clip : Instance->ReverseClipArray)
-		{
-			if (IsValid(Clip) && Clip->IsRooted())
-			{
-				Clip->RemoveFromRoot();
-				Clip->ConditionalBeginDestroy();
-				Clip = nullptr;
-			}
-		}
-		Instance->ReverseClipArray.Empty();
-	}
+	Super::BeginDestroy();
 }
-
 
 UTimebarPlayer* UTimebarPlayer::GetTimebarPlayer()
 {
 	if (!Instance)
 	{
-		Instance = NewObject<UTimebarPlayer>(GetTransientPackage());
+		Instance = NewObject<UTimebarPlayer>();
 		Instance->AddToRoot();
 		if (!Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
 		{
@@ -157,28 +54,84 @@ UTimebarPlayer* UTimebarPlayer::GetTimebarPlayer()
 	return Instance;
 }
 
+void UTimebarPlayer::DestroyTimebarPlayer()
+{
+	if (Instance)
+	{
+		if (Instance->OnClipCreated.IsAlreadyBound(Instance, &UTimebarPlayer::AddClipToArray))
+		{
+			Instance->OnClipCreated.RemoveDynamic(Instance, &UTimebarPlayer::AddClipToArray);
+		}
+
+		if (Instance->OnTrackSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectTrack))
+		{
+			Instance->OnTrackSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectTrack);
+		}
+
+		if (Instance->OnClipSelected.IsAlreadyBound(Instance, &UTimebarPlayer::SelectClip))
+		{
+			Instance->OnClipSelected.RemoveDynamic(Instance, &UTimebarPlayer::SelectClip);
+		}
+
+		if (Instance->OnFinished.IsAlreadyBound(Instance, &UTimebarPlayer::Stop))
+		{
+			Instance->OnFinished.RemoveDynamic(Instance, &UTimebarPlayer::Stop);
+		}
+
+		Instance->Shutdown();
+
+		/*if (Instance->IsRooted()) 
+		{
+			Instance->RemoveFromRoot();
+			Instance->MarkAsGarbage();
+		}*/
+		Instance->RemoveFromRoot();
+		Instance->MarkAsGarbage();
+		Instance = nullptr;
+	}
+}
 
 
+
+
+
+void UTimebarPlayer::Shutdown()
+{
+	if (CurrentManager)
+	{
+		CurrentManager = nullptr;
+	}
+}
 
 
 
 // Track
 UTrack* UTimebarPlayer::CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::CreateTrack"));
+		return nullptr;
+	}
+
 	// Create Object
 	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
 	NewTrack->AddToRoot();
 	NewTrack->Name = InName;
-	TrackArray.Add(NewTrack);
+	CurrentManager->TrackArray.Add(NewTrack);
 
 	// Create Widget
-	//UWorld* TargetWorld = NewTrack->GetWorld();
-	UWorld* TargetWorld = GWorld;
+	UWorld* TargetWorld = NewTrack->GetWorld();
+	if (!TargetWorld)
+	{
+		TargetWorld = GWorld;
+	}
 	NewTrack->HeaderWidget = CreateWidget<UUserWidget>(TargetWorld, InHeaderWidget);
 	NewTrack->ContentWidget = CreateWidget<UTrackWidget>(TargetWorld, InContentWidget);
+	//NewTrack->SceneCapturetWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
 	NewTrack->ContentWidget->TargetTrack = NewTrack;
 	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
-	
+
 	OnTrackCreated.Broadcast(NewTrack, NewTrack->HeaderWidget, NewTrack->ContentWidget);
 	//OnTrackSelected.Broadcast(NewTrack);
 
@@ -187,15 +140,19 @@ UTrack* UTimebarPlayer::CreateTrack(TSubclassOf<UUserWidget> InHeaderWidget, TSu
 
 UTrack* UTimebarPlayer::CreateSideTrack(UTrack* InParentTrack, TSubclassOf<UUserWidget> InHeaderWidget, TSubclassOf<UUserWidget> InContentWidget, FString InName)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::CreateSideTrack"));
+		return nullptr;
+	}
 	// Create Object
 	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
 	NewTrack->AddToRoot();
 	NewTrack->Name = InName;
-	TrackArray.Add(NewTrack);
+	CurrentManager->TrackArray.Add(NewTrack);
 
 	// Create Widget
-	//UWorld* TargetWorld = NewTrack->GetWorld();
-	UWorld* TargetWorld = GWorld;
+	UWorld* TargetWorld = NewTrack->GetWorld();
 	NewTrack->HeaderWidget = CreateWidget<UUserWidget>(TargetWorld, InHeaderWidget);
 	NewTrack->ContentWidget = CreateWidget<USideTrackWidget>(TargetWorld, InContentWidget);
 	NewTrack->ContentWidget->TargetTrack = NewTrack;
@@ -205,52 +162,13 @@ UTrack* UTimebarPlayer::CreateSideTrack(UTrack* InParentTrack, TSubclassOf<UUser
 	InParentTrack->SideTracks.Add(NewTrack);
 	Cast<USideTrackWidget>(NewTrack->ContentWidget)->ParentTrack = InParentTrack;
 	Cast<USideTrackWidget>(NewTrack->ContentWidget)->ParentTrackWidget = InParentTrack->ContentWidget;
-	
+
 	//NewTrack->ContentWidget->ExecCreateSideTrack(InParentTrack, NewTrack->HeaderWidget, NewTrack->ContentWidget);
 
 	OnSideTrackCreated.Broadcast(InParentTrack, NewTrack, NewTrack->HeaderWidget, Cast<USideTrackWidget>(NewTrack->ContentWidget));
 	OnTrackSelected.Broadcast(NewTrack);
 
 	return nullptr;
-}
-
-UTrack* UTimebarPlayer::CreateComponent(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent)
-{
-	// Create Object
-	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
-	NewTrack->AddToRoot();
-	NewTrack->Name = InName;
-	NewTrack->TargetComponent = InTargetComponent;
-	TrackArray.Add(NewTrack);
-
-	// Create Widget
-	//UWorld* TargetWorld = NewTrack->GetWorld();
-	UWorld* TargetWorld = GWorld;
-	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
-	NewTrack->ComponentWidget->TargetTrack = NewTrack;
-	//NewTrack->ContentWidget->ExecCreateTrack(NewTrack->HeaderWidget, NewTrack->ContentWidget);
-
-	OnComponentTrackCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
-	return NewTrack;
-}
-
-UTrack* UTimebarPlayer::CreateComponentBackward(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName, USkeletalMeshComponent* InTargetComponent)
-{
-	// Create Object
-	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
-	NewTrack->AddToRoot();
-	NewTrack->Name = InName;
-	NewTrack->TargetComponent = InTargetComponent;
-	ReverseTrackArray.Add(NewTrack);
-
-	// Create Widget
-	//UWorld* TargetWorld = NewTrack->GetWorld();
-	UWorld* TargetWorld = GWorld;
-	NewTrack->ComponentWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
-	NewTrack->ComponentWidget->TargetTrack = NewTrack;
-
-	OnComponentTrackBackwardCreated.Broadcast(NewTrack, NewTrack->ComponentWidget);
-	return NewTrack;
 }
 
 void UTimebarPlayer::SelectTrack(UTrack* InTrack)
@@ -267,6 +185,12 @@ void UTimebarPlayer::SelectTrack(UTrack* InTrack)
 
 void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::DeleteTrack"));
+		return;
+	}
+
 	if (IsValid(InTrack))
 	{
 		// Clear Widget
@@ -281,7 +205,7 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 		}
 
 
-		
+
 
 		// Clear Track References
 		if (InTrack->ParentTrack)
@@ -297,13 +221,41 @@ void UTimebarPlayer::DeleteTrack(UTrack* InTrack)
 			}
 			InTrack->SideTracks.Empty();
 		}
-		
+
 		// Clear Track
-		TrackArray.Remove(InTrack);
+		CurrentManager->TrackArray.Remove(InTrack);
 		InTrack->RemoveFromRoot();
-		InTrack->ConditionalBeginDestroy();
+		InTrack->MarkAsGarbage();
 		InTrack = nullptr;
 	}
+}
+
+UTrack* UTimebarPlayer::CreateComponentListItem(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName)
+{
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::CreateComponentListItem"));
+		return nullptr;
+	}
+
+	// Create Object
+	UTrack* NewTrack = NewObject<UTrack>(GetTransientPackage());
+	NewTrack->AddToRoot();
+	NewTrack->Name = InName;
+	CurrentManager->TrackArray.Add(NewTrack);
+
+	// Create Widget
+	UWorld* TargetWorld = NewTrack->GetWorld();
+	if (!TargetWorld)
+	{
+		TargetWorld = GWorld;
+	}
+	NewTrack->SceneCaptureWidget = CreateWidget<USceneCaptureIcon>(TargetWorld, InSceneCaptureWidget);
+	NewTrack->SceneCaptureWidget->TargetTrack = NewTrack;
+
+	//OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
+
+	return NewTrack;
 }
 
 
@@ -320,7 +272,7 @@ UClip* UTimebarPlayer::CreateClip(UTrack* InTrack, float InStartTime, float InEn
 	NewClip->ClipLength = InEndTime - InStartTime;
 	NewClip->Name = InName;
 	NewClip->AddToRoot();
-	
+
 	OnClipCreated.Broadcast(InTrack, NewClip);
 	OnTrackSelected.Broadcast(InTrack);
 	return NewClip;
@@ -328,11 +280,17 @@ UClip* UTimebarPlayer::CreateClip(UTrack* InTrack, float InStartTime, float InEn
 
 void UTimebarPlayer::AddClipToArray(UTrack* InTrack, UClip* InClip)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::AddClipToArray"));
+		return;
+	}
+
 	if (IsValid(InClip))
 	{
-		ClipArray.Add(InClip);
+		CurrentManager->ClipArray.Add(InClip);
 	}
-	
+
 }
 
 void UTimebarPlayer::SelectClip(UClip* InClip)
@@ -349,14 +307,22 @@ void UTimebarPlayer::SelectClip(UClip* InClip)
 
 void UTimebarPlayer::DeleteClip(UClip* InClip)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::DeleteClip"));
+		return;
+	}
+
 	if (InClip)
 	{
 		if (SelectedClip == InClip)
 		{
+			SelectedClip->RemoveFromRoot();
+			SelectedClip->MarkAsGarbage();
 			SelectedClip = nullptr;
 		}
 
-		ClipArray.Remove(InClip);
+		CurrentManager->ClipArray.Remove(InClip);
 
 		OnClipDeleted.Broadcast(InClip);
 	}
@@ -375,15 +341,7 @@ void UTimebarPlayer::Start()
 		switch (State)
 		{
 		case ETimebarState::Stopped:
-			if (bIsPlayingBackward)
-			{
-				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::RunBackward, 0.01f, true);
-			}
-			else
-			{
-				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::Run, 0.01f, true);
-			}
-			
+			GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::Run, 0.01f, true);
 			State = ETimebarState::Running;
 			break;
 		case ETimebarState::Paused:
@@ -391,15 +349,11 @@ void UTimebarPlayer::Start()
 			{
 				GWorld->GetTimerManager().UnPauseTimer(MainTimer);
 			}
-			else if(bIsPlayingBackward)
-			{
-				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::RunBackward, 0.01f, true);
-			}
 			else
 			{
 				GWorld->GetTimerManager().SetTimer(MainTimer, this, &UTimebarPlayer::Run, 0.01f, true);
 			}
-			
+
 			State = ETimebarState::Running;
 			break;
 		case ETimebarState::Running:
@@ -427,41 +381,28 @@ void UTimebarPlayer::Pause()
 
 void UTimebarPlayer::Stop()
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::Stop"));
+		return;
+	}
+
 	if (GWorld && (State == ETimebarState::Running) || (State == ETimebarState::Paused))
 	{
 		GWorld->GetTimerManager().ClearTimer(MainTimer);
 		CurrentTime = 0.0f;
 		OnCurrentTimeChanged.Broadcast(CurrentTime);
-
-		if (bIsPlayingBackward)
+		if (!CurrentManager->ClipArray.IsEmpty())
 		{
-			if (!ReverseClipArray.IsEmpty())
+			for (auto& Clip : CurrentManager->ClipArray)
 			{
-				for (auto& Clip : ReverseClipArray)
+				if (IsValid(Clip))
 				{
-					if (IsValid(Clip))
-					{
-						Clip->Stop();
-					}
+					Clip->Stop();
 				}
-
 			}
-		}
-		else
-		{
-			if (!ClipArray.IsEmpty())
-			{
-				for (auto& Clip : ClipArray)
-				{
-					if (IsValid(Clip))
-					{
-						Clip->Stop();
-					}
-				}
 
-			}
 		}
-		
 		State = ETimebarState::Stopped;
 		OnStateChanged.Broadcast(State);
 	}
@@ -469,6 +410,12 @@ void UTimebarPlayer::Stop()
 
 void UTimebarPlayer::Run()
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::Run"));
+		return;
+	}
+
 	// 게임의 실제 시간으로 CurrentTime 업데이트
 	if (GWorld)
 	{
@@ -476,9 +423,9 @@ void UTimebarPlayer::Run()
 		OnCurrentTimeChanged.Broadcast(CurrentTime);
 
 		// CurrentTime에 맞춰 클립의 재생 여부를 확인하고 클립 상태 관리
-		if (!ClipArray.IsEmpty())
+		if (!CurrentManager->ClipArray.IsEmpty())
 		{
-			for (auto& Clip : ClipArray)
+			for (auto& Clip : CurrentManager->ClipArray)
 			{
 				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
 				{
@@ -491,9 +438,9 @@ void UTimebarPlayer::Run()
 			}
 		}
 
-		if (!TrackArray.IsEmpty())
+		if (!CurrentManager->TrackArray.IsEmpty())
 		{
-			for (auto& Track : TrackArray)
+			for (auto& Track : CurrentManager->TrackArray)
 			{
 				if (IsValid(Track) && Track->IsPlaying())
 				{
@@ -506,90 +453,45 @@ void UTimebarPlayer::Run()
 			}
 		}
 
-		
 	}
 }
 
 void UTimebarPlayer::SetCurrentTime(float InCurrentTime)
 {
+	if (!IsValid(CurrentManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Current Manager at UTimebarPlayer::SetCurrentTime"));
+		return;
+	}
+
 	CurrentTime = InCurrentTime;
 	OnCurrentTimeChanged.Broadcast(CurrentTime);
 
-	if (bIsPlayingBackward)
+	if (!CurrentManager->ClipArray.IsEmpty())
 	{
-		if (!ReverseClipArray.IsEmpty())
+		for (auto& Clip : CurrentManager->ClipArray)
 		{
-			for (auto& Clip : ReverseClipArray)
+			if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
 			{
-				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
-				{
-					Clip->Play(CurrentTime);  // 클립 재생
-				}
-				else if (IsValid(Clip))
-				{
-					Clip->Stop();  // 클립 일시정지
-				}
+				Clip->Play(CurrentTime);  // 클립 재생
 			}
-		}
-	}
-	else
-	{
-		if (!ClipArray.IsEmpty())
-		{
-			for (auto& Clip : ClipArray)
+			else if (IsValid(Clip))
 			{
-				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
-				{
-					Clip->Play(CurrentTime);  // 클립 재생
-				}
-				else if (IsValid(Clip))
-				{
-					Clip->Stop();  // 클립 일시정지
-				}
+				Clip->Stop();  // 클립 일시정지
 			}
 		}
 	}
 }
 
-void UTimebarPlayer::RunBackward()
+
+
+//// Loop
+void UTimebarPlayer::ToggleLooping()
 {
-	// 게임의 실제 시간으로 CurrentTime 업데이트
-	if (GWorld)
-	{
-		CurrentTime += GWorld->GetDeltaSeconds(); // DeltaTime을 사용하여 시간 진행
-		OnCurrentTimeChanged.Broadcast(CurrentTime);
+	SetLooping(!bIsLooping);
+}
 
-		// CurrentTime에 맞춰 클립의 재생 여부를 확인하고 클립 상태 관리
-		if (!ReverseClipArray.IsEmpty())
-		{
-			for (auto& Clip : ReverseClipArray)
-			{
-				if (IsValid(Clip) && Clip->ShouldPlay(CurrentTime))  // 클립이 재생될 시간인지 체크
-				{
-					Clip->Play(CurrentTime);  // 클립 재생
-				}
-				else if (IsValid(Clip))
-				{
-					Clip->Stop();  // 클립 일시정지
-				}
-			}
-		}
-
-		if (!ReverseTrackArray.IsEmpty())
-		{
-			for (auto& Track : ReverseTrackArray)
-			{
-				if (IsValid(Track) && Track->IsPlaying())
-				{
-					Track->Play();
-				}
-				else if (IsValid(Track))
-				{
-					Track->Stop();
-				}
-			}
-		}
-
-
-	}
+void UTimebarPlayer::SetLooping(bool InbIsLooping)
+{
+	bIsLooping = InbIsLooping;
 }

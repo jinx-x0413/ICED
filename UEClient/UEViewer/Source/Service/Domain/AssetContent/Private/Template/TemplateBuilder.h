@@ -18,7 +18,7 @@ enum class ETemplateType : uint8
 	FREE			UMETA(DisplayName = "Free"),
 	PARTINFO		UMETA(DisplayName = "PartInfo"),
 	ASSEMBLY		UMETA(DisplayName = "Assembly"),
-	COMPONENT		UMETA(DisplayName = "Component")
+	DISASSEMBLY		UMETA(DisplayName = "Disassembly")
 };
 
 
@@ -29,7 +29,10 @@ class UTemplateBuilder : public UObject
 	
 	// construct
 public:
-
+	UTemplateBuilder();
+	virtual ~UTemplateBuilder();
+	virtual void BeginDestroy() override;
+	void Shutdown();
 
 
 
@@ -44,6 +47,7 @@ public:
 	AGltfAssetActor* TargetActor;
 	void SetTargetActor(AActor* InActor);
 
+	UPROPERTY()
 	TScriptInterface<ITemplateInterface> CurrentTemplate;
 	TScriptInterface<ITemplateInterface> SetCurrentTemplate(ETemplateType InTemplateType);
 

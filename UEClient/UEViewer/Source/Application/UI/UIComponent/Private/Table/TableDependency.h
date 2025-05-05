@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 
+#include "Table/TableController.h"
 #include "Table/TableManager.h"
 #include "Table/TableContainer.h"
 #include "Table/TableRow.h"

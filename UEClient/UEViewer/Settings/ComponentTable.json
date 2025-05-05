@@ -1,7 +1,43 @@
 ﻿{
   "Content": [
     {
-      "TableName": "Assembly",
+      "TableName": "부품설명",
+      "Rows": [
+        {
+          "RowIndex": "0",
+          "RowName": "RowName",
+          "Fields": [
+            {
+              "FieldIndex": "0",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "태그",
+              "FieldValue": ""
+            },
+            {
+              "FieldIndex": "1",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "참고자료",
+              "FieldValue": "None"
+            },
+            {
+              "FieldIndex": "2",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "파일경로",
+              "FieldValue": "Default"
+            },
+            {
+              "FieldIndex": "3",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "설명",
+              "FieldValue": "None"
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "TableName": "분해",
       "Rows": [
         {
           "RowIndex": "0",
@@ -34,9 +70,29 @@
               "FieldName": "숨기기",
               "FieldValue": "true",
               "InteractionClassName": "UHiddenInteraction"
+            },
+            {
+              "FieldIndex": "4",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "설명",
+              "FieldValue": "",
+              "InteractionClassName": "UPopupInteraction",
+              "PopupWidgetClass": "WBP_AssetContentPopup"
             }
-          ],
-          "FieldsBackward": [
+          ]
+        }
+      ]
+
+    },
+
+
+    {
+      "TableName": "조립",
+      "Rows": [
+        {
+          "RowIndex": "0",
+          "RowName": "RowName",
+          "Fields": [
             {
               "FieldIndex": "0",
               "FieldClass": "WBP_TableFieldCheckbox",
@@ -47,7 +103,7 @@
             {
               "FieldIndex": "1",
               "FieldClass": "WBP_TableFieldCheckbox",
-              "FieldName": "나타나기",
+              "FieldName": "나타내기",
               "FieldValue": "true",
               "InteractionClassName": "UHiddenInteraction"
             },
@@ -64,13 +120,19 @@
               "FieldName": "이동",
               "FieldValue": "Auto",
               "InteractionClassName": "UTransformInteraction"
+            },
+            {
+              "FieldIndex": "4",
+              "FieldClass": "WBP_TableFieldText",
+              "FieldName": "설명",
+              "FieldValue": "",
+              "InteractionClassName": "UPopupInteraction",
+              "PopupWidgetClass": "WBP_AssetContentPopup"
             }
-            
           ]
         }
       ]
 
     }
-
   ]
 }

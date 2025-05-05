@@ -7,4 +7,5 @@
 namespace UIComponentVars
 {
 	FString TableAssetPath = TEXT("Widgets/AssetContent/Template/DataTable");
+	FString PopupWidgetAssetPath = TEXT("Widgets/AssetContent/Timebar/Interactions");
 }

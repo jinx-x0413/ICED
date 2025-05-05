@@ -33,12 +33,14 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTemplateTypeApplied, ETemplateTyp
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTemplateLayoutTypeApplied, ETemplateLayoutType, InTemplateLayoutType);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTemplateDataApplied);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnPopupInteractionCreated, UInteractionBase*, InInteraction, TSubclassOf<UUserWidget>, InPopupWidgetClass, FString, InFieldValue);
+
 
 UCLASS(BlueprintType)
 class ASSETCONTENT_API UTemplateHandler : public UObject
 {
 	GENERATED_BODY()
-	
+
 	// construct / singleton
 public:
 	static UTemplateHandler* Instance;
@@ -47,6 +49,7 @@ public:
 	UTemplateHandler();
 	virtual ~UTemplateHandler();
 	void BeginDestroy();
+	static void DestroyTemplateHandler();
 	virtual void Initialize();
 
 
@@ -102,5 +105,8 @@ public:
 	FOnTemplateLayoutTypeApplied OnTemplateLayoutTypeApplied;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnTemplateDataApplied OnTemplateDataApplied;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnPopupInteractionCreated OnPopupInteractionCreated;
 
 };

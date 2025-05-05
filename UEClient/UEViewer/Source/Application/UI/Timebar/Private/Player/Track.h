@@ -20,8 +20,6 @@ public:
 	UTrack();
 	virtual ~UTrack();
 
-	void BeginDestroy();
-
 
 
 
@@ -47,9 +45,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<UClip*> Clips;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 ActiveClipCount = 0;
-
 	UFUNCTION()
 	void AddClipToArray(UTrack* InTrack, UClip* InClip);
 
@@ -67,6 +62,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FVector2D GetMinMaxTime();
+
+	//// Play
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 ActiveClipCount = 0;
 
 	UFUNCTION()
 	bool IsPlaying();
@@ -90,5 +89,7 @@ public:
 	class UTrackWidget* ContentWidget;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	class USceneCaptureIcon* ComponentWidget;
+	class USceneCaptureIcon* SceneCaptureWidget;
+
+
 };

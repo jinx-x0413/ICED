@@ -11,6 +11,7 @@ class UTableRow;
 class UTableField;
 class UTableFieldText;
 class UInteractionBase;
+class UUserWidget;
 
 // struct
 USTRUCT(BlueprintType)
@@ -31,6 +32,11 @@ struct FTableFieldData
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
 	TSubclassOf<UInteractionBase> InteractionClass;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
+	TSubclassOf<UUserWidget> PopupWidgetClass;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
+	UTableManager* TargetTableManager;
 
 	FTableFieldData()
 		: FieldIndex(0)
@@ -38,6 +44,7 @@ struct FTableFieldData
 		, FieldName(TEXT(""))
 		, FieldValue(TEXT(""))
 		, InteractionClass()
+		, TargetTableManager(nullptr)
 	{}
 };
 
@@ -53,14 +60,16 @@ struct FTableRowData
 	FString RowName;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
 	TArray<FTableFieldData> Fields;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Table")
-	TArray<FTableFieldData> FieldsBackward;
+	UTableManager* TargetTableManager;
+
 
 	FTableRowData()
 		: RowIndex(0)
 		, RowName(TEXT(""))
 		, Fields()
-		, FieldsBackward()
+		, TargetTableManager(nullptr)
 	{}
 };
 
@@ -86,7 +95,8 @@ struct FTableData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableCreated);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableDeleted);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTableUpdated);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAllFieldsActivated, int32, FieldIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAllFieldsChecked, int32, InFieldIndex, bool, bIsChecked);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAllFieldsSelected, int32, InFieldIndex, int32, InSelectedIndex);
 
 
 UCLASS(BlueprintType)
@@ -98,16 +108,16 @@ class UICOMPONENT_API UTableManager : public UObject
 public:
 	UTableManager();
 	virtual ~UTableManager();
-	void BeginDestroy();
-	UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
-	static UTableManager* GetTableManager();
+	virtual void BeginDestroy() override;
+	/*UFUNCTION(BlueprintCallable, meta = (AllowPrivateAccess = true))
+	static UTableManager* GetTableManager();*/
 	UFUNCTION(BlueprintCallable)
 	void Initialize(FTableData InData);
 	UFUNCTION()
 	void Shutdown();
 
 private:
-	static UTableManager* Instance;
+	//static UTableManager* Instance;
 
 
 
@@ -124,8 +134,6 @@ public:
 	FOnTableDeleted OnTableDeleted;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnTableUpdated OnTableUpdated;
-	UPROPERTY(BlueprintAssignable, BlueprintCallable)
-	FOnAllFieldsActivated OnAllFieldsActivated;
 
 
 	UFUNCTION(BlueprintCallable)
@@ -137,4 +145,20 @@ public:
 	virtual FTableData GetTableData();
 	UFUNCTION(BlueprintCallable)
 	virtual void UpdateTable();
+
+
+
+	// select all fields
+public:
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAllFieldsChecked OnAllFieldsChecked;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable)
+	FOnAllFieldsSelected OnAllFieldsSelected;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void CheckAllFields(int32 InFieldIndex, bool bIsChecked);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SelectAllFields(int32 InFieldIndex, int32 InSelectedOption);
 };

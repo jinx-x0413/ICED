@@ -6,15 +6,14 @@
 
 FString GetFilePath(const FString& InFileName) {
 	FString OutFilePath;
-	OutFilePath = UKismetSystemLibrary::GetProjectDirectory() + "Settings/" + InFileName + ".json";
-	/*if (GIsEditor)
+	if (GIsEditor)
 	{
 		OutFilePath = UKismetSystemLibrary::GetProjectDirectory() + "Settings/" + InFileName + ".json";
 	}
 	else
 	{
 		OutFilePath = FPaths::LaunchDir() + "Settings/" + InFileName + ".json";
-	}*/
+	}
 
 	return OutFilePath;
 }
@@ -22,11 +21,11 @@ FString GetFilePath(const FString& InFileName) {
 // WBP 클래스를 C++ 코드에서 구조체 변수로 추가하여 저장
 UClass* ConvertStringToWBPClass(const FString& InClassString)
 {
-	
+
 	FString AssetPath = FString::Printf(TEXT("/Game/%s/Table/"), *UIComponentVars::TableAssetPath);
 	if (InClassString == "WBP_TableFieldText")
 	{
-	
+
 		AssetPath = FString::Printf(TEXT("%sWBP_TableFieldText.WBP_TableFieldText_C"), *AssetPath);
 		UClass* WBPClass_TableField_Text = LoadClass<UUserWidget>(nullptr, *AssetPath);
 		if (WBPClass_TableField_Text)
@@ -96,6 +95,23 @@ UClass* ConvertStringToInteractionClass(const FString& InClassString)
 	}
 }
 
+UClass* ConertPopupWidgetClassStringToWBPClass(FString InClassString)
+{
+	FString AssetPath = FString::Printf(TEXT("/Game/%s/"), *UIComponentVars::PopupWidgetAssetPath);
+	if (InClassString == "WBP_AssetContentPopup")
+	{
+		AssetPath = FString::Printf(TEXT("%sWBP_AssetContentPopup.WBP_AssetContentPopup_C"), *AssetPath);
+		UClass* WBPClass_PopupWidget_Text = LoadClass<UUserWidget>(nullptr, *AssetPath);
+		if (WBPClass_PopupWidget_Text)
+		{
+			return WBPClass_PopupWidget_Text;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Convert PopupWidget Class String To WBP Class Failed - Invalid Asset or Asset Path"));
+	return UUserWidget::StaticClass();
+}
+
 
 void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FString InTableName, const TArray<FActorHierarchyData>& InActorHierarchyData, FTableData& OutTableData)
 {
@@ -124,9 +140,59 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 	if (JsonObject->HasField(TEXT("Content")))
 	{
 		TArray<TSharedPtr<FJsonValue>> ContentData = JsonObject->GetArrayField(TEXT("Content"));
-		if (InTableName == TEXT("Assembly"))
+
+		if (InTableName == TEXT("부품설명"))
 		{
 			TSharedPtr<FJsonObject> TargetContentData = ContentData[0]->AsObject();
+
+			if (TargetContentData->HasField(TEXT("Rows")))
+			{
+				// 2. parse Row
+				TArray<TSharedPtr<FJsonValue>> RowData = TargetContentData->GetArrayField(TEXT("Rows"));
+				TSharedPtr<FJsonObject> SampleRowData = RowData[0]->AsObject();
+				for (int i = 0; i < InActorHierarchyData.Num(); i++)
+				{
+					FTableRowData TempRowData;
+					if (!InActorHierarchyData[i].TargetComponent.IsValid())
+					{
+						continue;
+					}
+					TempRowData.RowIndex = i;
+					TempRowData.RowName = InActorHierarchyData[i].DisplayName;
+
+					// 3. parse Field
+					if (SampleRowData->HasField(TEXT("Fields")))
+					{
+						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("Fields"));
+
+						for (int j = 0; j < FieldData.Num(); j++)
+						{
+							FTableFieldData TempFieldData;
+							TSharedPtr<FJsonObject> EachFieldData = FieldData[j]->AsObject();
+							TempFieldData.FieldIndex = j;
+
+							// field class
+							FString TempClassString;
+							FString TempFieldName;
+							EachFieldData->TryGetStringField(TEXT("FieldClass"), TempClassString);
+							TempFieldData.FieldClass = ConvertStringToWBPClass(TempClassString);
+							EachFieldData->TryGetStringField(TEXT("FieldName"), TempFieldData.FieldName);
+							EachFieldData->TryGetStringField(TEXT("FieldValue"), TempFieldData.FieldValue);
+
+
+							TempRowData.Fields.Add(TempFieldData);
+						}
+					}
+
+					TempTableData.Rows.Add(TempRowData);
+
+				}
+			}
+
+		}
+		else if (InTableName == TEXT("분해"))
+		{
+			TSharedPtr<FJsonObject> TargetContentData = ContentData[1]->AsObject();
 
 			if (!TargetContentData.IsValid())
 			{
@@ -170,19 +236,49 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
 							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
 							
-							//if (TempFieldData.FieldIndex == 0) // Step Index
-							//{
-							//	TempFieldData.FieldValue = FString::FromInt(i);
-							//}
+							FString TempPopupWidgetClassString; // popup widget
+							if (EachFieldData->TryGetStringField(TEXT("PopupWidgetClass"), TempPopupWidgetClassString))
+							{
+								TempFieldData.PopupWidgetClass = ConertPopupWidgetClassStringToWBPClass(TempPopupWidgetClassString);
+							}
 
 							TempRowData.Fields.Add(TempFieldData);
 						}
 					}
 
-					// 4. parse FieldsBackward
-					if (SampleRowData->HasField(TEXT("FieldsBackward")))
+					TempTableData.Rows.Add(TempRowData);
+
+				}
+			}
+		}
+		else if (InTableName == TEXT("조립"))
+		{
+			TSharedPtr<FJsonObject> TargetContentData = ContentData[2]->AsObject();
+
+			if (!TargetContentData.IsValid())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("TargetContentData is not valid at JSONParserForUI"));
+			}
+
+			if (TargetContentData->HasField(TEXT("Rows")))
+			{
+				// 2. parse Row
+				TArray<TSharedPtr<FJsonValue>> RowData = TargetContentData->GetArrayField(TEXT("Rows"));
+				TSharedPtr<FJsonObject> SampleRowData = RowData[0]->AsObject();
+				for (int i = 0; i < InActorHierarchyData.Num(); i++)
+				{
+					FTableRowData TempRowData;
+					if (!InActorHierarchyData[i].TargetComponent.IsValid())
 					{
-						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("FieldsBackward"));
+						continue;
+					}
+					TempRowData.RowIndex = i;
+					TempRowData.RowName = InActorHierarchyData[i].DisplayName;
+
+					// 3. parse Field
+					if (SampleRowData->HasField(TEXT("Fields")))
+					{
+						TArray<TSharedPtr<FJsonValue>> FieldData = SampleRowData->GetArrayField(TEXT("Fields"));
 
 						for (int j = 0; j < FieldData.Num(); j++)
 						{
@@ -201,17 +297,22 @@ void UJSONParserForUI::ParseJsonComponentTable(const FString& InFileName, FStrin
 							EachFieldData->TryGetStringField(TEXT("InteractionClassName"), TempInteractionClassString);
 							TempFieldData.InteractionClass = ConvertStringToInteractionClass(TempInteractionClassString);
 
-							TempRowData.FieldsBackward.Add(TempFieldData);
+							FString TempPopupWidgetClassString; // popup widget
+							if (EachFieldData->TryGetStringField(TEXT("PopupWidgetClass"), TempPopupWidgetClassString))
+							{
+								TempFieldData.PopupWidgetClass = ConertPopupWidgetClassStringToWBPClass(TempPopupWidgetClassString);
+							}
+
+							TempRowData.Fields.Add(TempFieldData);
 						}
 					}
+
 					TempTableData.Rows.Add(TempRowData);
 
 				}
 			}
 		}
 	}
-
-
 
 
 	OutTableData = TempTableData;

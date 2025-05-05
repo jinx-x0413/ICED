@@ -7,20 +7,30 @@
 
 #include "TimebarController.generated.h"
 
-/**
- * 
- */
+USTRUCT()
+struct FTimebarManagerWrapper
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	UTimebarManager* Manager;
+
+	FTimebarManagerWrapper()
+		: Manager(nullptr)
+	{}
+};
+
 UCLASS(BlueprintType)
-class UTimebarController : public UObject
+class TIMEBAR_API UTimebarController : public UObject
 {
 	GENERATED_BODY()
 	
 	// construct
 public:
 	UTimebarController();
-	void BeginDestroy();
 	virtual ~UTimebarController();
-
+	virtual void BeginDestroy() override;
+	void Shutdown();
 
 
 	// Business Logic
@@ -48,4 +58,14 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void SetCurrentTime(float InCurrentTime);
+
+	//// Timebar Manager
+public:
+	UFUNCTION(BlueprintCallable)
+	UTimebarManager* GetTimebarManager(FName InManagerName);
+
+	TMap<FName, FTimebarManagerWrapper> ManagerMap;
+
+	UFUNCTION(BlueprintCallable)
+	void SetTimebarManager(FName InManagerName);
 };

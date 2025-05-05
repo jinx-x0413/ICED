@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "TimeScaleWidget.h"
@@ -55,12 +55,12 @@ void UTimeScaleWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime
 
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	// GetCachedGeometry()°¡ À¯È¿ÇÑÁö È®ÀÎÇÏ°í, ÇÑ¹ø¸¸ DrawRuler¸¦ È£Ãâ
+	// GetCachedGeometry()ê°€ ìœ íš¨í•œì§€ í™•ì¸í•˜ê³ , í•œë²ˆë§Œ DrawRulerë¥¼ í˜¸ì¶œ
 	
 	if (GetCachedGeometry().GetLocalSize().X > 0)
 	{
-		DrawRuler();  // ´«±İÀÚ ±×¸®±â
-		bIsRulerDrawn = true;  // ÇÑ ¹ø¸¸ ±×·ÁÁöµµ·Ï ¼³Á¤
+		DrawRuler();  // ëˆˆê¸ˆì ê·¸ë¦¬ê¸°
+		bIsRulerDrawn = true;  // í•œ ë²ˆë§Œ ê·¸ë ¤ì§€ë„ë¡ ì„¤ì •
 	}
 }
 
@@ -75,14 +75,12 @@ FReply UTimeScaleWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 	{
 		// click
 		FVector2D MousePosition = InMouseEvent.GetScreenSpacePosition();
-		FVector2D LocalMousePosition = InGeometry.AbsoluteToLocal(MousePosition); // Local space·Î º¯È¯
+		FVector2D LocalMousePosition = InGeometry.AbsoluteToLocal(MousePosition); // Local spaceë¡œ ë³€í™˜
 
 		/*UTimebarPlayer::GetTimebarPlayer()->CurrentTime = LocalMousePosition.X / (Variables::ConvertedValue* Variables::ScaleMultiplier);
 		UTimebarPlayer::GetTimebarPlayer()->OnCurrentTimeChanged.Broadcast(LocalMousePosition.X/ (Variables::ConvertedValue* Variables::ScaleMultiplier));*/
 		UTimebarPlayer::GetTimebarPlayer()->SetCurrentTime(LocalMousePosition.X / (Variables::ConvertedValue * Variables::ScaleMultiplier));
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, FString::Printf(
-			TEXT("CurrentTime : %f"), LocalMousePosition.X / (Variables::ConvertedValue * Variables::ScaleMultiplier)
-		));
+
 		// drag
 		bIsDragging = true;
 
@@ -98,11 +96,11 @@ FReply UTimeScaleWidget::NativeOnMouseMove(const FGeometry& InGeometry, const FP
 {
 	if (bIsDragging)
 	{
-		// ¸¶¿ì½º À§Ä¡ ¾÷µ¥ÀÌÆ®
+		// ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
 		FVector2D MousePosition = InMouseEvent.GetScreenSpacePosition();
 		FVector2D LocalMousePosition = InGeometry.AbsoluteToLocal(MousePosition);
 
-		// Time ¾÷µ¥ÀÌÆ®
+		// Time ì—…ë°ì´íŠ¸
 		/*UTimebarPlayer::GetTimebarPlayer()->CurrentTime = LocalMousePosition.X / (Variables::ConvertedValue* Variables::ScaleMultiplier);
 		UTimebarPlayer::GetTimebarPlayer()->OnCurrentTimeChanged.Broadcast(LocalMousePosition.X / (Variables::ConvertedValue* Variables::ScaleMultiplier));*/
 		UTimebarPlayer::GetTimebarPlayer()->SetCurrentTime(LocalMousePosition.X / (Variables::ConvertedValue * Variables::ScaleMultiplier));
@@ -148,10 +146,10 @@ void UTimeScaleWidget::FinishPlay(float InCurrentTime)
 //// Scale
 void UTimeScaleWidget::DrawRuler()
 {
-	// ÃÖ´ë ½ºÄÉÀÏ ÃÊ±âÈ­
+	// ìµœëŒ€ ìŠ¤ì¼€ì¼ ì´ˆê¸°í™”
 	SetMaxScale();
 
-	// ´«±İ ÃÊ±âÈ­
+	// ëˆˆê¸ˆ ì´ˆê¸°í™”
 	if (!RulerTickArray.IsEmpty())
 	{
 		for (auto& Tick : RulerTickArray)
@@ -165,43 +163,43 @@ void UTimeScaleWidget::DrawRuler()
 		RulerTickArray.Empty();
 	}
 
-	// ÇöÀç Äµ¹ö½º¸¦ °¡Á®¿É´Ï´Ù.
+	// í˜„ì¬ ìº”ë²„ìŠ¤ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	UCanvasPanel* CanvasPanel = Cast<UCanvasPanel>(GetRootWidget());
 	
 	if (CanvasPanel)
 	{
-		// ´«±İÀÚ¿¡ ±×¸± °¢ ´«±İÀÇ Å©±â
+		// ëˆˆê¸ˆìì— ê·¸ë¦´ ê° ëˆˆê¸ˆì˜ í¬ê¸°
 		float SpacingAdjusted = CurrentRulerSpacing * CurrentZoomScale;
 
-		// ´«±İÀÚ ±×¸®±â (°£°İ¿¡ ¸Â´Â ¼± ±×¸®±â)
+		// ëˆˆê¸ˆì ê·¸ë¦¬ê¸° (ê°„ê²©ì— ë§ëŠ” ì„  ê·¸ë¦¬ê¸°)
 		for (float i = 0; i < MaxScale; i += SpacingAdjusted)
 		{
-			// °¢ ´«±İÀÇ À§Ä¡¿¡ ¸Â´Â Border ¶Ç´Â LineÀ» ±×¸³´Ï´Ù.
+			// ê° ëˆˆê¸ˆì˜ ìœ„ì¹˜ì— ë§ëŠ” Border ë˜ëŠ” Lineì„ ê·¸ë¦½ë‹ˆë‹¤.
 			UBorder* NewRulerTick = NewObject<UBorder>(this);
 
-			// ±âº» Border µğÀÚÀÎ
+			// ê¸°ë³¸ Border ë””ìì¸
 			NewRulerTick->SetBrushColor(FLinearColor::White);
 			NewRulerTick->SetPadding(FMargin(0));
 
-			// Äµ¹ö½º¿¡ Ãß°¡
+			// ìº”ë²„ìŠ¤ì— ì¶”ê°€
 			CanvasPanel->AddChild(NewRulerTick);
 			RulerTickArray.Add(NewRulerTick);
 
-			// Canvas¿¡ ¹èÄ¡
+			// Canvasì— ë°°ì¹˜
 			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(NewRulerTick->Slot);
 			if (CanvasSlot)
 			{
-				CanvasSlot->SetAnchors(FAnchors(0.0f, 1.0f, 0.0f, 1.0f));  // X=0.5f (°¡¿îµ¥), Y=1.0f (ÇÏ´Ü)
-				CanvasSlot->SetAlignment(FVector2D(0.0f, 1.0f)); // ¾Æ·¡ÂÊ Á¤·Ä
-				CanvasSlot->SetPosition(FVector2D(i, 0.0f)); // X, Y À§Ä¡ (Y´Â °íÁ¤)
+				CanvasSlot->SetAnchors(FAnchors(0.0f, 1.0f, 0.0f, 1.0f));  // X=0.5f (ê°€ìš´ë°), Y=1.0f (í•˜ë‹¨)
+				CanvasSlot->SetAlignment(FVector2D(0.0f, 1.0f)); // ì•„ë˜ìª½ ì •ë ¬
+				CanvasSlot->SetPosition(FVector2D(i, 0.0f)); // X, Y ìœ„ì¹˜ (YëŠ” ê³ ì •)
 				
-				if (RulerTickArray.Num() % 10 == 1) // °£°İ 10¸¶´Ù Ç¥½Ã
+				if (RulerTickArray.Num() % 10 == 1) // ê°„ê²© 10ë§ˆë‹¤ í‘œì‹œ
 				{
-					CanvasSlot->SetSize(FVector2D(2, 40));   // ¼±ÀÇ Å©±â (2x40)
+					CanvasSlot->SetSize(FVector2D(2, 40));   // ì„ ì˜ í¬ê¸° (2x40)
 				}
 				else
 				{
-					CanvasSlot->SetSize(FVector2D(2, 20));   // ¼±ÀÇ Å©±â (2x20)
+					CanvasSlot->SetSize(FVector2D(2, 20));   // ì„ ì˜ í¬ê¸° (2x20)
 				}
 				
 
@@ -211,23 +209,35 @@ void UTimeScaleWidget::DrawRuler()
 
 			
 
-			// ÇÊ¿ä½Ã TextBlockÀ» Ãß°¡ÇÏ¿© °£°İ Ç¥½Ã
+			// í•„ìš”ì‹œ TextBlockì„ ì¶”ê°€í•˜ì—¬ ê°„ê²© í‘œì‹œ
 			if (RulerTickArray.Num() % 10 == 1)
 			{
 				UTextBlock* TickLabel = NewObject<UTextBlock>(this);
 				RulerTickLableArray.Add(TickLabel);
-				// TextBlockÀ» Äµ¹ö½º¿¡ Ãß°¡
+				// TextBlockì„ ìº”ë²„ìŠ¤ì— ì¶”ê°€
 				CanvasPanel->AddChild(TickLabel);
 
-				int32 IntI = FMath::FloorToInt(i / (Variables::ConvertedValue * Variables::ScaleMultiplier) );  // i¸¦ int·Î º¯È¯ (¼Ò¼öÁ¡ ÀÌÇÏ ¹ö¸²) // ºĞ
-				int32 Minutes = FMath::FloorToInt(IntI / 360.0f);  // ºĞ °è»ê
-				int32 Seconds = FMath::FloorToInt(IntI / 60.0f);  // ÃÊ °è»ê
-				int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI, 60.0f));  // ¹Ğ¸®ÃÊ °è»ê
-				//int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI * 1000.0f, 1000.0f));  // ¹Ğ¸®ÃÊ °è»ê
+				float TimeInSec = i / (Variables::ConvertedValue * Variables::ScaleMultiplier);
+				if (!FMath::IsFinite(TimeInSec) || TimeInSec < 0.0f || TimeInSec > 86400.0f) // 24ì‹œê°„ ì´ìƒì€ ë°©ì§€
+				{
+					continue;
+				}
+				
+				int32 IntI = FMath::FloorToInt(TimeInSec);  // ië¥¼ intë¡œ ë³€í™˜ (ì†Œìˆ˜ì  ì´í•˜ ë²„ë¦¼) // ë¶„
+				//UE_LOG(LogTemp, Warning, TEXT("Tick Pos: %f, TimeInSec: %f, IntI: %d"), i, TimeInSec, IntI);
+				if (Variables::ScaleMultiplier <= 0.001f)
+				{
+					UE_LOG(LogTemp, Error, TEXT("Invalid ScaleMultiplier: %f"), Variables::ScaleMultiplier);
+					return;
+				}
+				int32 Minutes = FMath::FloorToInt(IntI / 360.0f);  // ë¶„ ê³„ì‚°
+				int32 Seconds = FMath::FloorToInt(IntI / 60.0f);  // ì´ˆ ê³„ì‚°
+				int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI, 60.0f));  // ë°€ë¦¬ì´ˆ ê³„ì‚°
+				//int32 Milliseconds = FMath::FloorToInt(FMath::Fmod(IntI * 1000.0f, 1000.0f));  // ë°€ë¦¬ì´ˆ ê³„ì‚°
 
 				
 
-				// mm:ss Çü½ÄÀ¸·Î Æ÷¸Ë
+				// mm:ss í˜•ì‹ìœ¼ë¡œ í¬ë§·
 				//FText TimeText = FText::Format(NSLOCTEXT("YourNamespace", "TimeFormat", "{0}:{1}:{2}"), FText::AsNumber(Minutes), FText::AsNumber(Seconds), FText::AsNumber(Milliseconds));
 				FString TimeTextString = FString::Printf(TEXT("%02d:%02d:%02d"), Minutes, Seconds, Milliseconds);
 				FText TimeText = FText::FromString(TimeTextString);
@@ -235,7 +245,7 @@ void UTimeScaleWidget::DrawRuler()
 				TickLabel->SetText(TimeText);
 
 				FSlateFontInfo NewFontInfo = TickLabel->Font;
-				NewFontInfo.Size = 8;  // ¿øÇÏ´Â ÆùÆ® Å©±â ¼³Á¤
+				NewFontInfo.Size = 8;  // ì›í•˜ëŠ” í°íŠ¸ í¬ê¸° ì„¤ì •
 				TickLabel->SetFont(NewFontInfo);
 				CanvasSlot = Cast<UCanvasPanelSlot>(TickLabel->Slot);
 				if (CanvasSlot)
@@ -254,10 +264,10 @@ void UTimeScaleWidget::DrawRuler()
 
 void UTimeScaleWidget::SetRulerSpacing(float InRulerSpacing)
 {
-	// °£°İÀ» ¼³Á¤
+	// ê°„ê²©ì„ ì„¤ì •
 	CurrentRulerSpacing = InRulerSpacing;
 
-	// ´«±İÀÚ ´Ù½Ã ±×¸®±â
+	// ëˆˆê¸ˆì ë‹¤ì‹œ ê·¸ë¦¬ê¸°
 	DrawRuler();
 }
 
@@ -268,7 +278,7 @@ void UTimeScaleWidget::SetZoomScale(float InZoomScale)
 		return;
 	}
 
-	// È®´ë/Ãà¼Ò ºñÀ²À» ¼³Á¤
+	// í™•ëŒ€/ì¶•ì†Œ ë¹„ìœ¨ì„ ì„¤ì •
 	float OldScale = CurrentZoomScale;
 	CurrentZoomScale = InZoomScale;
 	float ScaleDiff = CurrentZoomScale - OldScale;
@@ -276,7 +286,7 @@ void UTimeScaleWidget::SetZoomScale(float InZoomScale)
 	
 	UTimebarPlayer::GetTimebarPlayer()->OnScaleChanged.Broadcast(OldScale, InZoomScale);
 
-	// ´«±İÀÚ ´Ù½Ã ±×¸®±â
+	// ëˆˆê¸ˆì ë‹¤ì‹œ ê·¸ë¦¬ê¸°
 	DrawRuler();
 }
 

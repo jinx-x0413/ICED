@@ -17,6 +17,8 @@ void UTableFieldCombobox::NativeConstruct()
 		, TEXT("Right")
 	};
 
+	
+
 	ExecConstruct();
 }
 

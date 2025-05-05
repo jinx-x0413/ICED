@@ -19,27 +19,15 @@ void UCommandStack::BeginDestroy()
 {
 	if (IsPendingKill()) return;  // 이미 파괴 중인 객체는 건너뜀
 
-	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
-
 	// History 파괴 처리
 	if (IsValid(History) && History->IsRooted())
 	{
-		for (auto& Command : History->GetCommands())
-		{
-			if (IsValid(Command) && Command->IsRooted())
-			{
-				Command->RemoveFromRoot();
-				Command->ConditionalBeginDestroy();  // Command 파괴 시작
-				Command = nullptr;
-			}
-		}
-
 		History->RemoveFromRoot();
-		History->ConditionalBeginDestroy();  // History 파괴 시작
+		History->MarkAsGarbage();  // History 파괴 시작
 		History = nullptr;
 	}
-
-	RemoveFromRoot();  // 스택 루트에서 제거
+	
+	Super::BeginDestroy();  // 부모 클래스의 BeginDestroy 호출
 }
 
 

@@ -20,13 +20,6 @@ UTrack::UTrack()
 
 UTrack::~UTrack()
 {
-	
-}
-
-void UTrack::BeginDestroy()
-{
-	Super::BeginDestroy();
-
 	/*if (UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.IsAlreadyBound(this, &UTrack::AddClipToArray))
 	{
 		UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.RemoveDynamic(this, &UTrack::AddClipToArray);
@@ -105,6 +98,7 @@ FVector2D UTrack::GetMinMaxTime()
 	return FVector2D();
 }
 
+
 bool UTrack::IsPlaying()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Track's Active Clip Count : %s / %d"), *Name, ActiveClipCount);
@@ -114,9 +108,9 @@ bool UTrack::IsPlaying()
 void UTrack::Play()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Track Playing : %s"), *Name);
-	if (IsValid(ComponentWidget))
+	if (IsValid(SceneCaptureWidget))
 	{
-		ComponentWidget->ExecSetActivated(true);
+		SceneCaptureWidget->ExecSetActivated(true);
 
 		if (UTimebarPlayer::GetTimebarPlayer()->bIsLooping)
 		{
@@ -132,8 +126,8 @@ void UTrack::Play()
 
 void UTrack::Stop()
 {
-	if (IsValid(ComponentWidget))
+	if (IsValid(SceneCaptureWidget))
 	{
-		ComponentWidget->ExecSetActivated(false);
+		SceneCaptureWidget->ExecSetActivated(false);
 	}
 }

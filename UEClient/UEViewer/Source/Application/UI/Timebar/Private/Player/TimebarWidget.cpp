@@ -52,17 +52,3 @@ void UTimebarWidget::SetScrollOffset(UScrollBox* InScrollBox, float InCurrentTim
 	}
 	
 }
-
-void UTimebarWidget::SetVerticalScrollOffset(UScrollBox* InScrollBox, float InCurrentTime)
-{
-	if (InCurrentTime < InScrollBox->GetScrollOffset())
-	{
-		// 커서가 위쪽에 벗어나면, 스크롤을 위로 이동
-		InScrollBox->SetScrollOffset(InCurrentTime);
-	}
-	else if (InCurrentTime > (InScrollBox->GetScrollOffset() + InScrollBox->GetCachedGeometry().GetLocalSize().Y) - Variables::VerticalScrollInterval)
-	{
-		// 커서가 아래쪽에 벗어나면, 스크롤을 아래로 이동
-		InScrollBox->SetScrollOffset(InCurrentTime - InScrollBox->GetCachedGeometry().GetLocalSize().Y + Variables::VerticalScrollInterval);
-	}
-}

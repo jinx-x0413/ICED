@@ -1,6 +1,44 @@
 #include "CommandHistory.h"
 #include "CommandDependency.h"
 
+// construct
+UCommandHistory::UCommandHistory()
+{
+}
+
+UCommandHistory::~UCommandHistory()
+{
+}
+
+void UCommandHistory::BeginDestroy()
+{
+    Shutdown();
+
+    Super::BeginDestroy();
+}
+
+void UCommandHistory::Shutdown()
+{
+    if (!Commands.IsEmpty())
+    {
+        for (auto& Command : Commands)
+        {
+            if (IsValid(Command) && Command->IsRooted())
+            {
+                Command->RemoveFromRoot();
+                Command->MarkAsGarbage();
+                Command = nullptr;
+            }
+        }
+
+        Commands.Empty();
+    }
+}
+
+
+
+
+
 void UCommandHistory::AddCommandToHistory(UCommandBase* InCommand)
 {
     // Add the command to the history list
@@ -23,7 +61,7 @@ UCommandBase* UCommandHistory::PopCommand()
         {
             // Safely remove it from the root and begin its destruction
             LastCommand->RemoveFromRoot();
-            LastCommand->ConditionalBeginDestroy();  // Begin destruction
+            LastCommand->MarkAsGarbage();  // Begin destruction
         }
 
         return LastCommand;

@@ -9,9 +9,8 @@
 /**
  * 
  */
-
-class UTrack;
 class UClipWidget;
+class UTrack;
 
 UCLASS()
 class TIMEBAR_API UClip : public UObject
@@ -68,7 +67,6 @@ public:
 
     UPROPERTY(BlueprintReadWrite, EditAnywhere)
     UClipWidget* TargetWidget;
-
 
 
     // track

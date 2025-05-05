@@ -24,14 +24,15 @@ public:
 	virtual ~UAssetContentController();
 
 	void BeginDestroy();
+	void Shutdown();
 
 
 
 	// business logic
 public:
-	virtual UInteractionBase* CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+	virtual UInteractionBase* CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
-	virtual UInteractionBase* CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+	//virtual UInteractionBase* CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	UPROPERTY()
 	UTemplateBuilder* TemplateBuilder;
@@ -46,5 +47,5 @@ public:
 
 
 	//// Component property
-	TSubclassOf<UUserWidget> TrackComponentWidgetClass;
+	TSubclassOf<UUserWidget> TrackSceneCaptureWidgetClass;
 };

@@ -16,23 +16,34 @@ UAssetContentController::~UAssetContentController()
 
 void UAssetContentController::BeginDestroy()
 {
+    Shutdown();
+
     Super::BeginDestroy();
 
-    if (IsValid(this) && IsRooted())
-    {
-        RemoveFromRoot();
-        ConditionalBeginDestroy();
-    }
 }
 
-UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+void UAssetContentController::Shutdown()
 {
-    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
+    if (IsValid(TemplateBuilder) && TemplateBuilder->IsRooted())
     {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
-        //InInteractionData.TargetClass = InInteractionData.TargetClass;
-        NewInteraction->TargetTrack = InTrack;
+        TemplateBuilder->RemoveFromRoot();
+        TemplateBuilder->MarkAsGarbage();
+        TemplateBuilder = nullptr;
+    }
+
+    TrackHeaderWidgetClass = nullptr;
+    TrackWidgetClass = nullptr;
+    TrackSceneCaptureWidgetClass = nullptr;
+}
+
+UInteractionBase* UAssetContentController::CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
+{
+    if (InInteractionClass->IsChildOf(UInteractionBase::StaticClass()))
+    {
+        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionClass);
+        InInteractionData.TargetClass = InInteractionClass;
         NewInteraction->Initialize(InInteractionData);
+        NewInteraction->TargetTrack = InTrack;
         NewInteraction->StartTime = InStartTime;
         NewInteraction->EndTime = InEndTime;
         NewInteraction->ClipLength = InEndTime - InStartTime;
@@ -40,30 +51,6 @@ UInteractionBase* UAssetContentController::CreateInteraction(FInteractionData In
         NewInteraction->AddToRoot();
 
         UTimebarPlayer::GetTimebarPlayer()->OnClipCreated.Broadcast(InTrack, NewInteraction);
-
-        return NewInteraction;
-    }
-
-    return nullptr;
-}
-
-UInteractionBase* UAssetContentController::CreateInteractionBackward(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime)
-{
-    if (InInteractionData.TargetClass->IsChildOf(UInteractionBase::StaticClass()))
-    {
-        UInteractionBase* NewInteraction = NewObject<UInteractionBase>(GetTransientPackage(), InInteractionData.TargetClass);
-        //InInteractionData.TargetClass = InInteractionData.TargetClass;
-        NewInteraction->TargetTrack = InTrack;
-        NewInteraction->bIsReversed = true;
-        NewInteraction->Initialize(InInteractionData);
-        NewInteraction->StartTime = InStartTime;
-        NewInteraction->EndTime = InEndTime;
-        NewInteraction->ClipLength = InEndTime - InStartTime;
-        NewInteraction->Name = InInteractionData.Name.ToString();
-        NewInteraction->AddToRoot();
-
-        UTimebarPlayer::GetTimebarPlayer()->ReverseClipArray.Add(NewInteraction);
-
         return NewInteraction;
     }
 

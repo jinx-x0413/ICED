@@ -27,4 +27,6 @@ public:
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	TArray<FName> TransformDirectionArray;
+
+	
 };

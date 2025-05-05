@@ -4,6 +4,39 @@
 #include "Template/TemplateBuilder.h"
 #include "TemplateBuildDependency.h"
 
+// construct
+UTemplateBuilder::UTemplateBuilder()
+{
+}
+
+UTemplateBuilder::~UTemplateBuilder()
+{
+}
+
+void UTemplateBuilder::BeginDestroy()
+{
+	Shutdown();
+	Super::BeginDestroy();
+}
+
+void UTemplateBuilder::Shutdown()
+{
+	if (TargetActor)
+	{
+		TargetActor = nullptr;
+	}
+
+	//if (IsValid(CurrentTemplate.GetObject()) && CurrentTemplate.GetObject()->IsRooted())
+	//{
+	//	CurrentTemplate.GetObject()->RemoveFromRoot();
+	//	CurrentTemplate.GetObject()->MarkAsGarbage();
+	//}
+}
+
+
+
+
+
 void UTemplateBuilder::SetController(UAssetContentController* InAssetActorController)
 {
 	Controller = InAssetActorController;
@@ -16,23 +49,28 @@ void UTemplateBuilder::SetTargetActor(AActor* InActor)
 
 TScriptInterface<ITemplateInterface> UTemplateBuilder::SetCurrentTemplate(ETemplateType InTemplateType)
 {
-	
+	UObject* TemplateObject = nullptr;
 	switch (InTemplateType)
 	{
 	case ETemplateType::NONE:
 		break;
-		return nullptr;
 	case ETemplateType::ASSEMBLY:
-		return NewObject<UAssemblyBuilder>(GetTransientPackage());
+		TemplateObject = NewObject<UAssemblyBuilder>(GetTransientPackage());
 		break;
-	case ETemplateType::COMPONENT:
-		return NewObject<UComponentBuilder>(GetTransientPackage());
+	case ETemplateType::DISASSEMBLY:
+		TemplateObject = NewObject<UDisassemblyBuilder>(GetTransientPackage());
 		break;
 	default:
-		return nullptr;
 		break;
 	}
-		
+
+	TScriptInterface<ITemplateInterface> TemplateInterface;
+	if (TemplateObject && TemplateObject->GetClass()->ImplementsInterface(UTemplateInterface::StaticClass()))
+	{
+		TemplateInterface.SetObject(TemplateObject);
+		TemplateInterface.SetInterface(Cast<ITemplateInterface>(TemplateObject));
+		return TemplateInterface;
+	}
 	return nullptr;
 	
 }

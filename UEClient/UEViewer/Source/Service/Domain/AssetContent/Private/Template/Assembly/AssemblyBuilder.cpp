@@ -4,9 +4,10 @@
 #include "Template/Assembly/AssemblyBuilder.h"
 #include "../TemplateBuildDependency.h"
 
+// construct
 UAssemblyBuilder::UAssemblyBuilder()
-	: ClipInterval(2.0f)
-	, TrackInterval(4 * ClipInterval)
+	: ClipInterval(1.0f)
+	
 {
 }
 
@@ -14,9 +15,19 @@ UAssemblyBuilder::~UAssemblyBuilder()
 {
 }
 
+void UAssemblyBuilder::BeginDestroy()
+{
+	Super::BeginDestroy();
+}
+
+
+
+
+
 void UAssemblyBuilder::Build()
 {
-	
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Build Assembly Content"));
+
 	// Get AssetActor Hierarchy Data
 	if (IsValid(TargetActor))
 	{
@@ -29,80 +40,73 @@ void UAssemblyBuilder::Build()
 		}
 
 		float LatestClipEndTime = 0.0f;
-		TargetTableData = UTableManager::GetTableManager()->GetTableData(); // 참조로 사용
+		//TargetTableData = UTableController::GetTableManager(TEXT("Assembly"))->GetTableData(); // 참조로 사용
 
-		for (int i = 0; i < CurrentData.Num() - 1; i++) // Actor 대상으로 클립 생성하지 않도록
+		for (int i = 0; i < TargetTableData.Rows.Num(); i++) // Actor 대상으로 클립 생성하지 않도록
 		{
-			for (auto& Row : TargetTableData.Rows)
+			FTableRowData TargetRowData = TargetTableData.Rows[TargetTableData.Rows.Num() - i - 1];
+			for (int j = 0; j < CurrentData.Num() - 1; j++)
 			{
-				if (Row.RowName == CurrentData[i + 1].DisplayName)
+				if (TargetRowData.RowName == CurrentData[j + 1].DisplayName)
 				{
-					
-					if (CurrentData[i + 1].TargetComponent.IsValid())
+					//UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, TargetRowData.RowName);
+					UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateComponentListItem(
+						Controller->TrackSceneCaptureWidgetClass
+						, CurrentData[i + 1].DisplayName);
+					if (IsValid(NewTrack))
 					{
-						//UTrack* NewTrack = UTimebarPlayer::GetTimebarPlayer()->CreateTrack(Controller->TrackHeaderWidgetClass, Controller->TrackWidgetClass, CurrentData[i + 1].DisplayName);
-						UTrack* NewTrack = nullptr;
-						if (IsValid(NewTrack))
+						if (IsValid(CurrentData[j + 1].TargetComponent.Get()))
 						{
-							if (IsValid(CurrentData[i + 1].TargetComponent.Get()))
+							NewTrack->TargetComponent = CurrentData[j + 1].TargetComponent.Get();
+							// loop table data
+							for (auto& Field : TargetRowData.Fields)
 							{
-								NewTrack->TargetComponent = CurrentData[i + 1].TargetComponent.Get();
-
-								// loop table data
-								for (auto& Field : Row.Fields)
+								// check if data checked
+								if (Field.FieldValue.IsEmpty())
 								{
-									// check if data checked
-									//UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName,  *Field.FieldValue);
-									if (Field.FieldValue.IsEmpty())
-									{
-										continue;
-									}
-
-									if(Field.FieldValue == TEXT("false"))
-									{
-										UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *Row.RowName, *Field.FieldName, *Field.FieldValue);
-									}
-									else if (Field.FieldValue == TEXT("true"))
-									{
-										LatestClipEndTime = SetClip(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime);
-									}
-									else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
-									{
-										LatestClipEndTime = SetClip(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime, Field.FieldValue);
-									}
+									continue;
 								}
 
-							}
-							else
-							{
-								UE_LOG(LogTemp, Warning, TEXT("InHierarchyData.TargetComponent is Invalid at AssemblyBuilder"));
-							}
 
-
+								if (Field.FieldValue == TEXT("false"))
+								{
+									UE_LOG(LogTemp, Warning, TEXT("AssemblyBuilder Field Value: %s - %s:%s"), *TargetRowData.RowName, *Field.FieldName, *Field.FieldValue);
+								}
+								else if (Field.FieldValue == TEXT("true"))
+								{
+									LatestClipEndTime = SetClip(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime);
+								}
+								else if (Field.InteractionClass == UTransformInteraction::StaticClass() && Field.FieldValue != TEXT("None")) // transform interaction
+								{
+									LatestClipEndTime = SetClip(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime, Field.FieldValue);
+								}
+								else if (Field.InteractionClass == UPopupInteraction::StaticClass() && !Field.FieldValue.IsEmpty()) // popup interaction
+								{
+									LatestClipEndTime = SetClip(NewTrack, Field.InteractionClass, FName(*Field.FieldName), LatestClipEndTime, Field.FieldValue, Field.PopupWidgetClass);
+									// create popupwidget
+								}
+							}
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
+							UE_LOG(LogTemp, Warning, TEXT("InHierarchyData.TargetComponent is Invalid at AssemblyBuilder"));
 						}
 					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
+					}
 
-
-					break;
+					UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
 				}
 			}
 
-
-
-
-
-
-			//SetTracks(CurrentData[i + 1], (float) i * TrackInterval);
 		}
-		
-		
+
+
 	}
 
-	
+
 }
 
 
@@ -111,7 +115,8 @@ float UAssemblyBuilder::SetClip(
 	, TSubclassOf<UInteractionBase> InInteractionClass
 	, FName InInteractionName
 	, float PrevTrackEndTime
-	, FString InFieldValue)
+	, FString InFieldValue
+	, TSubclassOf<UUserWidget> InPopupWidgetClass)
 {
 	float CurrentEndTrackTime = PrevTrackEndTime;
 
@@ -119,49 +124,59 @@ float UAssemblyBuilder::SetClip(
 	{
 		USceneComponent* TargetComponent = InTrack->TargetComponent;
 
+		// common
 		FInteractionData TargetInteractionData;
 		TargetInteractionData.TargetActor = TargetActor;
 		TargetInteractionData.TargetComponent = TargetComponent;
 		TargetInteractionData.Name = InInteractionName;
-		TargetInteractionData.TargetClass = InInteractionClass;
 
-
+		// highlight interaction
 		TargetInteractionData.bIsHighlighted = true;
-		/*TargetInteractionData.StartTransform = FTransform(FRotator(), TargetComponent->GetComponentLocation(), FVector());
-		TargetInteractionData.EndTransform = FTransform(FRotator(), TargetComponent->GetComponentLocation() + FVector(0, 0, 250.0f), FVector());*/
+
 
 		// transform interaction set direction
 		ETransformInteractionDirection CurrentDirection = ETransformInteractionDirection::AUTO;
-		if (InFieldValue == TEXT("Up"))
+		if (InInteractionClass == UTransformInteraction::StaticClass())
 		{
-			CurrentDirection = ETransformInteractionDirection::UP;
-		}
-		else if (InFieldValue == TEXT("Down"))
-		{
-			CurrentDirection = ETransformInteractionDirection::DOWN;
-		}
-		else if (InFieldValue == TEXT("Left"))
-		{
-			CurrentDirection = ETransformInteractionDirection::LEFT;
-		}
-		else if (InFieldValue == TEXT("Right"))
-		{
-			CurrentDirection = ETransformInteractionDirection::RIGHT;
+			if (InFieldValue == TEXT("Up"))
+			{
+				CurrentDirection = ETransformInteractionDirection::UP;
+			}
+			else if (InFieldValue == TEXT("Down"))
+			{
+				CurrentDirection = ETransformInteractionDirection::DOWN;
+			}
+			else if (InFieldValue == TEXT("Left"))
+			{
+				CurrentDirection = ETransformInteractionDirection::LEFT;
+			}
+			else if (InFieldValue == TEXT("Right"))
+			{
+				CurrentDirection = ETransformInteractionDirection::RIGHT;
+			}
 		}
 		TargetInteractionData.TransformDirection = CurrentDirection;
+		TargetInteractionData.bIsReversed = true;
 
-		TargetInteractionData.bIsHidden = true;
-		// TODO : refactoring ; switch?
-		// TODO : popup Interaction property (TargetWidget, Text)
-		
+		// hidden interaction
+		TargetInteractionData.bIsHidden = false;
 
-		UInteractionBase* NewCameraInteraction = Controller->CreateInteraction(
-			TargetInteractionData
+		// create
+		UInteractionBase* NewInteraction = Controller->CreateInteraction(
+			InInteractionClass
+			, TargetInteractionData
 			, InTrack
 			, PrevTrackEndTime
 			, PrevTrackEndTime + ClipInterval);
 
 		CurrentEndTrackTime = PrevTrackEndTime + ClipInterval;
+
+		// popupwidget interaction
+		if (InInteractionClass == UPopupInteraction::StaticClass())
+		{
+			UTemplateHandler::GetTemplateHandler()->OnPopupInteractionCreated.Broadcast(NewInteraction, InPopupWidgetClass, InFieldValue);
+		}
+
 	}
 
 	return CurrentEndTrackTime;
