@@ -169,14 +169,19 @@ float UDisassemblyBuilder::SetClip(UTrack* InTrack, TSubclassOf<UInteractionBase
 		TargetInteractionData.bIsHidden = true;
 
 		// create
+		float CurrentInterval = ClipInterval;
+		if (InInteractionClass == UTransformInteraction::StaticClass())
+		{
+			CurrentInterval = 2.0f;
+		}
 		UInteractionBase* NewInteraction = Controller->CreateInteraction(
 			InInteractionClass
 			, TargetInteractionData
 			, InTrack
 			, PrevTrackEndTime
-			, PrevTrackEndTime + ClipInterval);
+			, PrevTrackEndTime + CurrentInterval);
 
-		CurrentEndTrackTime = PrevTrackEndTime + ClipInterval;
+		CurrentEndTrackTime = PrevTrackEndTime + CurrentInterval;
 
 		// popupWidget interaction
 		if (InInteractionClass == UPopupInteraction::StaticClass())
