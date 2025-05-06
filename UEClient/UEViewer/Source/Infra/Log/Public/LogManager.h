@@ -21,7 +21,7 @@ public:
     static ULogManager* GetLogManager();
     static ULogManager* Instance;
 
-
+    static void DestroyLogManager();
 
 
     // feature

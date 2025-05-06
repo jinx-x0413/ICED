@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Modules/ModuleManager.h"
-
+#include "LogDependency.h"
+	
 DECLARE_LOG_CATEGORY_EXTERN(Log, All, All);
 
 class FLog : public IModuleInterface

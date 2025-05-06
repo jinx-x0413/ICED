@@ -162,6 +162,11 @@ FString UHttpRequest::GetURL(const FString& APIType)
 	return TEXT("APIType is InValid");
 }
 
+void UHttpRequest::DestroyActorDelegate()
+{
+	DestroyGltfAssetActor.Broadcast();
+}
+
 FOpenApiTest UHttpRequest::GetURLFromConfig()
 {
 	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");

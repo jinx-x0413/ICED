@@ -38,12 +38,14 @@ void IHttpInterface::Start()
 
 void IHttpInterface::GetHttpRequest(const FString& URL, TFunction<void(FHttpResponsePtr, bool)> OnComplete) const
 {
+	
+	FString Token = ULogManager::GetLogManager()->GetToken();
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 	Request->SetURL(URL);
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ2NDQ2ODY2LCJleHAiOjE3NDY0NTc2NjZ9.yIyxCijyI5opEu6MroBZ5w3asPd31--pOTY4TnRAVHU"));
+	Request->SetHeader(TEXT("Authorization"), Token);
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	// OnComplete를 안전하게 이동
 	TFunction<void(FHttpResponsePtr, bool)> LocalOnComplete = MoveTemp(OnComplete);

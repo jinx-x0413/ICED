@@ -6,7 +6,8 @@ public class HTTP_Connection : ModuleRules
 	{
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json", "HTTP", "Networking", "Sockets", "JsonUtilities" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "Json", "HTTP", "Networking", "Sockets", "JsonUtilities"
+		, "Log"});
  
 		PublicIncludePaths.AddRange(new string[] {"HTTP_Connection/Public"});
 		PrivateIncludePaths.AddRange(new string[] {"HTTP_Connection/Private"});

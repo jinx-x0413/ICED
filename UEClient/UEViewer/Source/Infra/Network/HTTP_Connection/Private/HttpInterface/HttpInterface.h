@@ -8,6 +8,8 @@
 #include "HttpModule.h"        // HTTP 요청을 보내기 위한 모듈
 #include "Interfaces/IHttpRequest.h"   // HTTP 요청 인터페이스
 #include "Interfaces/IHttpResponse.h"  // HTTP 응답 인터페이스
+#include "Infra/Log/Public/LogManager.h"
+
 
 #include "HttpInterface.generated.h"
 
@@ -38,6 +40,5 @@ public:
 	
 	TMap<FString, FString> URLMap;
 
-	
 
 };

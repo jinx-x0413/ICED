@@ -15,7 +15,7 @@ void FLog::ShutdownModule()
 {
 	UE_LOG(Log, Warning, TEXT("Log module has been unloaded"));
 
-
+	ULogManager::DestroyLogManager();
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -13,12 +13,7 @@ ULogManager::ULogManager()
 
 ULogManager::~ULogManager()
 {
-    if (IsValid(Instance) && Instance->IsRooted())
-    {
-        Instance->RemoveFromRoot();
-        Instance->MarkAsGarbage();
-        Instance = nullptr;
-    }
+ 
 }
 
 ULogManager* ULogManager::GetLogManager()
@@ -31,6 +26,16 @@ ULogManager* ULogManager::GetLogManager()
     return Instance;
 }
 
+void ULogManager::DestroyLogManager()
+{
+    if (Instance)
+    {
+        Instance->RemoveFromRoot();
+        Instance->MarkAsGarbage();
+        Instance = nullptr;
+    }
+    
+}
 
 
 
