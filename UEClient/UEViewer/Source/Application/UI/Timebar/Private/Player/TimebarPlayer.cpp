@@ -50,6 +50,7 @@ UTimebarPlayer* UTimebarPlayer::GetTimebarPlayer()
 		{
 			Instance->OnFinished.AddDynamic(Instance, &UTimebarPlayer::Stop);
 		}
+
 	}
 	return Instance;
 }

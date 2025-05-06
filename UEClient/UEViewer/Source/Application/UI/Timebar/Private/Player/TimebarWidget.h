@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class UTimebarWidget : public UUserWidget
+class TIMEBAR_API UTimebarWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	

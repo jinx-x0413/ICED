@@ -42,6 +42,7 @@ void UDisassemblyBuilder::Build()
 		{
 			for (auto& Row : TargetTableData.Rows)
 			{
+				//if (Row.RowName == CurrentData[i + 1].NodeName)
 				if (Row.RowName == CurrentData[i + 1].DisplayName)
 				{
 
@@ -90,18 +91,44 @@ void UDisassemblyBuilder::Build()
 							}
 							else
 							{
-								UE_LOG(LogTemp, Warning, TEXT("InHierarchyData.TargetComponent is Invalid at AssemblyBuilder"));
+								UE_LOG(LogTemp, Warning, TEXT("InHierarchyData.TargetComponent is Invalid at DisassemblyBuilder"));
+#if UE_BUILD_SHIPPING
+								FString LogString = FString::Printf(TEXT("InHierarchyData.TargetComponent is Invalid at DisassemblyBuilder"));
+
+								FString LogFilePath = FPaths::ProjectLogDir() + TEXT("ShippingLog.txt");
+
+								// Append 모드로 여러 줄 저장 가능하게
+								FFileHelper::SaveStringToFile(LogString, *LogFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+#endif
 							}
 
 
 						}
 						else
 						{
-							UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at AssemblyBuilder"));
+							UE_LOG(LogTemp, Warning, TEXT("New Track is Invalid at DisassemblyBuilder"));
+#if UE_BUILD_SHIPPING
+							FString LogString = FString::Printf(TEXT("New Track is Invalid at DisassemblyBuilder"));
+
+							FString LogFilePath = FPaths::ProjectLogDir() + TEXT("ShippingLog.txt");
+
+							// Append 모드로 여러 줄 저장 가능하게
+							FFileHelper::SaveStringToFile(LogString, *LogFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+#endif
 						}
 
 						UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.Broadcast(NewTrack, NewTrack->SceneCaptureWidget);
+
+#if UE_BUILD_SHIPPING
+						FString LogString = FString::Printf(TEXT("OnComponentListItemCreated Broadcasted at DisassemblyBuilder"));
+
+						FString LogFilePath = FPaths::ProjectLogDir() + TEXT("ShippingLog.txt");
+
+						// Append 모드로 여러 줄 저장 가능하게
+						FFileHelper::SaveStringToFile(LogString, *LogFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+#endif
 					}
+
 
 					break;
 				}
@@ -117,6 +144,17 @@ void UDisassemblyBuilder::Build()
 
 
 	}
+	else
+	{
+#if UE_BUILD_SHIPPING
+		FString LogString = FString::Printf(TEXT("TargetActor is Invalid at DisassemblyBuilder"));
+
+		FString LogFilePath = FPaths::ProjectLogDir() + TEXT("ShippingLog.txt");
+
+		// Append 모드로 여러 줄 저장 가능하게
+		FFileHelper::SaveStringToFile(LogString, *LogFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
+#endif
+		}
 }
 
 

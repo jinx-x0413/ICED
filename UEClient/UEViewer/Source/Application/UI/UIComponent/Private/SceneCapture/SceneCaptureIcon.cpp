@@ -47,7 +47,7 @@ UTexture2D* USceneCaptureIcon::GetSkeletalMeshCapture(
 	}
 
 	// Render Target 생성 및 등록
-	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>();
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>(GetTransientPackage());
 	RenderTarget->AddToRoot(); // GC 방지
 	RenderTarget->InitAutoFormat(512, 512);
 	RenderTarget->ClearColor = FLinearColor::Transparent;
@@ -63,17 +63,22 @@ UTexture2D* USceneCaptureIcon::GetSkeletalMeshCapture(
 	if (!TempActor) return nullptr;
 
 	// Root 설정
-	USceneComponent* TempRootComponent = NewObject<USceneComponent>(TempActor);
-	TempActor->AddInstanceComponent(TempRootComponent);
-	TempRootComponent->RegisterComponent();
+	USceneComponent* TempRootComponent = NewObject<USceneComponent>(TempActor, USceneComponent::StaticClass(), NAME_None, RF_Transactional);
+	TempRootComponent->SetupAttachment(nullptr);
+	TempRootComponent->RegisterComponentWithWorld(World); // ? 여기에 World가 필요
 	TempActor->SetRootComponent(TempRootComponent);
 
 	// SkeletalMeshComponent 생성 및 설정
-	USkeletalMeshComponent* MeshComp = NewObject<USkeletalMeshComponent>(TempActor);
+	/*USkeletalMeshComponent* MeshComp = NewObject<USkeletalMeshComponent>(TempActor);
 	TempActor->AddInstanceComponent(MeshComp);
 	MeshComp->RegisterComponent();
 	MeshComp->SetSkeletalMesh(InComponent->SkeletalMesh);
-	MeshComp->AttachToComponent(TempRootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	MeshComp->AttachToComponent(TempRootComponent, FAttachmentTransformRules::KeepRelativeTransform);*/
+	USkeletalMeshComponent* MeshComp = NewObject<USkeletalMeshComponent>(TempActor);
+	MeshComp->SetSkeletalMesh(InComponent->SkeletalMesh);
+	MeshComp->SetupAttachment(TempRootComponent); // 부모 설정
+	MeshComp->RegisterComponent();
+	TempActor->AddInstanceComponent(MeshComp); // ? GC 방지
 	MeshComp->SetRelativeLocation(FVector::ZeroVector);
 	MeshComp->SetVisibility(true);
 	MeshComp->SetHiddenInGame(false);

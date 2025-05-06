@@ -47,5 +47,6 @@ public:
 
 
 	//// Component property
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UUserWidget> TrackSceneCaptureWidgetClass;
 };

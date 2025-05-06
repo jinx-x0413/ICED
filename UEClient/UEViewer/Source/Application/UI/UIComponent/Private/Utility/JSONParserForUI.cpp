@@ -6,6 +6,9 @@
 
 FString GetFilePath(const FString& InFileName) {
 	FString OutFilePath;
+	OutFilePath = UKismetSystemLibrary::GetProjectDirectory() + "Settings/" + InFileName + ".json";
+	return OutFilePath;
+
 	if (GIsEditor)
 	{
 		OutFilePath = UKismetSystemLibrary::GetProjectDirectory() + "Settings/" + InFileName + ".json";
