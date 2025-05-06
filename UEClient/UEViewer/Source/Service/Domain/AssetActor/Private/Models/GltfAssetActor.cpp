@@ -23,7 +23,7 @@ AGltfAssetActor::AGltfAssetActor()
 	BoxComponent->SetupAttachment(RootComponent);
 
 	// Debug
-	BoxComponent->bHiddenInGame = false;
+	BoxComponent->bHiddenInGame = true;
 
 }
 

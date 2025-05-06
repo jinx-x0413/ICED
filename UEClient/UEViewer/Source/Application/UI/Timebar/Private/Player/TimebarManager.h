@@ -35,4 +35,10 @@ public:
 	UFUNCTION()
 	void SetTracksVisibility(bool bIsVisible);
 
+
+
+	//// Track
+public:
+	UPROPERTY()
+	UTrack* CurrentPlayingTrack = nullptr;
 };
