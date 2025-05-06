@@ -9,7 +9,7 @@ public class UEViewer : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { 
-			"Core", "CoreUObject", "Engine", "InputCore"
+			"Core", "CoreUObject", "Engine", "InputCore", "UMG"
 			, "AssetActor"
 			, "AssetContent"
 			, "Command"
@@ -17,8 +17,11 @@ public class UEViewer : ModuleRules
 			, "glTFRuntime"
 			, "glTFRuntimeFBX"
 			, "RuntimeTransformer"
+			, "UIComponent"
+			, "Timebar"
 			, "HTTP_Connection"
-			, "UMG"
+			, "Profiling"
+			, "Log"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

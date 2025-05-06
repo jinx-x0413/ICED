@@ -9,6 +9,15 @@
 #include "TransformerPawn.h"
 #include "CorePawn.generated.h"
 
+UENUM(BlueprintType)
+enum class ECameraFocus : uint8
+{
+	FRONTVIEW			UMETA(DisplayName = "FrontView"),
+	TOPVIEW				UMETA(DisplayName = "TopView"),
+	SIDEVIEW			UMETA(DisplayName = "SideView")
+};
+
+
 UCLASS()
 class UEVIEWER_API ACorePawn : public APawn
 {
@@ -118,8 +127,32 @@ public:
 
 
 
+
+	// Set Camera Focus
+public:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	float CameraFocusArmLength = 700.0f;
+	float CameraFocusDistance = 300.0f;
+	UFUNCTION()
+	FTransform SetCameraFocusTransform(AActor* InTargetActor, ECameraFocus InCameraFocus);
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusToActor(AActor* InTargetActor, ECameraFocus InCameraFocus);
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusToComponent(AActor* InTargetActor, USkeletalMeshComponent* InTargetComponent);
+
+	FVector GetTargetActorCenter(AActor* InActor);
+
+	// test
+	UFUNCTION(BlueprintCallable)
+	void SetCameraFocusRelative(AActor* InTargetActor, const FVector& RelativeOffset);
+
+
+
 	// Gizmo Delegate : AssetActorTransform Command
 public:
 	void InitializeGizmoDelegate();
-
+	UFUNCTION()
+	void InvokeSetStartAssetActorTransform(FTransform InTransform);
+	UFUNCTION()
+	void InvokeSetEndAssetActorTransform(FTransform InTransform);
 };

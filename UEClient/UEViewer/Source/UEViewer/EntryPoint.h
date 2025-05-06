@@ -19,7 +19,11 @@
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 #include "Service/Domain/AssetContent/Public/AssetContent.h"
+<<<<<<< HEAD
 #include "Application/UI/UIComponent/Public/Table/TableManager.h"
+=======
+#include "Application/UI/UIComponent/Public/UIComponent.h"
+>>>>>>> Develop_UE
 
 
 #include "EntryPoint.generated.h"
@@ -71,6 +75,7 @@ public:
 	// AssetContent
 public:
 	UFUNCTION(BlueprintCallable)
+<<<<<<< HEAD
 	static UInteractionBase* CreateInteractionToTimebar(FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
 
 	UFUNCTION(BlueprintCallable)
@@ -79,6 +84,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static void BuildComponentContent(AActor* InActor, TSubclassOf<UUserWidget> InTrackHeaderWidgetClass);
 
+=======
+	static UInteractionBase* CreateInteraction(TSubclassOf<UInteractionBase> InInteractionClass, FInteractionData InInteractionData, UTrack* InTrack, float InStartTime, float InEndTime);
+
+	UFUNCTION(BlueprintCallable)
+	static void BuildAssemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass);
+
+	UFUNCTION(BlueprintCallable)
+	static void BuildDisassemblyContent(AActor* InActor, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass);
+
+	
+>>>>>>> Develop_UE
 	// Timebar
 public:
 	UFUNCTION(BlueprintCallable)
@@ -105,4 +121,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetTimebarCurrentTime(float InCurrentTime);
+<<<<<<< HEAD
+=======
+
+	UFUNCTION(BlueprintCallable)
+	static UTimebarManager* GetTimebarManager(FName InManagerName);
+
+	UFUNCTION(BlueprintCallable)
+	static void SwitchTimebarContent(FName InManagerName);
+
+	// UIComponent
+public:
+	UFUNCTION(BlueprintCallable)
+	static UTableManager* GetTableManager(FName InManagerName);
+>>>>>>> Develop_UE
 };

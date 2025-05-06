@@ -1,8 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Models/GltfAssetActor.h"
 #include "Service/Domain/AssetActor/Private/AssetActorDependency.h"
+#include "Hierarchy/HierarchyDataUpdate.h"
+
 
 AGltfAssetActor::AGltfAssetActor()
 {
@@ -22,10 +24,21 @@ AGltfAssetActor::AGltfAssetActor()
 
 	// Debug
 	BoxComponent->bHiddenInGame = false;
+
 }
 
 AGltfAssetActor::~AGltfAssetActor()
 {
+}
+
+void AGltfAssetActor::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+	
+
+	
 }
 
 void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -36,6 +49,27 @@ void AGltfAssetActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		RemoveFromRoot();
 	}
+
+	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
+	{
+		if (ACorePawn* CurrentCorePawn = Cast<ACorePawn>(PlayerPawn))
+		{
+			if (CurrentCorePawn->TransformerPawn->OnActiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnActiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnActiveSelect.RemoveDynamic(this, &AGltfAssetActor::CallbackOnActiveSelected);
+			}
+			if (CurrentCorePawn->TransformerPawn->OnDeactiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnDeactiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnDeactiveSelect.RemoveDynamic(this, &AGltfAssetActor::CallbackOnDeactiveSelected);
+			}
+		}
+
+	}
+}
+
+void AGltfAssetActor::UpdateHierarchy()
+{
+	
 }
 
 
@@ -67,7 +101,30 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 	InitializeAsset();
 	SetInitialBoundBoxExtent();
 
-	ResetHierarchyData();
+	/*ResetHierarchyData();*/
+
+	/*if (HierarchyManager)
+	{
+		HierarchyManager->InitializeHierarchy(this);
+		HierarchyData = HierarchyManager->GetHierarchyData();
+	}*/
+	UpdateHierarchyData(this);
+
+	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
+	{
+		if (ACorePawn* CurrentCorePawn = Cast<ACorePawn>(PlayerPawn))
+		{
+			if (!CurrentCorePawn->TransformerPawn->OnActiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnActiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnActiveSelect.AddDynamic(this, &AGltfAssetActor::CallbackOnActiveSelected);
+			}
+			if (!CurrentCorePawn->TransformerPawn->OnDeactiveSelect.IsAlreadyBound(this, &AGltfAssetActor::CallbackOnDeactiveSelected))
+			{
+				CurrentCorePawn->TransformerPawn->OnDeactiveSelect.AddDynamic(this, &AGltfAssetActor::CallbackOnDeactiveSelected);
+			}
+		}
+
+	}
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()
@@ -117,58 +174,6 @@ void AGltfAssetActor::SetScale(FVector InScale)
 
 
 
-//// Hierarchy Data
-void AGltfAssetActor::ResetHierarchyData()
-{
-	HierarchyData.Empty(0);
-	GetHierarchyDataRecursive(0); // recursive
-}
-
-void AGltfAssetActor::GetHierarchyDataRecursive(int IndentLevel)
-{
-	FActorHierarchyData NewData;
-	NewData.NodeName = GetName(); // »ý¼ºÇÑ ÀÌ¸§ Àû¿ë
-	NewData.Depth = IndentLevel;
-	HierarchyData.Add(NewData);
-
-	USceneComponent* InRootComponent = GetRootComponent();
-	if (InRootComponent)
-	{
-		GetComponentHierarchyRecursive(InRootComponent, IndentLevel + 1);
-	}
-}
-
-void AGltfAssetActor::GetComponentHierarchyRecursive(USceneComponent* InComponent, int IndentLevel)
-{
-	if (!InComponent || InComponent->GetFName() == FName("RootScene"))
-	{
-		return;
-	}
-
-	FActorHierarchyData NewData;
-	if (Cast<USkeletalMeshComponent>(InComponent))
-	{
-		NewData.NodeName = InComponent->GetName();
-		NewData.Depth = IndentLevel;
-		NewData.TargetComponent = InComponent;
-		HierarchyData.Add(NewData);
-
-		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
-		for (USceneComponent* InChild : InChildren)
-		{
-			GetComponentHierarchyRecursive(InChild, IndentLevel + 1);
-		}
-	}
-	else
-	{
-		const TArray<USceneComponent*>& InChildren = InComponent->GetAttachChildren();
-		for (USceneComponent* InChild : InChildren)
-		{
-			GetComponentHierarchyRecursive(InChild, IndentLevel);
-		}
-	}
-}
-
 void AGltfAssetActor::SetOutline(bool bIsActivated)
 {
 	TArray<USkeletalMeshComponent*> SkeletalMeshComponents;
@@ -186,4 +191,21 @@ void AGltfAssetActor::SetOutline(bool bIsActivated)
 			}
 		}
 	}
+}
+
+void AGltfAssetActor::CallbackOnActiveSelected()
+{
+	SetOutline(true);
+}
+
+void AGltfAssetActor::CallbackOnDeactiveSelected()
+{
+	SetOutline(false);
+}
+
+const TArray<FActorHierarchyData>& AGltfAssetActor::GetInterfaceHierarchyData() const
+{
+	
+
+	return GetHierarchyData();
 }

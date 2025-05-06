@@ -14,4 +14,5 @@ class UEVIEWER_API UCoreGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 	
+	virtual void Init() override;
 };

@@ -11,11 +11,7 @@ UAssetActorController::UAssetActorController()
 
 UAssetActorController::~UAssetActorController()
 {
-	if (IsValid(this) && IsRooted())
-	{
-		RemoveFromRoot();
-		MarkAsGarbage();
-	}
+	
 }
 
 AGltfAssetActor* UAssetActorController::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)

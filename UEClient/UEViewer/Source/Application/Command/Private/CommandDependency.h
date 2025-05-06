@@ -8,6 +8,7 @@
 #include "Application/Command/Public/CommandStack.h"
 #include "CommandHistory.h"
 #include "CommandClass/CommandBase.h"
+#include "CommandClass/SetAssetActorTransformCommand.h"
 
 #include "CommandDependency.generated.h"
 

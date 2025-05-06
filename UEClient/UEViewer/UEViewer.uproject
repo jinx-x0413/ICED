@@ -10,8 +10,7 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"CoreUObject",
-				"UMG"
+				"CoreUObject"
 			]
 		},
 		{
@@ -39,11 +38,40 @@
 			]
 		},
 		{
-			"Name": "HTTP_Connection",
+			"Name": "UIComponent",
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"CoreUObject"
+				"CoreUObject",
+				"UMG"
+			]
+		},
+		{
+			"Name": "Timebar",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
+			]
+		},
+		{
+			"Name": "Profiling",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "HTTP_Connection",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "Log",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject",
+				"UMG"
 			]
 		}
 	],
