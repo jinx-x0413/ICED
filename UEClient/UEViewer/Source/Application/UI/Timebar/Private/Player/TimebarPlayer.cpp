@@ -387,6 +387,9 @@ void UTimebarPlayer::Stop()
 		return;
 	}
 
+	CurrentManager->CurrentPlayingTrack = nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("CurrentPlayingTrack is nullptr"));
+
 	if (GWorld && (State == ETimebarState::Running) || (State == ETimebarState::Paused))
 	{
 		GWorld->GetTimerManager().ClearTimer(MainTimer);
@@ -445,6 +448,8 @@ void UTimebarPlayer::Run()
 				if (IsValid(Track) && Track->IsPlaying())
 				{
 					Track->Play();
+					CurrentManager->CurrentPlayingTrack = Track;
+					UE_LOG(LogTemp, Warning, TEXT("CurrentPlayingTrack : %s"), *CurrentManager->CurrentPlayingTrack->Name);
 				}
 				else if (IsValid(Track))
 				{

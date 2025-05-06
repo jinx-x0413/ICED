@@ -10,7 +10,7 @@
  * 
  */
 UCLASS(BlueprintType)
-class UTrack : public UObject
+class TIMEBAR_API UTrack : public UObject
 {
 	GENERATED_BODY()
 

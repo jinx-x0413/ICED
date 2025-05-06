@@ -112,6 +112,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static void SwitchTimebarContent(FName InManagerName);
 
+	UFUNCTION(BlueprintCallable)
+	static void StartNextTrack();
+	
+	UFUNCTION(BlueprintCallable)
+	static void StartPrevTrack();
+
+	UFUNCTION(BlueprintCallable)
+	static void EndTimebar();
+
+
 	// UIComponent
 public:
 	UFUNCTION(BlueprintCallable)

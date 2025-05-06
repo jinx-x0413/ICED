@@ -347,6 +347,80 @@ void UEntryPoint::SwitchTimebarContent(FName InManagerName)
 	}
 }
 
+void UEntryPoint::StartNextTrack()
+{
+	if (UTimebarPlayer* CurrentTimebarPlayer = UTimebarPlayer::GetTimebarPlayer())
+	{
+		if (CurrentTimebarPlayer->CurrentManager)
+		{
+			UTimebarManager* CurrentManager = CurrentTimebarPlayer->CurrentManager;
+			UTrack* CurrentTrack = CurrentManager->CurrentPlayingTrack;
+			for (int i=0; i< CurrentManager->TrackArray.Num(); i++)
+			{
+				if (CurrentManager->TrackArray[i] == CurrentTrack && CurrentManager->TrackArray.IsValidIndex(i+1))
+				{
+					FVector2D MinMax = CurrentManager->TrackArray[i + 1]->GetMinMaxTime();
+					CurrentTimebarPlayer->SetCurrentTime(MinMax.X);
+					return;
+				}
+				else if (CurrentManager->TrackArray[i] == CurrentTrack)
+				{
+					FVector2D MinMax = CurrentManager->TrackArray[i + 1]->GetMinMaxTime();
+					CurrentTimebarPlayer->SetCurrentTime(MinMax.Y);
+				}
+			}
+
+		}
+	}
+	
+}
+
+void UEntryPoint::StartPrevTrack()
+{
+	if (UTimebarPlayer* CurrentTimebarPlayer = UTimebarPlayer::GetTimebarPlayer())
+	{
+		if (CurrentTimebarPlayer->CurrentManager)
+		{
+			UTimebarManager* CurrentManager = CurrentTimebarPlayer->CurrentManager;
+			UTrack* CurrentTrack = CurrentManager->CurrentPlayingTrack;
+			for (int i = 0; i < CurrentManager->TrackArray.Num(); i++)
+			{
+				if (CurrentManager->TrackArray[i] == CurrentTrack && CurrentManager->TrackArray.IsValidIndex(i - 1))
+				{
+
+					FVector2D MinMax = CurrentManager->TrackArray[i - 1]->GetMinMaxTime();
+					CurrentTimebarPlayer->SetCurrentTime(MinMax.X);
+					return;
+				}
+				else if (CurrentManager->TrackArray[i] == CurrentTrack)
+				{
+					CurrentTimebarPlayer->SetCurrentTime(0.0f);
+					return;
+				}
+			}
+
+		}
+	}
+}
+
+void UEntryPoint::EndTimebar()
+{
+	if (UTimebarPlayer* CurrentTimebarPlayer = UTimebarPlayer::GetTimebarPlayer())
+	{
+		if (CurrentTimebarPlayer->CurrentManager)
+		{
+			UTimebarManager* CurrentManager = CurrentTimebarPlayer->CurrentManager;
+			if (!CurrentManager->TrackArray.IsEmpty())
+			{
+				FVector2D MinMax = CurrentManager->TrackArray[CurrentManager->TrackArray.Num() - 1]->GetMinMaxTime();
+				CurrentTimebarPlayer->SetCurrentTime(MinMax.Y);
+				return;
+			}
+
+		}
+	}
+}
+
 
 
 // UIComponent
