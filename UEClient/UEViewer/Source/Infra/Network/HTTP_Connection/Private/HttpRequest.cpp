@@ -275,6 +275,7 @@ void UHttpRequest::CreateInterface(EApiType InApiType)
 	}
 
 	CurrentInterface.GetObject()->AddToRoot();
+	CurrentInterface->Manager = this;
 }
 
 void UHttpRequest::SendHttp(EApiType InApiType)
@@ -287,7 +288,7 @@ void UHttpRequest::GetData()
 {
 	if (UGetCartInterface* CurrentCartInterface = Cast<UGetCartInterface>(CurrentInterface.GetObject()))
 	{
-		OnGetCartData.Broadcast(CurrentCartInterface->CartResponse);
+		OnGetCartData.Broadcast(CartResponse);
 	}
 	else if (Cast<UDownloadInterface>(CurrentInterface.GetObject()))
 	{

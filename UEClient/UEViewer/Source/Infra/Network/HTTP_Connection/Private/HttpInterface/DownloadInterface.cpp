@@ -16,7 +16,7 @@ void UDownloadInterface::Start()
 	}
 
     // 인터페이스의 헬퍼 함수 호출
-    GetHttpRequest(DownloadModelURL, [](FHttpResponsePtr Response, bool bSuccess)
+    GetHttpRequest(DownloadModelURL, [this](FHttpResponsePtr Response, bool bSuccess)
     {
         if (bSuccess && Response.IsValid())
         {
@@ -30,8 +30,9 @@ void UDownloadInterface::Start()
         FString ContentString = Response->GetContentAsString();
 		if (bSuccess && Response.IsValid() && Response->GetResponseCode() == 200)
 		{
-			// 저장 경로: Saved/DownloadedModels/
-			FString FilePath = FPaths::ProjectSavedDir() / TEXT("DownloadedModels/MyModel.glb");
+			// 저장 경로: Resource/
+			UE_LOG(LogTemp, Warning, TEXT("filename = %s"), *Manager->Cart.fileName);
+			FString FilePath = FPaths::ProjectDir() / TEXT("Resource/") + *Manager->Cart.fileName;
 
 			// 디렉토리 없으면 생성
 			IFileManager::Get().MakeDirectory(*FPaths::GetPath(FilePath), true);

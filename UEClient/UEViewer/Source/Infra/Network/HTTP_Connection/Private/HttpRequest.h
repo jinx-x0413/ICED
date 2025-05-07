@@ -8,7 +8,6 @@
 #include "HttpModule.h"        // HTTP 요청을 보내기 위한 모듈
 #include "Interfaces/IHttpRequest.h"   // HTTP 요청 인터페이스
 #include "Interfaces/IHttpResponse.h"  // HTTP 응답 인터페이스
-#include "HttpInterface/GetCartInterface.h"
 
 #include "HttpRequest.generated.h"
 
@@ -43,6 +42,50 @@ struct FOpenApiTest
 	FString FilePath;
 
 };
+
+USTRUCT(BlueprintType)
+struct FCart
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 id;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 fileId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString fileName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString description;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString thumbnailUri;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString size;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString addedAt;
+};
+
+// 루트 구조체
+USTRUCT(BlueprintType)
+struct FCartResponse
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString userId;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	TArray<FCart> CartArray;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	int32 CartCount;
+};
+
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FOpenApiTest&, ApiTest);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDestroyGltfAssetActor);
@@ -112,7 +155,12 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "HTTP")
 	FOnGetUserData OnGetUserData;
 
-
 	UFUNCTION(BlueprintCallable)
 	void GetData();
+
+	UPROPERTY(BluePrintReadWrite, EditAnywhere)	
+	FCartResponse CartResponse;
+
+	UPROPERTY(BluePrintReadWrite, EditAnywhere)	
+	FCart Cart;
 };

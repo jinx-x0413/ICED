@@ -16,5 +16,8 @@ class UDownloadInterface : public UObject, public IHttpInterface
 {
 	GENERATED_BODY()
 public:
+
 	virtual void Start() override;
+
+	
 };

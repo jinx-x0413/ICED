@@ -7,6 +7,12 @@
 
 void IHttpInterface::Start()
 {
+	if (!IsValid(Manager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Manager is invalid at IHttpInterface::Start()"));
+		return;
+	}
+
 	FString ProjectFilePath = FPaths::ProjectDir() + TEXT("/Settings/LoginSetting.json");
 	FString JsonRaw;
 	if (!FFileHelper::LoadFileToString(JsonRaw, *ProjectFilePath))
@@ -39,13 +45,13 @@ void IHttpInterface::Start()
 void IHttpInterface::GetHttpRequest(const FString& URL, TFunction<void(FHttpResponsePtr, bool)> OnComplete) const
 {
 	
-	FString Token = TEXT("Bearer ") + ULogManager::GetLogManager()->GetToken();
+	//FString Token = TEXT("Bearer ") + ULogManager::GetLogManager()->GetToken();
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 	Request->SetURL(URL);
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("Authorization"), Token);
+	Request->SetHeader(TEXT("Authorization"), TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ2NjEwOTE2LCJleHAiOjE3NDY2MjE3MTZ9.KlpoY1NEu6Yw-yn5vrh2HX_zsW04oifSvothouIoOH8"));
 	//  &AWebApi::GetDataCallBack 부분 변경 (서버에서 받아온 Json 파싱 함수)
 	// OnComplete를 안전하게 이동
 	TFunction<void(FHttpResponsePtr, bool)> LocalOnComplete = MoveTemp(OnComplete);
