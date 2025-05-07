@@ -25,6 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnSideTrackCreated, UTrack*, InPa
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackDeleted, UTrack*, InTrack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTrackSelected, UTrack*, InTrack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnComponentListItemCreated, UTrack*, InTrack, UUserWidget*, InSceneCaptureWidget);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComponentListDeleted);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnClipCreated, UTrack*, InTrack, UClip*, InClip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnClipDeleted, UClip*, InClip);
@@ -109,6 +110,9 @@ public:
 	UTrack* CreateComponentListItem(TSubclassOf<UUserWidget> InSceneCaptureWidget, FString InName);
 	UPROPERTY(BlueprintCallable, BlueprintAssignable)
 	FOnComponentListItemCreated OnComponentListItemCreated;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable)
+	FOnComponentListDeleted OnComponentListDeleted;
 
 	// Clip
 public:

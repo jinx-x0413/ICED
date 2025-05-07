@@ -529,5 +529,5 @@ void UEntryPoint::DestructContent(AActor* InActor)
 	}
 
 	// reset widget
-
+	UTimebarPlayer::GetTimebarPlayer()->OnComponentListDeleted.Broadcast();
 }

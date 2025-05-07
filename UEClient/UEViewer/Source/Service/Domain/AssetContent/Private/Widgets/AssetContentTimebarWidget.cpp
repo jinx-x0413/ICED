@@ -22,6 +22,11 @@ void UAssetContentTimebarWidget::NativeConstruct()
 			FFileHelper::SaveStringToFile(TEXT("AddDynamic Done"), *(FPaths::ProjectLogDir() + TEXT("ShippingLog.txt")), FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 #endif
 		}
+
+		if (!UTimebarPlayer::GetTimebarPlayer()->OnComponentListDeleted.IsAlreadyBound(this, &UAssetContentTimebarWidget::OnComponentListDeleted))
+		{
+			UTimebarPlayer::GetTimebarPlayer()->OnComponentListDeleted.AddDynamic(this, &UAssetContentTimebarWidget::OnComponentListDeleted);
+		}
 	}
 
 }
@@ -35,6 +40,11 @@ void UAssetContentTimebarWidget::NativeDestruct()
 		if (UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.IsAlreadyBound(this, &UAssetContentTimebarWidget::OnComponentListItemCreated))
 		{
 			UTimebarPlayer::GetTimebarPlayer()->OnComponentListItemCreated.RemoveDynamic(this, &UAssetContentTimebarWidget::OnComponentListItemCreated);
+		}
+
+		if (UTimebarPlayer::GetTimebarPlayer()->OnComponentListDeleted.IsAlreadyBound(this, &UAssetContentTimebarWidget::OnComponentListDeleted))
+		{
+			UTimebarPlayer::GetTimebarPlayer()->OnComponentListDeleted.RemoveDynamic(this, &UAssetContentTimebarWidget::OnComponentListDeleted);
 		}
 	}
 }
@@ -50,4 +60,9 @@ void UAssetContentTimebarWidget::OnComponentListItemCreated(UTrack* InTrack, UUs
 	FFileHelper::SaveStringToFile(LogString, *LogFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 #endif
 	ExecOnComponentListItemCreated(InTrack, InSceneCaptureWidget);
+}
+
+void UAssetContentTimebarWidget::OnComponentListDeleted()
+{
+	ExecOnComponentListDeleted();
 }

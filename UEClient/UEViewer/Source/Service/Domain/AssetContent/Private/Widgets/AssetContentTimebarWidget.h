@@ -27,4 +27,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "On Component List Item Created"))
 	void ExecOnComponentListItemCreated(UTrack* InTrack, UUserWidget* InSceneCaptureWidget);
+
+	UFUNCTION()
+	void OnComponentListDeleted();
+
+	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName = "On Component List Deleted"))
+	void ExecOnComponentListDeleted();
 };
