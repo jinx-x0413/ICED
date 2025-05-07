@@ -41,6 +41,7 @@ void UDownloadInterface::Start()
 			if (FFileHelper::SaveArrayToFile(Response->GetContent(), *FilePath))
 			{
 				UE_LOG(LogTemp, Log, TEXT("GLTF file saved to: %s"), *FilePath);
+				Manager->DestroyGltfAssetActor.Broadcast();
 			}
 			else
 			{
