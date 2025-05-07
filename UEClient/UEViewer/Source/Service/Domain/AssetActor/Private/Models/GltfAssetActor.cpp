@@ -110,7 +110,7 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 	}*/
 	UpdateHierarchyData(this);
 
-	if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
+	/*if (APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GWorld, 0))
 	{
 		if (ACorePawn* CurrentCorePawn = Cast<ACorePawn>(PlayerPawn))
 		{
@@ -124,7 +124,7 @@ void AGltfAssetActor::Initialize(int32 InIndex, UglTFRuntimeAsset* InAsset, FTra
 			}
 		}
 
-	}
+	}*/
 }
 
 void AGltfAssetActor::SetInitialBoundBoxExtent()

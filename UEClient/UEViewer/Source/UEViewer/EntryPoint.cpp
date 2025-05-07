@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "EntryPoint.h"
@@ -12,7 +12,7 @@ UHttpRequest* UEntryPoint::GetHttpRequest()
 		FHTTP_Connection* Module = FModuleManager::Get().GetModulePtr<FHTTP_Connection>("HTTP_Connection");
 		if (Module)
 		{
-			if (Module->HttpRequest) // NULL üũ �߰�
+			if (Module->HttpRequest) // NULL 체크 추가
 			{
 				return Module->HttpRequest;
 			}
@@ -34,7 +34,7 @@ void UEntryPoint::SendUserDataHttpRequest()
 		FHTTP_Connection* Module = FModuleManager::Get().GetModulePtr<FHTTP_Connection>("HTTP_Connection");
 		if (Module)
 		{
-			if (Module->HttpRequest) // NULL üũ �߰�
+			if (Module->HttpRequest) // NULL 체크 추가
 			{
 				return Module->HttpRequest->SendUserDataHttpRequest();
 			}
@@ -437,4 +437,97 @@ UTableManager* UEntryPoint::GetTableManager(FName InManagerName)
 	}
 
 	return CurrentManager;
+}
+
+
+
+
+// Integrated Logic
+AGltfAssetActor* UEntryPoint::ConstructAssetActor(const FString& InFileName, FglTFRuntimeConfig InAssetActorConfig)
+{
+	AGltfAssetActor* CurrentActor = nullptr;
+
+	// Create Asset Actor
+	FString AssetFilePath = UKismetSystemLibrary::GetProjectDirectory() + "Resource/" + InFileName;
+	//FglTFRuntimeConfig AssetConfig = FglTFRuntimeConfig();
+	UglTFRuntimeAsset* CurrentAsset = UglTFRuntimeFunctionLibrary::glTFLoadAssetFromFilename(InFileName, false, InAssetActorConfig);
+
+	FTransform InitialTransform;
+	InitialTransform.SetLocation(FVector(150.0f, 0.0f, 200.0f));
+	InitialTransform.SetRotation(FQuat(0.0f));
+	InitialTransform.SetScale3D(FVector(5.0f));
+	
+	CurrentActor = CreateGltfAssetActor(AGltfAssetActor::StaticClass(), InitialTransform, CurrentAsset, TEXT(""), TEXT(""));
+
+	return CurrentActor;
+}
+
+void UEntryPoint::ConstructAssetContent(AGltfAssetActor* InCurrentActor, const FString& InContentName, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass)
+{
+	if (!IsValid(InCurrentActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InCurrentActor is invalid at UEntryPoint::CreateAssetContent()"));
+		return;
+	}
+
+	// Create Data Table
+	TArray<FActorHierarchyData> CurrentHierarchyData = InCurrentActor->GetInterfaceHierarchyData();
+	FTableData CurrentTableData = FTableData();
+
+	FString CurrentTableName = TEXT("");
+	if (InContentName == TEXT("Assembly"))
+	{
+		CurrentTableName = TEXT("조립");
+		UJSONParserForUI::ParseJsonComponentTable(TEXT("ComponentTable"), CurrentTableName, CurrentHierarchyData, CurrentTableData);
+		UTableManager* CurrentTableManager = GetTableManager(FName(InContentName));
+		CurrentTableManager->Initialize(CurrentTableData);
+
+		// Build Content
+		BuildAssemblyContent(InCurrentActor, InSceneCaptureWidgetClass);
+	}
+	else if(InContentName == TEXT("Disassembly"))
+	{
+		CurrentTableName = TEXT("분해");
+		UJSONParserForUI::ParseJsonComponentTable(TEXT("ComponentTable"), CurrentTableName, CurrentHierarchyData, CurrentTableData);
+		UTableManager* CurrentTableManager = GetTableManager(FName(InContentName));
+		CurrentTableManager->Initialize(CurrentTableData);
+
+		// Build Content
+		BuildDisassemblyContent(InCurrentActor, InSceneCaptureWidgetClass);
+	}
+	
+}
+
+void UEntryPoint::DestructContent(AActor* InActor)
+{
+	if (!IsValid(InActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InCurrentActor is invalid at UEntryPoint::DestructContent()"));
+		return;
+	}
+
+	InActor->Destroy();
+
+	// table manager reset
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("UIComponent")))
+	{
+		FUIComponent* Module = FModuleManager::Get().GetModulePtr<FUIComponent>("UIComponent");
+		if (Module)
+		{
+			Module->TableController->Shutdown();
+		}
+	}
+
+	// timebar content reset
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("Timebar")))
+	{
+		FTimebar* Module = FModuleManager::Get().GetModulePtr<FTimebar>("Timebar");
+		if (Module)
+		{
+			Module->Controller->Shutdown();
+		}
+	}
+
+	// reset widget
+
 }

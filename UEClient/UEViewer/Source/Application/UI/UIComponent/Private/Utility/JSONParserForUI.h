@@ -10,7 +10,7 @@ struct FDropdownData;
 struct FActorHierarchyData;
  
 UCLASS()
-class UJSONParserForUI : public UBlueprintFunctionLibrary
+class UICOMPONENT_API UJSONParserForUI : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 	

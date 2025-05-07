@@ -17,6 +17,7 @@
 
 #include "glTFRuntime/Public/glTFRuntimeAssetActor.h"
 #include "glTFRuntimeFBX/Public/glTFRuntimeFBXAssetActor.h"
+#include "glTFRuntime/Public/glTFRuntimeFunctionLibrary.h"
 #include "Application/UI/Timebar/Public/Timebar.h"
 #include "Service/Domain/AssetContent/Public/AssetContent.h"
 #include "Application/UI/UIComponent/Public/UIComponent.h"
@@ -126,5 +127,19 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 	static UTableManager* GetTableManager(FName InManagerName);
+
+
+
+
+	// Integrated Logic
+	public:
+		UFUNCTION(BlueprintCallable)
+		static AGltfAssetActor* ConstructAssetActor(const FString& InFileName, FglTFRuntimeConfig InAssetActorConfig);
+
+		UFUNCTION(BlueprintCallable)
+		static void ConstructAssetContent(AGltfAssetActor* InCurrentActor, const FString& InContentName, TSubclassOf<UUserWidget> InSceneCaptureWidgetClass);
+
+		UFUNCTION(BlueprintCallable)
+		static void DestructContent(AActor* InActor);
 
 };
