@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './InstallerDownload.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const InstallerDownload = () => {
   const [downloading, setDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -14,7 +16,7 @@ const InstallerDownload = () => {
 
     try {
       const response = await axios({
-        url: 'http://localhost:8080/download/installer',
+        url: `${baseURL}/download/installer`,
         method: 'GET',
         responseType: 'blob',
         onDownloadProgress: (progressEvent) => {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/cart.css';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 // 토스트 알림 컴포넌트
 const Toast = ({ message, isVisible, type }) => {
@@ -68,9 +69,11 @@ const Cart = () => {
             const token = localStorage.getItem('accessToken');
             
             // API 호출
-            const response = await fetch('http://localhost:8080/api/cart', {
+            const response = await fetch(`${baseURL}/api/cart`, {
                 headers: {
-                    'Authorization': token
+                    'Authorization': token,
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 }
             });
             
@@ -105,10 +108,12 @@ const Cart = () => {
         try {
             const token = localStorage.getItem('accessToken');
             
-            const response = await fetch(`http://localhost:8080/api/cart/${fileId}`, {
+            const response = await fetch(`${baseURL}/api/cart/${fileId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': token
+                    'Authorization': token,
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 }
             });
             
@@ -131,10 +136,12 @@ const Cart = () => {
         try {
             const token = localStorage.getItem('accessToken');
             
-            const response = await fetch('http://localhost:8080/api/cart', {
+            const response = await fetch(`${baseURL}/api/cart`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': token
+                    'Authorization': token,
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 }
             });
             
@@ -267,7 +274,7 @@ const Cart = () => {
                                         <img 
                                             src={item.thumbnailUri.startsWith('http') 
                                                 ? item.thumbnailUri 
-                                                : `http://localhost:8080${item.thumbnailUri}`}
+                                                : `${baseURL}${item.thumbnailUri}`}
                                             alt={item.fileName || 'File thumbnail'} 
                                         />
                                     ) : (

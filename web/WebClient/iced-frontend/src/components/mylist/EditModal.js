@@ -1,5 +1,6 @@
 // components/mylist/EditModal.js
 import React, { useState, useEffect } from 'react';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const EditModal = ({ isOpen, onClose, file, onUpdate }) => {
     const [description, setDescription] = useState('');
@@ -20,7 +21,7 @@ const EditModal = ({ isOpen, onClose, file, onUpdate }) => {
                 file.thumbnailUri 
                     ? (file.thumbnailUri.startsWith('http') 
                         ? file.thumbnailUri 
-                        : `http://localhost:8080${file.thumbnailUri}`)
+                        : `${baseURL}${file.thumbnailUri}`)
                     : null
             );
         }

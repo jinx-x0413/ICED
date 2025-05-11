@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import './css/main.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 // 상세보기 모달 컴포넌트
 const DetailModal = ({ isOpen, onClose, file }) => {
     if (!isOpen) return null;
@@ -30,7 +32,7 @@ const DetailModal = ({ isOpen, onClose, file }) => {
         try {
             const token = localStorage.getItem('accessToken');
             
-            const response = await fetch('http://localhost:8080/api/cart/add', {
+            const response = await fetch(`${baseURL}/api/cart/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +67,7 @@ const DetailModal = ({ isOpen, onClose, file }) => {
                             <img 
                                 src={file.thumbnailUri.startsWith('http')
                                     ? file.thumbnailUri
-                                    : `http://localhost:8080${file.thumbnailUri}`}
+                                    : `${baseURL}${file.thumbnailUri}`}
                                 alt={file.description || 'File thumbnail'} 
                             />
                         ) : (
@@ -156,8 +158,15 @@ const Main = () => {
                 setLoading(true);
                 setPageLoading(true); // 스켈레톤 UI 활성화를 위함
                 
-                const response = await fetch('http://localhost:8080/api/files');
-                
+                const response = await fetch(`${baseURL}/api/files`,
+                    {
+                        headers: {
+                            'ngrok-skip-browser-warning': 'true',
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
+
                 if (!response.ok) {
                     throw new Error('서버 응답 오류: ' + response.status);
                 }
@@ -328,7 +337,7 @@ const Main = () => {
                 // 썸네일 URL 추가
                 const filesWithThumbnails = currentFilesData.map(file => {
                     const thumbnailUrl = file.thumbnailUri 
-                        ? `http://localhost:8080${file.thumbnailUri}` 
+                        ? `${baseURL}${file.thumbnailUri}` 
                         : `https://via.placeholder.com/300x200?text=${encodeURIComponent(file.description || 'No Image')}`;
                     
                     return {
@@ -444,7 +453,7 @@ const Main = () => {
             
             // 선택된 각 파일에 대해 API 호출
             for (const fileId of selectedFiles) {
-                const response = await fetch('http://localhost:8080/api/cart/add', {
+                const response = await fetch(`${baseURL}/api/cart/add`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -473,7 +482,7 @@ const Main = () => {
         try {
             const token = localStorage.getItem('accessToken');
             
-            const response = await fetch('http://localhost:8080/api/cart/add', {
+            const response = await fetch(`${baseURL}/api/cart/add`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

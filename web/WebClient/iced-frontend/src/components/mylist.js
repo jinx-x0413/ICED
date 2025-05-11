@@ -5,6 +5,8 @@ import DetailModal from './mylist/DetailModal';
 import EditModal from './mylist/EditModal';
 import './css/mylist.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const Mylist = () => {
     const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ const Mylist = () => {
                 setLoading(true);
                 setPageLoading(true);
 
-                const response = await fetch(`http://localhost:8080/api/files/user/${userId}`, {
+                const response = await fetch(`${baseURL}/api/files/user/${userId}`, {
                     headers: {
                         'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
                     },
@@ -260,7 +262,7 @@ const Mylist = () => {
                 // 썸네일 URL 추가
                 const filesWithThumbnails = currentFilesData.map(file => {
                     const thumbnailUrl = file.thumbnailUri 
-                        ? `http://localhost:8080${file.thumbnailUri}` 
+                        ? `${baseURL}${file.thumbnailUri}` 
                         : `https://via.placeholder.com/300x200?text=${encodeURIComponent(file.description || 'No Image')}`;
                     
                     return {
@@ -296,7 +298,7 @@ const Mylist = () => {
             // LocalStorage에서 토큰 가져오기
             const token = localStorage.getItem("accessToken");
             
-            const response = await fetch(`http://localhost:8080/api/files/${fileId}`, {
+            const response = await fetch(`${baseURL}/api/files/${fileId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
@@ -335,7 +337,7 @@ const Mylist = () => {
             // LocalStorage에서 토큰 가져오기
             const token = localStorage.getItem("accessToken");
             
-            const response = await fetch(`http://localhost:8080/api/files/${fileId}/update`, {
+            const response = await fetch(`${baseURL}/api/files/${fileId}/update`, {
                 method: 'POST',
                 headers: {
                     'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
@@ -355,7 +357,7 @@ const Mylist = () => {
             setPageLoading(true);
             
             // 서버에서 최신 데이터 다시 가져오기 - 역시 인증 헤더 추가
-            const userFilesResponse = await fetch(`http://localhost:8080/api/files/user/${userId}`, {
+            const userFilesResponse = await fetch(`${baseURL}/api/files/user/${userId}`, {
                 headers: {
                     'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
                 },

@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
 import './css/login.css';
 
-const API_BASE = "http://localhost:8080";
+const baseURL = process.env.REACT_APP_BASE_URL;
+//const API_BASE = "http://localhost:8080";
+const API_BASE = baseURL;
 
 function Login() {
     const [isSignup, setIsSignup] = useState(false);

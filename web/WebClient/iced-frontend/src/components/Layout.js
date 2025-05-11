@@ -4,6 +4,8 @@ import { useAuth } from '../AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './css/layout.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const Layout = ({ children }) => {
     const { state, dispatch } = useAuth();
     const user = state.user;
@@ -16,8 +18,12 @@ const Layout = ({ children }) => {
 
     const logout = async () => {
         try {
-            const res = await fetch("http://localhost:8080/logout", {
+            const res = await fetch(`${baseURL}/logout`, {
                 method: "POST",
+                headers: {
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json',
+                },
                 credentials: "include"
             });
 

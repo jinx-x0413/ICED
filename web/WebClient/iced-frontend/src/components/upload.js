@@ -3,6 +3,8 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '../AuthContext';
 import './css/upload.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const Upload = () => {
     const { state } = useAuth();
     const user = state.user;
@@ -96,11 +98,15 @@ const Upload = () => {
         setStatusType('loading');
     
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:8080/api/upload", true);
+        xhr.open("POST", `${baseURL}/api/upload`, true);
     
         // LocalStorage에서 토큰 가져오기
         const token = localStorage.getItem("accessToken");
-    
+        xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+
+        console.log("accessToken:", token);
+
+
         // 요청 헤더에 Authorization과 credentials 추가
         if (token) {
             if (token.startsWith('Bearer ')) {

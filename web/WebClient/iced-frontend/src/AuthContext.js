@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 // 초기 상태
 const initialState = { user: null };
@@ -61,9 +62,13 @@ const autoLogin = async (token, dispatch) => {
       res = { status: 401 }; // 401 상태로 간주하여 토큰을 요청하도록 함
     } else {
       // 토큰이 있는 경우, 로그인 시도
-      res = await fetch("http://localhost:8080/admin", {
+        res = await fetch(`${baseURL}/admin`, {
         method: "GET",
-        headers: { Authorization: token },
+            headers: {
+                Authorization: token,
+                'ngrok-skip-browser-warning': 'true',
+                'Content-Type': 'application/json'
+            },
         credentials: "include",
       });
     }
@@ -73,8 +78,12 @@ const autoLogin = async (token, dispatch) => {
       dispatch({ type: "LOGIN", payload: { userid: decodedToken.userid} });
     } else if (res.status === 401) {
       // 인증 실패 시, 토큰 갱신 시도
-      const refreshRes = await fetch("http://localhost:8080/reissue", {
-        method: "POST",
+        const refreshRes = await fetch(`${baseURL}/reissue`, {
+            method: "POST",
+            headers: {
+                'ngrok-skip-browser-warning': 'true',
+                'Content-Type': 'application/json'
+            },
         credentials: "include",
       });
 

@@ -1,5 +1,6 @@
 // components/DetailModal.js
 import React from 'react';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const DetailModal = ({ isOpen, onClose, file }) => {
     if (!isOpen) return null;
@@ -38,7 +39,7 @@ const DetailModal = ({ isOpen, onClose, file }) => {
                             <img 
                                 src={file.thumbnailUri.startsWith('http') 
                                     ? file.thumbnailUri 
-                                    : `http://localhost:8080${file.thumbnailUri}`
+                                    : `${baseURL}${file.thumbnailUri}`
                                 } 
                                 alt={file.description || 'File thumbnail'} 
                             />

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import './css/install.css';
 
+const baseURL = process.env.REACT_APP_BASE_URL;
+
 const Install = () => {
     const [downloading, setDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
@@ -14,11 +16,17 @@ const Install = () => {
 
         try {
             let token = localStorage.getItem("accessToken");
-            const response = await fetch('http://localhost:8080/download/installer', {
+            const response = await fetch(`${baseURL}/download/installer`, {
                 method: 'GET',
                 credentials: "include",
-                headers: { Authorization: token }
+                headers: {
+                    Authorization: token,
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
+                }
             });
+
+            console.log("install res : ", response);
 
             if (!response.ok) {
                 throw new Error(`다운로드 오류: ${response.status} ${response.statusText}`);
