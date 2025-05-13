@@ -92,7 +92,9 @@ const Mylist = () => {
 
                 const response = await fetch(`${baseURL}/api/files/user/${userId}`, {
                     headers: {
-                        'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
+                        'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`),
+                        'ngrok-skip-browser-warning': 'true',
+                        'Content-Type': 'application/json'
                     },
                     credentials: 'include' // 쿠키 포함
                 });
@@ -301,7 +303,9 @@ const Mylist = () => {
             const response = await fetch(`${baseURL}/api/files/${fileId}`, {
                 method: 'DELETE',
                 headers: {
-                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
+                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`),
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 },
                 credentials: 'include' // 쿠키 포함
             });
@@ -340,7 +344,9 @@ const Mylist = () => {
             const response = await fetch(`${baseURL}/api/files/${fileId}/update`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
+                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`),
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 },
                 body: formData,
                 credentials: 'include' // 쿠키 포함
@@ -359,7 +365,9 @@ const Mylist = () => {
             // 서버에서 최신 데이터 다시 가져오기 - 역시 인증 헤더 추가
             const userFilesResponse = await fetch(`${baseURL}/api/files/user/${userId}`, {
                 headers: {
-                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`)
+                    'Authorization': token && (token.startsWith('Bearer ') ? token : `Bearer ${token}`),
+                    'ngrok-skip-browser-warning': 'true',
+                    'Content-Type': 'application/json'
                 },
                 credentials: 'include' // 쿠키 포함
             });
