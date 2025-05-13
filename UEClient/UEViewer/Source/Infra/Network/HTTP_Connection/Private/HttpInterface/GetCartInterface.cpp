@@ -57,15 +57,6 @@ void UGetCartInterface::Start()
 					Manager->Cart.thumbnailUri = ItemObj->GetStringField("thumbnailUri");
 					Manager->Cart.addedAt = ItemObj->GetStringField("addedAt");
 					Manager->CartResponse.CartArray.Add(Manager->Cart);
-
-					/*this->Cart.fileName = ItemObj->GetStringField("fileName");
-					this->Cart.fileId = ItemObj->GetIntegerField("fileId");
-					this->Cart.size = ItemObj->GetStringField("size");
-					this->Cart.description = ItemObj->GetStringField("description");
-					this->Cart.thumbnailUri = ItemObj->GetStringField("thumbnailUri");
-					this->Cart.addedAt = ItemObj->GetStringField("addedAt");
-					this->CartResponse.CartArray.Add(Cart);*/
-					//UE_LOG(LogTemp, Warning, TEXT("fileName: %s, fileId: %d, size: %s, description: %s, thumbnailUri: %s, AddedAt: %s"), *DataStructOwner->Cart.fileName, DataStructOwner->Cart.fileId, *DataStructOwner->Cart.size, *DataStructOwner->Cart.description, *DataStructOwner->Cart.thumbnailUri, *DataStructOwner->Cart.addedAt);
 				}
 				
 			}

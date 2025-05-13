@@ -6,21 +6,17 @@
 #include "UObject/NoExportTypes.h"
 #include "HttpInterface.h"
 
-#include "GetCartInterface.generated.h"
+#include "UserInfoInterface.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class UGetCartInterface : public UObject, public IHttpInterface
+class UUserInfoInterface : public UObject, public IHttpInterface
 {
 	GENERATED_BODY()
-
+	
 public:
-	
-
 	virtual void Start() override;
-
-	
 
 };

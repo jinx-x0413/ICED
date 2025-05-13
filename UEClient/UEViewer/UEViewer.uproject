@@ -64,7 +64,10 @@
 		{
 			"Name": "HTTP_Connection",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject"
+			]
 		},
 		{
 			"Name": "Log",

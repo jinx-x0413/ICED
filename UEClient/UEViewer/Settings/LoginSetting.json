@@ -11,6 +11,10 @@
     {
       "APIType": "DownloadModel",
       "URL": "https://heron-good-curiously.ngrok-free.app/api/cart/download/4"
+    },
+    {
+      "APIType": "UserInfo",
+      "URL": "https://heron-good-curiously.ngrok-free.app/userinfo"
     }
 
   ],

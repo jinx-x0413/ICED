@@ -39,9 +39,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static UHttpRequest* GetHttpRequest();
 
-	UFUNCTION(BlueprintCallable)
-	static void SendUserDataHttpRequest();
-
 
 	// asset actor
 public:

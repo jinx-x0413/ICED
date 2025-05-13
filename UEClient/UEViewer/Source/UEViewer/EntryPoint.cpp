@@ -26,26 +26,6 @@ UHttpRequest* UEntryPoint::GetHttpRequest()
 	return nullptr;
 }
 
-
-void UEntryPoint::SendUserDataHttpRequest()
-{
-	if (FModuleManager::Get().IsModuleLoaded(TEXT("HTTP_Connection")))
-	{
-		FHTTP_Connection* Module = FModuleManager::Get().GetModulePtr<FHTTP_Connection>("HTTP_Connection");
-		if (Module)
-		{
-			if (Module->HttpRequest) // NULL 체크 추가
-			{
-				return Module->HttpRequest->SendUserDataHttpRequest();
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("HttpRequest is NULL!"));
-			}
-		}
-	}
-}
-
 // asset actor
 AGltfAssetActor* UEntryPoint::CreateGltfAssetActor(TSubclassOf<AGltfAssetActor> AssetActorClass, FTransform InTransform, UglTFRuntimeAsset* InAsset, const FString& FilePath, FString InFileName)
 {

@@ -8,6 +8,7 @@
 #include "GetCartInterface.h"
 #include "DownloadInterface.h"
 #include "HttpInterface.h"
+#include "UserInfoInterface.h"
 
 #include "InterfaceDependency.generated.h"
 

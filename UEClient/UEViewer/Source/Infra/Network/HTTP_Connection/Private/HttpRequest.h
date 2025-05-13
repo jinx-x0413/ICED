@@ -17,31 +17,23 @@ class IHttpInterface;
 /**
  * 
  */
+
+
 USTRUCT(BlueprintType)
-struct FOpenApiTest
+struct FUserInfo
 {
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FString userid;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString URL;
+	FString email;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Gender;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString UserName;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString Email;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString ObjectName;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	FString FilePath;
-
+	FString username;
 };
+
 
 USTRUCT(BlueprintType)
 struct FCart
@@ -87,18 +79,18 @@ struct FCartResponse
 };
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FUserDataDelivery, const FOpenApiTest&, ApiTest);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDestroyGltfAssetActor);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetCartData, FCartResponse, InCartData);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetUserData, FOpenApiTest, InCartData);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGetUserData, FUserInfo, InUserData);
 
 UENUM(BlueprintType)
 enum class EApiType : uint8	//블루프린트에서 쓰려면 uint8 붙이셈
 {
 	BaseURL,
 	GetCart,       // 장바구니 조회 API
-	DownloadModel  // 모델 다운로드 API
+	DownloadModel,  // 모델 다운로드 API
+	UserInfo
 };
 
 UCLASS()
@@ -111,27 +103,15 @@ public:
 	virtual ~UHttpRequest();
 
 	UPROPERTY(BlueprintAssignable, Category = "HTTP")
-	FUserDataDelivery UserDataDelivery;
-
-	UPROPERTY(BlueprintAssignable, Category = "HTTP")
 	FDestroyGltfAssetActor DestroyGltfAssetActor;
 
-	UFUNCTION(BlueprintCallable)
-	virtual void SendUserDataHttpRequest();
 
 private:
-	void GetUserDataCallBack(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-
-	FString GetURL(const FString& APIType);
-
 	UFUNCTION(BlueprintCallable)
 	void DestroyActorDelegate();
 	
 	// login
 private:
-	FOpenApiTest GetURLFromConfig();  // JSON 파일에서 URL 값을 가져오는 함수
-	FOpenApiTest OpenApi;
-	TMap<FString, FString> URLMap;
 
 public:
 	void StartHttp(); // sub (strategy)
@@ -157,6 +137,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GetData();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	FUserInfo UserInfo;
 
 	UPROPERTY(BluePrintReadWrite, EditAnywhere)	
 	FCartResponse CartResponse;
