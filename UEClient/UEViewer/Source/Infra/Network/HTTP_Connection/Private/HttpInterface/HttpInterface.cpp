@@ -45,7 +45,9 @@ void IHttpInterface::Start()
 void IHttpInterface::GetHttpRequest(const FString& URL, TFunction<void(FHttpResponsePtr, bool)> OnComplete) const
 {
 	
-	FString Token = TEXT("Bearer ") + ULogManager::GetLogManager()->GetToken();
+	//FString Token = TEXT("Bearer ") + ULogManager::GetLogManager()->GetToken();
+	FString Token = TEXT("Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6IkF1dGhvcml6YXRpb24iLCJ1c2VyaWQiOiJhZG1pbiIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ3MjIwMjIwLCJleHAiOjE3NDcyMzEwMjB9._MWiqj2X-Yq9WcaOsv6t-hNeDoNB7eBSy2KTfYuyh5k");
+
 	// Parse URL
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = FHttpModule::Get().CreateRequest();
 	Request->SetURL(URL);

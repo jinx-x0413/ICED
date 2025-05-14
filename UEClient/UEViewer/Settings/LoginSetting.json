@@ -6,15 +6,15 @@
     },
     {
       "APIType": "GetCart",
-      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart"
+      "URL": "http://122.32.117.5:8080/api/cart"
     },
     {
       "APIType": "DownloadModel",
-      "URL": "https://heron-good-curiously.ngrok-free.app/api/cart/download/4"
+      "URL": "http://122.32.117.5:8080/api/cart/download/"
     },
     {
       "APIType": "UserInfo",
-      "URL": "https://heron-good-curiously.ngrok-free.app/userinfo"
+      "URL": "http://122.32.117.5:8080/userinfo"
     }
 
   ],

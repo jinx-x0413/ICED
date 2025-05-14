@@ -7,7 +7,7 @@ void UDownloadInterface::Start()
 {
 	IHttpInterface::Start();
 
-	FString DownloadModelURL = IHttpInterface::GetURL("DownloadModel");
+	FString DownloadModelURL = IHttpInterface::GetURL("DownloadModel") + FString::FromInt(Manager->CurrentCartId);
 
 	if (DownloadModelURL.IsEmpty())
 	{
@@ -47,6 +47,7 @@ void UDownloadInterface::Start()
 			{
 				UE_LOG(LogTemp, Error, TEXT("Failed to save GLTF file."));
 			}
+			Manager->CurrentCartId = 0;
 		}
 		else
 		{

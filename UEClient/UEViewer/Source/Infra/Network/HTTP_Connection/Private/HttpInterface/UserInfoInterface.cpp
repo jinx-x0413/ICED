@@ -15,19 +15,29 @@ void UUserInfoInterface::Start()
 		return;
 	}
 
+
 	// 인터페이스의 헬퍼 함수 호출
 	GetHttpRequest(UserInfoURL, [this](FHttpResponsePtr Response, bool bSuccess)
 	{
-		if (bSuccess && Response.IsValid())
+
+		if (Response.IsValid())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Response: %s"), *Response->GetContentAsString());
+			UE_LOG(LogTemp, Warning, TEXT("HTTP Status Code: %d"), Response->GetResponseCode());
 		}
-		else
+
+		if (!bSuccess || !Response.IsValid())
 		{
-			UE_LOG(LogTemp, Error, TEXT("HTTP Request Failed"));
+			UE_LOG(LogTemp, Error, TEXT("HTTP request failed or response is invalid"));
+			return;
 		}
 
 		FString ContentString = Response->GetContentAsString();
+		if (ContentString.IsEmpty())
+		{
+			UE_LOG(LogTemp, Error, TEXT("HTTP Response is empty"));
+			return;
+		}
+
 		TSharedPtr<FJsonObject> JsonObject;
 		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ContentString);
 
@@ -45,6 +55,8 @@ void UUserInfoInterface::Start()
 		{
 			UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON."));
 		}
+
+		
 
 	});
 }
