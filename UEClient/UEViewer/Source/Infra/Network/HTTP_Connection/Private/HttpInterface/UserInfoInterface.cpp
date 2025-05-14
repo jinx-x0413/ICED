@@ -50,6 +50,7 @@ void UUserInfoInterface::Start()
 			UE_LOG(LogTemp, Warning, TEXT("UserId: %s"), *Manager->UserInfo.userid);
 			UE_LOG(LogTemp, Warning, TEXT("Email: %s"), *Manager->UserInfo.email);
 			UE_LOG(LogTemp, Warning, TEXT("Username: %s"), *Manager->UserInfo.username);
+			Manager->GetData();
 		}
 		else
 		{

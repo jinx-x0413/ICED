@@ -33,7 +33,7 @@ void UHttpRequest::CreateInterface(EApiType InApiType)
 	{
 		CurrentInterface.GetObject()->RemoveFromRoot();
 		CurrentInterface.GetObject()->MarkAsGarbage();
-		//CurrentInterface.GetObject() = nullptr;
+		CurrentInterface = nullptr;
 	}
 
 	switch (InApiType)
@@ -69,15 +69,15 @@ void UHttpRequest::SendHttp(EApiType InApiType)
 
 void UHttpRequest::GetData()
 {
-	if (CurrentInterface = Cast<UGetCartInterface>(CurrentInterface.GetObject()))
+	if (Cast<UGetCartInterface>(CurrentInterface.GetObject()))
 	{
 		OnGetCartData.Broadcast(CartResponse);
 	}
-	else if (CurrentInterface = Cast<UDownloadInterface>(CurrentInterface.GetObject()))
+	else if (Cast<UDownloadInterface>(CurrentInterface.GetObject()))
 	{
 		
 	}
-	else if (CurrentInterface = Cast<UUserInfoInterface>(CurrentInterface.GetObject()))
+	else if (Cast<UUserInfoInterface>(CurrentInterface.GetObject()))
 	{
 		OnGetUserData.Broadcast(UserInfo);
 	}
