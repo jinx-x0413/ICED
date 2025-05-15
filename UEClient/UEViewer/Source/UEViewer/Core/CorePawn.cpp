@@ -35,7 +35,7 @@ ACorePawn::ACorePawn()
 	Camera->SetupAttachment(SpringArm);
 
 	// SpringArm Settings
-	SpringArm->TargetArmLength = 800.0f;
+	SpringArm->TargetArmLength = 1600.0f;
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->bEnableCameraRotationLag = true;
 	SpringArm->CameraLagSpeed = 10;
