@@ -49,7 +49,7 @@ void UGetCartInterface::Start()
 				{
 					TSharedPtr<FJsonObject> ItemObj = ItemValue.Get()->AsObject();
 
-					
+					Manager->Cart.id = ItemObj->GetIntegerField("id");
 					Manager->Cart.fileName = ItemObj->GetStringField("fileName");
 					Manager->Cart.fileId = ItemObj->GetIntegerField("fileId");
 					Manager->Cart.size = ItemObj->GetStringField("size");

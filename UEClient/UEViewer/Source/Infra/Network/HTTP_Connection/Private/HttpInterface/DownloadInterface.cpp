@@ -7,6 +7,8 @@ void UDownloadInterface::Start()
 {
 	IHttpInterface::Start();
 
+	UE_LOG(LogTemp, Error, TEXT("Current Cart ID : %d"), Manager->CurrentCartId);
+
 	FString DownloadModelURL = IHttpInterface::GetURL("DownloadModel") + FString::FromInt(Manager->CurrentCartId);
 
 	if (DownloadModelURL.IsEmpty())

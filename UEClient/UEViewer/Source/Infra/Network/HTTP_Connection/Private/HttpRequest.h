@@ -148,5 +148,5 @@ public:
 	FCart Cart;
 
 	UPROPERTY(BluePrintReadWrite, EditAnywhere)
-	int32 CurrentCartId = 0;
+	int32 CurrentCartId;
 };

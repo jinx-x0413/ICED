@@ -2,19 +2,19 @@
   "URL": [
     {
       "APIType": "BaseURL",
-      "URL": "https://randomuser.me/api/"
+      "URL": "https://iced-serverpostg.mooo.com/"
     },
     {
       "APIType": "GetCart",
-      "URL": "http://122.32.117.5:8080/api/cart"
+      "URL": "https://iced-serverpostg.mooo.com:8443/api/cart"
     },
     {
       "APIType": "DownloadModel",
-      "URL": "http://122.32.117.5:8080/api/cart/download/"
+      "URL": "https://iced-serverpostg.mooo.com:8443/api/cart/download/"
     },
     {
       "APIType": "UserInfo",
-      "URL": "http://122.32.117.5:8080/userinfo"
+      "URL": "https://iced-serverpostg.mooo.com:8443/userinfo"
     }
 
   ],
