@@ -3,7 +3,6 @@ import { useAuth } from '../AuthContext';
 import './css/login.css';
 
 const baseURL = process.env.REACT_APP_BASE_URL;
-//const API_BASE = "http://localhost:8080";
 const API_BASE = baseURL;
 
 function Login() {
@@ -13,8 +12,6 @@ function Login() {
         userid: "",
         username: "",
         password: "",
-        birthDate: "",
-        school: "",
     });
     const [loginForm, setLoginForm] = useState({
         userid: "",
@@ -41,22 +38,31 @@ function Login() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        
+
         try {
-            const formData = new URLSearchParams(form);
+            const { email, userid, username, password } = form;
+
+            const formData = new URLSearchParams();
+            formData.append("email", email);
+            formData.append("userid", userid);
+            formData.append("username", username);
+            formData.append("password", password);
+
             const res = await fetch(`${API_BASE}/join`, {
                 method: "POST",
                 body: formData,
             });
-            
-            const data = await res.json();
-            
-            if (!res.ok) {
-                throw new Error(data.message || "회원가입 실패");
+
+            const text = await res.text();
+
+            if (text.includes("성공")) {
+                alert("회원가입 성공");
+                setIsSignup(false);
+            } else if (text.includes("이미 존재")) {
+                setError("이미 존재하는 아이디입니다.");
+            } else {
+                throw new Error(text || "회원가입 실패");
             }
-            
-            alert("회원가입 성공");
-            setIsSignup(false);
         } catch (error) {
             console.error("회원가입 실패:", error);
             setError(error.message || "회원가입 중 오류가 발생했습니다.");
@@ -69,7 +75,7 @@ function Login() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        
+
         try {
             const formData = new URLSearchParams(loginForm);
             const res = await fetch(`${API_BASE}/login`, {
@@ -104,7 +110,7 @@ function Login() {
                     <h2>{isSignup ? "회원가입" : "로그인"}</h2>
                     {error && <p className="error-message">{error}</p>}
                 </div>
-                
+
                 {isSignup ? (
                     <form className="auth-form" onSubmit={join}>
                         <div className="form-group">
@@ -118,26 +124,18 @@ function Login() {
                         </div>
                         <div className="form-group">
                             <input 
-                                type="date" 
-                                name="birthDate" 
-                                placeholder="생년 월일" 
+                                type="text" 
+                                name="userid" 
+                                placeholder="아이디" 
                                 onChange={handleInputChange} 
                                 required 
                             />
                         </div>
                         <div className="form-group">
                             <input 
-                                type="text" 
-                                name="school" 
-                                placeholder="학교" 
-                                onChange={handleInputChange} 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input 
                                 type="email" 
                                 name="email" 
-                                placeholder="ID(이메일)" 
+                                placeholder="이메일" 
                                 onChange={handleInputChange} 
                                 required 
                             />
@@ -181,7 +179,7 @@ function Login() {
                         </button>
                     </form>
                 )}
-                
+
                 <div className="auth-footer">
                     <span className="toggle-form-btn" onClick={toggleForm}>
                         {isSignup ? "계정이 있으신가요? 로그인" : "계정이 없으신가요? 회원가입"}
