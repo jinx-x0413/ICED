@@ -86,39 +86,56 @@ const EditModal = ({ isOpen, onClose, file, onUpdate }) => {
         }
     };
 
-    // 폼 제출 처리
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (!description.trim()) {
-            setError("파일 설명을 입력해주세요.");
-            return;
+    e.preventDefault();
+    
+    if (!description.trim()) {
+        setError("파일 설명을 입력해주세요.");
+        return;
+    }
+    
+    setIsSubmitting(true);
+    setError(''); // 오류 초기화
+    
+    const formData = new FormData();
+    formData.append('description', description);
+    
+    if (newFile) {
+        formData.append('file', newFile);
+    }
+    
+    if (newThumbnail) {
+        formData.append('thumbnail', newThumbnail);
+    }
+
+    const token = localStorage.getItem('accessToken'); // JWT 토큰 가져오기
+
+    try {
+        const response = await fetch(`${baseURL}/api/files/${file.id}/update`, {
+            method: 'POST',
+            headers: {
+                'Authorization': token,
+                'ngrok-skip-browser-warning': 'true',
+                // ❗ Content-Type 생략 (FormData는 자동 설정됨)
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || '파일 업데이트 실패');
         }
-        
-        setIsSubmitting(true);
-        setError(''); // 오류 초기화
-        
-        const formData = new FormData();
-        formData.append('description', description);
-        
-        if (newFile) {
-            formData.append('file', newFile);
-        }
-        
-        if (newThumbnail) {
-            formData.append('thumbnail', newThumbnail);
-        }
-        
-        try {
-            await onUpdate(file.id, formData);
-            handleClose();
-        } catch (error) {
-            console.error('파일 업데이트 중 오류:', error);
-            setError(error.message || '파일 업데이트에 실패했습니다.');
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+
+        await onUpdate(file.id, formData); // 성공 시 외부 콜백 실행
+        handleClose();
+    } catch (error) {
+        console.error('파일 업데이트 중 오류:', error);
+        setError(error.message || '파일 업데이트에 실패했습니다.');
+    } finally {
+        setIsSubmitting(false);
+    }
+};
+
 
     // 파일 이름 표시 함수
     const getFileName = (file) => {
